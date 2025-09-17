@@ -29,10 +29,6 @@ jobs:
       run: |
          xcodebuild -version
          swift --version
-
-    - uses: swift-actions/setup-swift@v2
-      with:
-          swift-version: "6.2"
           
     - name: Build AppCore
       run: swift build --target AppCore -v
