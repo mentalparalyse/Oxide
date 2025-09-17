@@ -20,7 +20,7 @@ jobs:
     - name: Cache SwiftPM
       uses: actions/cache@v4
       with:
-        path: .build
+        path: OxideModules/.build
         key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
         restore-keys: |
           ${{ runner.os }}-spm-
@@ -32,31 +32,40 @@ jobs:
          
     - name: Build AppCore
       run: swift build --target AppCore -v
+      working-directory: OxideModules
 
     - name: Build Root
       run: swift build --target Root -v
+      working-directory: OxideModules
 
     - name: Build Home
       run: swift build --target Home -v
+      working-directory: OxideModules
 
     - name: Build Gallery
       run: swift build --target Gallery -v
+      working-directory: OxideModules
 
     - name: Build Settings
       run: swift build --target Settings -v
+      working-directory: OxideModules
 
 
 # Run tests
     - name: Run Root tests
       run: swift test --target RootTests -v
+      working-directory: OxideModules
 
     - name: Run Home tests
       run: swift test --target HomeTests -v
+      working-directory: OxideModules
 
     - name: Run Gallery tests
       run: swift test --target GalleryTests -v
+      working-directory: OxideModules
 
     - name: Run Settings tests
       run: swift test --target SettingsTests -v
+      working-directory: OxideModules
 
       
