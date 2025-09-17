@@ -1,0 +1,62 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+  
+    - name: Cache SwiftPM
+      uses: actions/cache@v4
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Xcode setup
+      run: |
+         xcodebuild -version
+         swift --version
+         
+    - name: Build AppCore
+      run: swift build --target AppCore -v
+
+    - name: Build Root
+      run: swift build --target Root -v
+
+    - name: Build Home
+      run: swift build --target Home -v
+
+    - name: Build Gallery
+      run: swift build --target Gallery -v
+
+    - name: Build Settings
+      run: swift build --target Settings -v
+
+
+# Run tests
+    - name: Run Root tests
+      run: swift test --target RootTests -v
+
+    - name: Run Home tests
+      run: swift test --target HomeTests -v
+
+    - name: Run Gallery tests
+      run: swift test --target GalleryTests -v
+
+    - name: Run Settings tests
+      run: swift test --target SettingsTests -v
+
+      
