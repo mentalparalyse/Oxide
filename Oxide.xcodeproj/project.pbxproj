@@ -7,46 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F4876A852E6F382600C2379C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F4876A842E6F382600C2379C /* Lottie */; };
+		F404A0BA2E7985FF000EB721 /* Root in Frameworks */ = {isa = PBXBuildFile; productRef = F404A0B92E7985FF000EB721 /* Root */; };
+		F404A0BC2E798602000EB721 /* Home in Frameworks */ = {isa = PBXBuildFile; productRef = F404A0BB2E798602000EB721 /* Home */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		F43075E42E6F356100884AFD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F43075CD2E6F355F00884AFD /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F43075D42E6F355F00884AFD;
-			remoteInfo = Oxide;
-		};
-		F43075EE2E6F356100884AFD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F43075CD2E6F355F00884AFD /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F43075D42E6F355F00884AFD;
-			remoteInfo = Oxide;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
+		F404A0B52E796D92000EB721 /* OxideModules */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = OxideModules; sourceTree = "<group>"; };
 		F43075D52E6F355F00884AFD /* Oxide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oxide.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F43075E32E6F356100884AFD /* OxideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OxideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F43075ED2E6F356100884AFD /* OxideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OxideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F43FBC112E7B124500AB5922 /* Exceptions for "Oxide" folder in "Oxide" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F43075D42E6F355F00884AFD /* Oxide */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F43075D72E6F355F00884AFD /* Oxide */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F43FBC112E7B124500AB5922 /* Exceptions for "Oxide" folder in "Oxide" target */,
+			);
 			path = Oxide;
-			sourceTree = "<group>";
-		};
-		F43075E62E6F356100884AFD /* OxideTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = OxideTests;
-			sourceTree = "<group>";
-		};
-		F43075F02E6F356100884AFD /* OxideUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = OxideUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -56,33 +42,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4876A852E6F382600C2379C /* Lottie in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F43075E02E6F356100884AFD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F43075EA2E6F356100884AFD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				F404A0BA2E7985FF000EB721 /* Root in Frameworks */,
+				F404A0BC2E798602000EB721 /* Home in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F404A0B62E797569000EB721 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F43075CC2E6F355F00884AFD = {
 			isa = PBXGroup;
 			children = (
+				F404A0B52E796D92000EB721 /* OxideModules */,
 				F43075D72E6F355F00884AFD /* Oxide */,
-				F43075E62E6F356100884AFD /* OxideTests */,
-				F43075F02E6F356100884AFD /* OxideUITests */,
+				F404A0B62E797569000EB721 /* Frameworks */,
 				F43075D62E6F355F00884AFD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,8 +71,6 @@
 			isa = PBXGroup;
 			children = (
 				F43075D52E6F355F00884AFD /* Oxide.app */,
-				F43075E32E6F356100884AFD /* OxideTests.xctest */,
-				F43075ED2E6F356100884AFD /* OxideUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -117,57 +95,12 @@
 			);
 			name = Oxide;
 			packageProductDependencies = (
-				F4876A842E6F382600C2379C /* Lottie */,
+				F404A0B92E7985FF000EB721 /* Root */,
+				F404A0BB2E798602000EB721 /* Home */,
 			);
 			productName = Oxide;
 			productReference = F43075D52E6F355F00884AFD /* Oxide.app */;
 			productType = "com.apple.product-type.application";
-		};
-		F43075E22E6F356100884AFD /* OxideTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F43075FA2E6F356100884AFD /* Build configuration list for PBXNativeTarget "OxideTests" */;
-			buildPhases = (
-				F43075DF2E6F356100884AFD /* Sources */,
-				F43075E02E6F356100884AFD /* Frameworks */,
-				F43075E12E6F356100884AFD /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F43075E52E6F356100884AFD /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				F43075E62E6F356100884AFD /* OxideTests */,
-			);
-			name = OxideTests;
-			packageProductDependencies = (
-			);
-			productName = OxideTests;
-			productReference = F43075E32E6F356100884AFD /* OxideTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		F43075EC2E6F356100884AFD /* OxideUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F43075FD2E6F356100884AFD /* Build configuration list for PBXNativeTarget "OxideUITests" */;
-			buildPhases = (
-				F43075E92E6F356100884AFD /* Sources */,
-				F43075EA2E6F356100884AFD /* Frameworks */,
-				F43075EB2E6F356100884AFD /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F43075EF2E6F356100884AFD /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				F43075F02E6F356100884AFD /* OxideUITests */,
-			);
-			name = OxideUITests;
-			packageProductDependencies = (
-			);
-			productName = OxideUITests;
-			productReference = F43075ED2E6F356100884AFD /* OxideUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -182,14 +115,6 @@
 					F43075D42E6F355F00884AFD = {
 						CreatedOnToolsVersion = 16.4;
 					};
-					F43075E22E6F356100884AFD = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = F43075D42E6F355F00884AFD;
-					};
-					F43075EC2E6F356100884AFD = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = F43075D42E6F355F00884AFD;
-					};
 				};
 			};
 			buildConfigurationList = F43075D02E6F355F00884AFD /* Build configuration list for PBXProject "Oxide" */;
@@ -202,7 +127,6 @@
 			mainGroup = F43075CC2E6F355F00884AFD;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F4876A832E6F382600C2379C /* XCRemoteSwiftPackageReference "lottie-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F43075D62E6F355F00884AFD /* Products */;
@@ -210,28 +134,12 @@
 			projectRoot = "";
 			targets = (
 				F43075D42E6F355F00884AFD /* Oxide */,
-				F43075E22E6F356100884AFD /* OxideTests */,
-				F43075EC2E6F356100884AFD /* OxideUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F43075D32E6F355F00884AFD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F43075E12E6F356100884AFD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F43075EB2E6F356100884AFD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -248,34 +156,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F43075DF2E6F356100884AFD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F43075E92E6F356100884AFD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		F43075E52E6F356100884AFD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F43075D42E6F355F00884AFD /* Oxide */;
-			targetProxy = F43075E42E6F356100884AFD /* PBXContainerItemProxy */;
-		};
-		F43075EF2E6F356100884AFD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F43075D42E6F355F00884AFD /* Oxide */;
-			targetProxy = F43075EE2E6F356100884AFD /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F43075F52E6F356100884AFD /* Debug */ = {
@@ -406,6 +287,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Oxide/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -445,6 +327,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Oxide/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -472,96 +355,6 @@
 			};
 			name = Release;
 		};
-		F43075FB2E6F356100884AFD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z347LN4W5G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.oxide.app.OxideTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Oxide.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Oxide";
-				XROS_DEPLOYMENT_TARGET = 2.5;
-			};
-			name = Debug;
-		};
-		F43075FC2E6F356100884AFD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z347LN4W5G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.oxide.app.OxideTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Oxide.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Oxide";
-				XROS_DEPLOYMENT_TARGET = 2.5;
-			};
-			name = Release;
-		};
-		F43075FE2E6F356100884AFD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z347LN4W5G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.oxide.app.OxideUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Oxide;
-				XROS_DEPLOYMENT_TARGET = 2.5;
-			};
-			name = Debug;
-		};
-		F43075FF2E6F356100884AFD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z347LN4W5G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MACOSX_DEPLOYMENT_TARGET = 15.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.oxide.app.OxideUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Oxide;
-				XROS_DEPLOYMENT_TARGET = 2.5;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -583,42 +376,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F43075FA2E6F356100884AFD /* Build configuration list for PBXNativeTarget "OxideTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F43075FB2E6F356100884AFD /* Debug */,
-				F43075FC2E6F356100884AFD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F43075FD2E6F356100884AFD /* Build configuration list for PBXNativeTarget "OxideUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F43075FE2E6F356100884AFD /* Debug */,
-				F43075FF2E6F356100884AFD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		F4876A832E6F382600C2379C /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.5.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		F4876A842E6F382600C2379C /* Lottie */ = {
+		F404A0B92E7985FF000EB721 /* Root */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F4876A832E6F382600C2379C /* XCRemoteSwiftPackageReference "lottie-spm" */;
-			productName = Lottie;
+			productName = Root;
+		};
+		F404A0BB2E798602000EB721 /* Home */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Home;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
