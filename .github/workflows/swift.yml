@@ -12,61 +12,82 @@ on:
 jobs:
   build-and-test:
     runs-on: macos-latest
-    
+
     env:
-      IOS_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
+      DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Cache SwiftPM
+    - name: Cache DerivedData
       uses: actions/cache@v4
       with:
-        path: ./OxideModules
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        path: ~/Library/Developer/Xcode/DerivedData
+        key: ${{ runner.os }}-deriveddata-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-spm-
+          ${{ runner.os }}-deriveddata-
 
     - name: Xcode setup
       run: |
         xcodebuild -version
         swift --version
 
+    # Собираем таргеты
     - name: Build AppCore
-      run: xcrun swift build --target AppCore --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild build \
+        -scheme AppCore \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
     - name: Build Root
-      run: xcrun swift build --target Root --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild build \
+        -scheme Root \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
     - name: Build Home
-      run: xcrun swift build --target Home --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild build \
+        -scheme Home \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
     - name: Build Gallery
-      run: xcrun swift build --target Gallery --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild build \
+        -scheme Gallery \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
     - name: Build Settings
-      run: xcrun swift build --target Settings --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild build \
+        -scheme Settings \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
+    # Запускаем тесты
     - name: Run Root tests
-      run: xcrun swift test --target RootTests --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild test \
+        -scheme Root \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
     - name: Run Home tests
-      run: xcrun swift test --target HomeTests --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild test \
+        -scheme Home \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
     - name: Run Gallery tests
-      run: xcrun swift test --target GalleryTests --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild test \
+        -scheme Gallery \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
 
     - name: Run Settings tests
-      run: xcrun swift test --target SettingsTests --destination "$IOS_DESTINATION"
-      working-directory: OxideModules
+      run: xcodebuild test \
+        -scheme Settings \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation
+
 
       
