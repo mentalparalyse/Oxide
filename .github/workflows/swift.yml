@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-latest
 
     env:
-      DESTINATION: "platform:iOS Simulator, arch:arm64, id:5EAA4E83-BEFF-486D-9A72-230E3D4B1E42, OS:26.0, name:iPhone 17 Pro Max"
+      DESTINATION: 'platform=iOS Simulator,name=iPhone 17 Pro Max,OS=26.0'
 
     steps:
     - name: Checkout repository
