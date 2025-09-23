@@ -13,10 +13,13 @@ jobs:
   build-and-test:
     runs-on: macos-latest
     
+    env:
+      IOS_DESTINATION: "platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.4"
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-  
+
     - name: Cache SwiftPM
       uses: actions/cache@v4
       with:
@@ -27,45 +30,43 @@ jobs:
 
     - name: Xcode setup
       run: |
-         xcodebuild -version
-         swift --version
-          
+        xcodebuild -version
+        swift --version
+
     - name: Build AppCore
-      run: swift build --target AppCore -v
+      run: xcrun swift build --target AppCore --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
     - name: Build Root
-      run: swift build --target Root -v
+      run: xcrun swift build --target Root --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
     - name: Build Home
-      run: swift build --target Home -v
+      run: xcrun swift build --target Home --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
     - name: Build Gallery
-      run: swift build --target Gallery -v
+      run: xcrun swift build --target Gallery --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
     - name: Build Settings
-      run: swift build --target Settings -v
+      run: xcrun swift build --target Settings --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
-
-# Run tests
     - name: Run Root tests
-      run: swift test --target RootTests -v
+      run: xcrun swift test --target RootTests --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
     - name: Run Home tests
-      run: swift test --target HomeTests -v
+      run: xcrun swift test --target HomeTests --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
     - name: Run Gallery tests
-      run: swift test --target GalleryTests -v
+      run: xcrun swift test --target GalleryTests --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
     - name: Run Settings tests
-      run: swift test --target SettingsTests -v
+      run: xcrun swift test --target SettingsTests --destination "$IOS_DESTINATION"
       working-directory: OxideModules
 
       
