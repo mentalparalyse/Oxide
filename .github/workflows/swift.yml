@@ -33,58 +33,65 @@ jobs:
         xcodebuild -version
         swift --version
 
-    # Собираем таргеты
     - name: Build AppCore
-      run: xcodebuild build \
+      run: |
+        xcodebuild build \
         -scheme AppCore \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Build Root
-      run: xcodebuild build \
+      run: |
+        xcodebuild build \
         -scheme Root \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Build Home
-      run: xcodebuild build \
+      run: | 
+        xcodebuild build \
         -scheme Home \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Build Gallery
-      run: xcodebuild build \
+      run: | 
+        xcodebuild build \
         -scheme Gallery \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Build Settings
-      run: xcodebuild build \
+      run: |
+        xcodebuild build \
         -scheme Settings \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
-    # Запускаем тесты
     - name: Run Root tests
-      run: xcodebuild test \
+      run: |
+        xcodebuild test \
         -scheme Root \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Run Home tests
-      run: xcodebuild test \
+      run: |
+        xcodebuild test \
         -scheme Home \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Run Gallery tests
-      run: xcodebuild test \
+      run: |
+        xcodebuild test \
         -scheme Gallery \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Run Settings tests
-      run: xcodebuild test \
+      run: |
+        xcodebuild test \
         -scheme Settings \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
