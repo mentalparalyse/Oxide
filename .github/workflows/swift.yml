@@ -32,14 +32,7 @@ jobs:
       run: |
         xcodebuild -version
         swift --version
-
-    - name: Build AppCore
-      run: |
-        xcodebuild build \
-        -scheme AppCore \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
+        
     - name: Build Root
       run: |
         xcodebuild build \
