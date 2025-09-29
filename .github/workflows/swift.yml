@@ -46,49 +46,56 @@ jobs:
         xcodebuild build \
         -scheme Home \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     - name: Build Gallery
       run: | 
         xcodebuild build \
         -scheme Gallery \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     - name: Build Settings
       run: |
         xcodebuild build \
         -scheme Settings \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     - name: Run Root tests
       run: |
         xcodebuild test \
         -scheme Root \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     - name: Run Home tests
       run: |
         xcodebuild test \
         -scheme Home \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     - name: Run Gallery tests
       run: |
         xcodebuild test \
         -scheme Gallery \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     - name: Run Settings tests
       run: |
         xcodebuild test \
         -scheme Settings \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
 
       
