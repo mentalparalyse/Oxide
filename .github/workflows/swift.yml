@@ -68,32 +68,36 @@ jobs:
     - name: Run Root tests
       run: |
         xcodebuild test \
-        -scheme Root \
+        -scheme OxideModules-Package \
         -destination "$DESTINATION" \
+        -only-testing:RootTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
     - name: Run Home tests
       run: |
         xcodebuild test \
-        -scheme Home \
+        -scheme OxideModules-Package \
         -destination "$DESTINATION" \
+        -only-testing:HomeTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
     - name: Run Gallery tests
       run: |
         xcodebuild test \
-        -scheme Gallery \
+        -scheme OxideModules-Package \
         -destination "$DESTINATION" \
+        -only-testing:GalleryTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
     - name: Run Settings tests
       run: |
         xcodebuild test \
-        -scheme Settings \
+        -scheme OxideModules-Package \
         -destination "$DESTINATION" \
+        -only-testing:SettingsTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
