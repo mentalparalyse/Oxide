@@ -28,6 +28,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-deriveddata-
 
+    - name: Clean Swift Package
+      run: swift package clean
+
     - name: Xcode setup
       run: |
         xcodebuild -version
