@@ -12,7 +12,13 @@
 
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "RootTests",
+        "name" : "RootTests"
+      }
+    }
   ],
   "version" : 1
 }

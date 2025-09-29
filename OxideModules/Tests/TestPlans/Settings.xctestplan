@@ -12,7 +12,13 @@
 
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SettingsTests",
+        "name" : "SettingsTests"
+      }
+    }
   ],
   "version" : 1
 }
