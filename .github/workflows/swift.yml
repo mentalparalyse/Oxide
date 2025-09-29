@@ -38,7 +38,7 @@ jobs:
         xcodebuild build \
         -scheme Root \
         -destination "$DESTINATION" \
-        -skipPackagePluginValidation
+        -skipPackagePluginValidation \
         -skipMacroValidation
 
     - name: Build Home
