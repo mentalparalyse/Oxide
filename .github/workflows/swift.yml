@@ -33,6 +33,9 @@ jobs:
         xcodebuild -version
         swift --version
         
+    - name: Show available Xcode versions
+      run: ls /Applications | grep Xcode
+
     - name: Build Root
       run: |
         xcodebuild build \
