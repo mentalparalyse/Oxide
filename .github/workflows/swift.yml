@@ -29,7 +29,9 @@ jobs:
           ${{ runner.os }}-deriveddata-
 
     - name: Clean Swift Package
-      run: swift package clean
+      run: |
+        swift package clean \
+        --package-path OxideModules
 
     - name: Xcode setup
       run: |
