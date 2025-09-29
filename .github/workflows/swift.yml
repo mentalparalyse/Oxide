@@ -65,39 +65,39 @@ jobs:
         -skipPackagePluginValidation \
         -skipMacroValidation
 
+    - name: List all available targets
+      run: |
+        xcodebuild -list -project Oxide.xcodeproj
+
     - name: Run Root tests
       run: |
         xcodebuild test \
-        -scheme OxideModules-Package \
+        -scheme Root \
         -destination "$DESTINATION" \
-        -only-testing:RootTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
     - name: Run Home tests
       run: |
         xcodebuild test \
-        -scheme OxideModules-Package \
+        -scheme Home \
         -destination "$DESTINATION" \
-        -only-testing:HomeTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
     - name: Run Gallery tests
       run: |
         xcodebuild test \
-        -scheme OxideModules-Package \
+        -scheme Gallery \
         -destination "$DESTINATION" \
-        -only-testing:GalleryTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
     - name: Run Settings tests
       run: |
         xcodebuild test \
-        -scheme OxideModules-Package \
+        -scheme Settings \
         -destination "$DESTINATION" \
-        -only-testing:SettingsTests
         -skipPackagePluginValidation \
         -skipMacroValidation
 
