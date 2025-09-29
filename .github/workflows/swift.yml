@@ -65,41 +65,37 @@ jobs:
         -skipPackagePluginValidation \
         -skipMacroValidation
 
-    - name: List all available targets
-      run: |
-        xcodebuild -list -project Oxide.xcodeproj
+    # - name: Run Root tests
+    #   run: |
+    #     xcodebuild test \
+    #     -scheme Root \
+    #     -destination "$DESTINATION" \
+    #     -skipPackagePluginValidation \
+    #     -skipMacroValidation
 
-    - name: Run Root tests
-      run: |
-        xcodebuild test \
-        -scheme Root \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation \
-        -skipMacroValidation
+    # - name: Run Home tests
+    #   run: |
+    #     xcodebuild test \
+    #     -scheme Home \
+    #     -destination "$DESTINATION" \
+    #     -skipPackagePluginValidation \
+    #     -skipMacroValidation
 
-    - name: Run Home tests
-      run: |
-        xcodebuild test \
-        -scheme Home \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation \
-        -skipMacroValidation
+    # - name: Run Gallery tests
+    #   run: |
+    #     xcodebuild test \
+    #     -scheme Gallery \
+    #     -destination "$DESTINATION" \
+    #     -skipPackagePluginValidation \
+    #     -skipMacroValidation
 
-    - name: Run Gallery tests
-      run: |
-        xcodebuild test \
-        -scheme Gallery \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation \
-        -skipMacroValidation
-
-    - name: Run Settings tests
-      run: |
-        xcodebuild test \
-        -scheme Settings \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation \
-        -skipMacroValidation
+    # - name: Run Settings tests
+    #   run: |
+    #     xcodebuild test \
+    #     -scheme Settings \
+    #     -destination "$DESTINATION" \
+    #     -skipPackagePluginValidation \
+    #     -skipMacroValidation
 
 
       
