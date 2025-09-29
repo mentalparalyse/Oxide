@@ -81,6 +81,14 @@ jobs:
     #     -skipPackagePluginValidation \
     #     -skipMacroValidation
 
+    - name: Run Gallery Autocreated tests
+      run: |
+        swift test \
+        --filter Gallery
+        -destination "$DESTINATION" \
+        -skip-package-plugin-validation \
+        -skip-macro-validation
+
     # - name: Run Gallery tests
     #   run: |
     #     xcodebuild test \
