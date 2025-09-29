@@ -84,6 +84,7 @@ jobs:
     - name: Run Gallery Autocreated tests
       run: |
         swift test \
+        --package-path OxideModules \
         --filter Gallery
         -destination "$DESTINATION" \
         -skip-package-plugin-validation \
