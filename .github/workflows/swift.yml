@@ -28,11 +28,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-deriveddata-
 
-    - name: Clean Swift Package
-      run: |
-        swift package clean \
-        --package-path OxideModules
-
     - name: Xcode setup
       run: |
         xcodebuild -version
@@ -70,21 +65,21 @@ jobs:
         -skipPackagePluginValidation \
         -skipMacroValidation
 
-    # - name: Run Root tests
-    #   run: |
-    #     xcodebuild test \
-    #     -scheme Root \
-    #     -destination "$DESTINATION" \
-    #     -skipPackagePluginValidation \
-    #     -skipMacroValidation
+    - name: Run Root tests
+      run: |
+        xcodebuild test \
+        -scheme Root \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
-    # - name: Run Home tests
-    #   run: |
-    #     xcodebuild test \
-    #     -scheme Home \
-    #     -destination "$DESTINATION" \
-    #     -skipPackagePluginValidation \
-    #     -skipMacroValidation
+    - name: Run Home tests
+      run: |
+        xcodebuild test \
+        -scheme Home \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     - name: Run Gallery tests
       run: |
@@ -94,13 +89,13 @@ jobs:
         -skipPackagePluginValidation \
         -skipMacroValidation
 
-    # - name: Run Settings tests
-    #   run: |
-    #     xcodebuild test \
-    #     -scheme Settings \
-    #     -destination "$DESTINATION" \
-    #     -skipPackagePluginValidation \
-    #     -skipMacroValidation
+    - name: Run Settings tests
+      run: |
+        xcodebuild test \
+        -scheme Settings \
+        -destination "$DESTINATION" \
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
 
       
