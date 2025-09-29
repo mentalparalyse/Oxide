@@ -86,23 +86,13 @@ jobs:
     #     -skipPackagePluginValidation \
     #     -skipMacroValidation
 
-    - name: Run Gallery Autocreated tests
+    - name: Run Gallery tests
       run: |
-        swift test \
-        --package-path OxideModules \
-        --filter Gallery
+        xcodebuild test \
+        -scheme Gallery \
         -destination "$DESTINATION" \
-        -skip-package-plugin-validation \
-        -skip-macro-validation \
-        --disable-sandbox
-
-    # - name: Run Gallery tests
-    #   run: |
-    #     xcodebuild test \
-    #     -scheme Gallery \
-    #     -destination "$DESTINATION" \
-    #     -skipPackagePluginValidation \
-    #     -skipMacroValidation
+        -skipPackagePluginValidation \
+        -skipMacroValidation
 
     # - name: Run Settings tests
     #   run: |
