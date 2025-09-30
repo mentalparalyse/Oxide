@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "6F68B626-2121-42B3-9B26-0AE20A12C8DA",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "GalleryTests",
+        "name" : "GalleryTests"
+      }
+    }
+  ],
+  "version" : 1
+}
