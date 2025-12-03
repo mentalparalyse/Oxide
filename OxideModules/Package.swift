@@ -26,9 +26,20 @@ let package = Package(
             name: "Settings",
             targets: ["Settings"]
         ),
+        .library(
+            name: "Onboarding",
+            targets: ["Onboarding"]
+        ),
+        .library(
+            name: "Splash",
+            targets: ["Splash"]
+        ),
+        .library(
+            name: "ImageProcessor",
+            targets: ["ImageProcessor"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", branch: "main"),
         .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.2")
     ],
     targets: [
@@ -36,15 +47,19 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "AppCore",
-            dependencies: []
+            dependencies: [],
+//            resources: [
+//                .process("Resources")
+//            ]
         ),
         .target(
             name: "Root",
             dependencies: [
                 "Home",
                 "AppCore",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "Lottie", package: "lottie-spm")
+                "Splash",
+                "Onboarding",
+                "ImageProcessor"
             ]
         ),
         .testTarget(
@@ -57,7 +72,6 @@ let package = Package(
                 "Gallery",
                 "Settings",
                 "AppCore",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
         .testTarget(
@@ -68,7 +82,6 @@ let package = Package(
             name: "Gallery",
             dependencies: [
                 "AppCore",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
         .testTarget(
@@ -79,12 +92,33 @@ let package = Package(
             name: "Settings",
             dependencies: [
                 "AppCore",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
         .testTarget(
             name: "SettingsTests",
             dependencies: ["Settings"]
+        ),
+        .target(
+            name: "ImageProcessor",
+            dependencies: [],
+            resources: [.process("Shaders")]
+        ),
+        .testTarget(
+            name: "ImageProcessorTests",
+            dependencies: ["ImageProcessor"]
+        ),
+        .target(
+            name: "Onboarding",
+            dependencies: [
+                "AppCore"
+            ]
+        ),
+        .target(
+            name: "Splash",
+            dependencies: [
+                "AppCore",
+                .product(name: "Lottie", package: "lottie-spm")
+            ]
         ),
     ]
 )
