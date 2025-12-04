@@ -1,78 +1,32 @@
-//
-//  RootView.swift
-//  OxideModules
-//
-//  Created by Lex Sava on 16.09.2025.
-//
+// Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
-import SwiftUI
+import AppCore
 import Home
-import ComposableArchitecture
-
-@Reducer(state: .equatable)
-public enum RootMode {
-    case launching
-    case home(HomeFeature)
-}
-
-@Reducer
-public struct RootFeature {
-    
-    public init() { }
-    
-    @ObservableState
-    public struct State: Equatable {
-        public init() { }
-        var mode: RootMode.State? = .launching
-    }
-    
-    public enum Action {
-        case didFinishLaunching
-        case mode(RootMode.Action)
-    }
-    
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
-            switch action {
-            case .didFinishLaunching:
-                state.mode = .home(HomeFeature.State())
-                return .none
-            case .mode:
-                return .none
-            }
-        }
-        .ifLet(\.mode, action: \.mode) {
-            RootMode.body
-        }
-    }
-}
+import Onboarding
+import Splash
+import SwiftUI
 
 public struct RootView: View {
-    @Perception.Bindable private var store: StoreOf<RootFeature>
+    @ObservedObject var appState: AppState
+    let coordinator: any RootCoordinatorProtocol
     
-    public init(store: StoreOf<RootFeature>) {
-        self.store = store
+    public init(coordinator: any RootCoordinatorProtocol, appState: AppState) {
+        self.coordinator = coordinator
+        self.appState = appState
     }
     
     public var body: some View {
-        WithPerceptionTracking {
-            if let store = store.scope(state: \.mode, action: \.mode) {
-                switch store.case {
-                case .launching:
-                    Text("Hello, Loading!")
-                case let .home(homeStore):
-                    HomeView(store: homeStore)
-                }
+        ZStack {
+            AppColours.appColor
+                .ignoresSafeArea()
+            switch appState.route {
+            case .home:
+                HomeBuilder.build()
+            case .onboarding:
+                OnboardingBuilder.build(coordinator)
+            case .splash:
+                SplashBuilder.build(coordinator: coordinator)
             }
         }
-    }
-}
-
-#Preview {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    RootView(
-        store: appDelegate.store
-    ).onAppear {
-        appDelegate.store.send(.didFinishLaunching)
     }
 }

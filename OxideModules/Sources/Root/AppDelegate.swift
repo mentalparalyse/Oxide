@@ -1,28 +1,25 @@
-//
-//  AppDelegate.swift
-//  OxideModules
-//
-//  Created by Lex Sava on 16.09.2025.
-//
+// Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
-import ComposableArchitecture
-import Foundation
-import SwiftUI
+import CoreImage
+import ImageProcessor
 import UIKit
 
 public final class AppDelegate: NSObject, UIApplicationDelegate {
-    
-    public let store = Store(initialState: RootFeature.State()) {
-        RootFeature()
-    }
     
     public func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        store.send(.didFinishLaunching)
-        // Perform any app setup here.
+        registerLookupFilter()
         return true
     }
 
+    
+    private func registerLookupFilter() {
+        CIFilter.registerName(
+            "LookupFilter",
+            constructor: FilterConstructor(),
+            classAttributes: [kCIAttributeFilterCategories: ["CustomFilters"]]
+        )
+    }
 }

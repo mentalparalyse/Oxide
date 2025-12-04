@@ -1,9 +1,4 @@
-//
-//  Color+Extension.swift
-//  Oxide
-//
-//  Created by Lex Sava on 10.09.2025.
-//
+// Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
 import SwiftUI
 
