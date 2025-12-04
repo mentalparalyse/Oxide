@@ -40,10 +40,25 @@ jobs:
         
     - name: Detect simulator
       run: |
-        LINE=$(xcrun simctl list devices | grep -E "iPhone .* iOS [0-9]+\.[0-9]+" | head -n 1)
-        DEVICE=$(echo "$LINE" | sed -E 's/.*(iPhone[^()]*).*/\1/' | sed 's/[ \t]*$//' )
-        OS=$(echo "$LINE" | grep -oE "iOS [0-9]+\.[0-9]+" | awk '{print $2}')
-        echo "DESTINATION=platform=iOS Simulator,name=$DEVICE,OS=$OS" >> $GITHUB_ENV
+        echo "➡️ Searching for first available iPhone simulator…"
+        DEVICE_LINE=$(xcrun simctl list devices | grep -E "iPhone 16 Pro (.*Shutdown)" | head -n 1)
+        if [ -z "$DEVICE_LINE" ]; then
+          echo "❌ No suitable iPhone 16 Pro found. Showing all devices:"
+          xcrun simctl list devices
+          exit 1
+        fi
+        NAME=$(echo "$DEVICE_LINE" | awk -F '[()]' '{print $1}' | sed 's/[ \t]*$//')
+        UDID=$(echo "$DEVICE_LINE" | awk -F '[()]' '{print $2}')
+        echo "📱 Selected simulator:"
+        echo "  Name: $NAME"
+        echo "  UDID: $UDID"
+        echo "DESTINATION=platform=iOS Simulator,id=$UDID" >> $GITHUB_ENV
+        echo "🚀 Booting simulator…"
+        xcrun simctl boot "$UDID" || true
+        echo "🪄 Opening Simulator.app with this UDID…"
+        open -a Simulator --args -CurrentDeviceUDID "$UDID"
+        echo "⏳ Waiting for the system to settle…"
+        xcrun simctl bootstatus "$UDID" -b
 
     - name: Print selected destination
       run: echo "$DESTINATION"
