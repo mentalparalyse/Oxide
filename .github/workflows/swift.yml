@@ -13,9 +13,6 @@ jobs:
   build-and-test:
     runs-on: macos-latest
 
-    env:
-      DESTINATION: 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.4'
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -32,7 +29,17 @@ jobs:
       run: |
         xcodebuild -version
         swift --version
-        
+        xcrun simctl list devices
+
+    - name: Detect simulator
+      run: |
+        DEVICE=$(xcrun simctl list devices | grep -E "iPhone .*Shutdown" | head -n 1 | awk -F '[()]' '{print $1}' | sed 's/^[ \t]*//' )
+        OS=$(xcrun simctl list devices | grep -E "iPhone .*Shutdown" | head -n 1 | awk -F '[()]' '{print $2}')
+        echo "DESTINATION=platform=iOS Simulator,name=$DEVICE,OS=$OS" >> $GITHUB_ENV
+
+    - name: Print selected destination
+      run: echo "$DESTINATION"
+
     - name: Build Root
       run: |
         xcodebuild build \
@@ -41,14 +48,14 @@ jobs:
         -skipPackagePluginValidation
 
     - name: Build Home
-      run: | 
+      run: |
         xcodebuild build \
         -scheme Home \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
 
     - name: Build Gallery
-      run: | 
+      run: |
         xcodebuild build \
         -scheme Gallery \
         -destination "$DESTINATION" \
@@ -88,6 +95,7 @@ jobs:
         -scheme Settings \
         -destination "$DESTINATION" \
         -skipPackagePluginValidation
+
 
 
       
