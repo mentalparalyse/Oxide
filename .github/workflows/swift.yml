@@ -30,35 +30,28 @@ jobs:
         xcodebuild -version
         swift --version
 
-    - name: Show available simulators (for debugging)
+    - name: Detect and boot simulator
       run: |
-        echo "== Available destinations for scheme 'Root' =="
-        xcodebuild -scheme Root -showdestinations
-        echo
-        echo "== Raw simctl list =="
-        xcrun simctl list devices
-        
-    - name: Detect simulator
-      run: |
-        echo "➡️ Searching for first available iPhone simulator…"
-        DEVICE_LINE=$(xcrun simctl list devices | grep -E "iPhone 16 Pro (.*Shutdown)" | head -n 1)
-        if [ -z "$DEVICE_LINE" ]; then
-          echo "❌ No suitable iPhone 16 Pro found. Showing all devices:"
-          xcrun simctl list devices
+        # Берём первый iPhone 17 Pro Max в состоянии Shutdown
+        DEVICE_INFO=$(xcrun simctl list devices | grep "iPhone 17 Pro Max (" | grep Shutdown | head -n 1)
+        UDID=$(echo $DEVICE_INFO | awk -F '[()]' '{print $2}')
+        echo "Booting simulator $UDID ..."
+        xcrun simctl boot "$UDID"
+        # Ждём пока симулятор будет запущен
+        booted=false
+        for i in {1..10}; do
+          STATUS=$(xcrun simctl list devices | grep "$UDID" | grep -o "Booted")
+          if [ "$STATUS" = "Booted" ]; then
+            booted=true
+            break
+          fi
+          sleep 2
+        done
+        if [ "$booted" = false ]; then
+          echo "Simulator did not boot in time"
           exit 1
         fi
-        NAME=$(echo "$DEVICE_LINE" | awk -F '[()]' '{print $1}' | sed 's/[ \t]*$//')
-        UDID=$(echo "$DEVICE_LINE" | awk -F '[()]' '{print $2}')
-        echo "📱 Selected simulator:"
-        echo "  Name: $NAME"
-        echo "  UDID: $UDID"
-        echo "DESTINATION=platform=iOS Simulator,id=$UDID" >> $GITHUB_ENV
-        echo "🚀 Booting simulator…"
-        xcrun simctl boot "$UDID" || true
-        echo "🪄 Opening Simulator.app with this UDID…"
-        open -a Simulator --args -CurrentDeviceUDID "$UDID"
-        echo "⏳ Waiting for the system to settle…"
-        xcrun simctl bootstatus "$UDID" -b
+        echo "DESTINATION=platform=iOS Simulator,UDID=$UDID" >> $GITHUB_ENV
 
     - name: Print selected destination
       run: echo "$DESTINATION"
