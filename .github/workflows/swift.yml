@@ -29,6 +29,13 @@ jobs:
       run: |
         xcodebuild -version
         swift --version
+
+    - name: Show available simulators (for debugging)
+      run: |
+        echo "== Available destinations for scheme 'Root' =="
+        xcodebuild -scheme Root -showdestinations
+        echo
+        echo "== Raw simctl list =="
         xcrun simctl list devices
         
     - name: Detect simulator
