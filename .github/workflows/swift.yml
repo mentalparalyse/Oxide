@@ -30,11 +30,12 @@ jobs:
         xcodebuild -version
         swift --version
         xcrun simctl list devices
-
+        
     - name: Detect simulator
       run: |
-        DEVICE=$(xcrun simctl list devices | grep -E "iPhone .*Shutdown" | head -n 1 | awk -F '[()]' '{print $1}' | sed 's/^[ \t]*//' )
-        OS=$(xcrun simctl list devices | grep -E "iPhone .*Shutdown" | head -n 1 | awk -F '[()]' '{print $2}')
+        LINE=$(xcrun simctl list devices | grep -E "iPhone .* iOS [0-9]+\.[0-9]+" | head -n 1)
+        DEVICE=$(echo "$LINE" | sed -E 's/.*(iPhone[^()]*).*/\1/' | sed 's/[ \t]*$//' )
+        OS=$(echo "$LINE" | grep -oE "iOS [0-9]+\.[0-9]+" | awk '{print $2}')
         echo "DESTINATION=platform=iOS Simulator,name=$DEVICE,OS=$OS" >> $GITHUB_ENV
 
     - name: Print selected destination
