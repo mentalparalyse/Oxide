@@ -1,6 +1,5 @@
 # This workflow will build a Swift project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
-#
 
 name: Swift CI
 
@@ -12,7 +11,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: macos-latest
+    runs-on: macos-15-arm64
 
     steps:
     - name: Checkout repository
@@ -26,15 +25,24 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-deriveddata-
 
-    - name: Xcode setup
-      run: |
-        xcodebuild -version
-        swift --version
+#    - name: Xcode setup
+#      run: |
+#        xcodebuild -version
+#        swift --version
+
+    - name: Select Xcode 16.4
+      run: sudo xcode-select -switch /Applications/Xcode_16.4.app
+
+    - name: Verify Xcode version
+      run: xcodebuild -version
+
+    - name: List available simulators
+      run: xcrun simctl list devices available
 
     - name: Detect and boot simulator
       run: |
         # Берём первый iPhone 17 Pro Max в состоянии Shutdown
-        DEVICE_INFO=$(xcrun simctl list devices | grep "iPhone 17 Pro Max (" | grep Shutdown | head -n 1)
+        DEVICE_INFO=$(xcrun simctl list devices available | grep "iPhone 17 Pro Max (" | grep Shutdown | head -n 1)
         UDID=$(echo $DEVICE_INFO | awk -F '[()]' '{print $2}')
         echo "Booting simulator $UDID ..."
         xcrun simctl boot "$UDID"
@@ -52,7 +60,7 @@ jobs:
           echo "Simulator did not boot in time"
           exit 1
         fi
-        echo "DESTINATION=platform=iOS Simulator, UDID=$UDID" >> $GITHUB_ENV
+        echo "DESTINATION=platform=iOS Simulator,UDID=$UDID" >> $GITHUB_ENV
 
     - name: Print selected destination
       run: echo "$DESTINATION"
