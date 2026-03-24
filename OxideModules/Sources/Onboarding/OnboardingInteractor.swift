@@ -8,7 +8,6 @@ protocol OnboardingInteractorProtocol {
 }
 
 final class OnboardingInteractor: OnboardingInteractorProtocol {
-    init() { }
     
     func fetchPages() -> [OnboardingItem] {
         [
