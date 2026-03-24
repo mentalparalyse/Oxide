@@ -1,6 +1,6 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
-import AppCore
+import UIComponents
 import Lottie
 import SwiftUI
 
@@ -20,8 +20,6 @@ public struct SplashView: View {
                 .animationDidFinish { completed in
                     presenter.finish()
                 }
-//                .frame(width: 300, height: 300)
-//                .background(Color.red)
         }
     }
 }

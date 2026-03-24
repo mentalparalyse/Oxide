@@ -48,9 +48,10 @@ let package = Package(
         .target(
             name: "AppCore",
             dependencies: [],
-//            resources: [
-//                .process("Resources")
-//            ]
+        ),
+        .target(
+            name: "UIComponents",
+            dependencies: [],
         ),
         .target(
             name: "Root",
@@ -72,6 +73,7 @@ let package = Package(
                 "Gallery",
                 "Settings",
                 "AppCore",
+                "UIComponents",
             ]
         ),
         .testTarget(
@@ -82,6 +84,7 @@ let package = Package(
             name: "Gallery",
             dependencies: [
                 "AppCore",
+                "UIComponents"
             ]
         ),
         .testTarget(
@@ -92,6 +95,7 @@ let package = Package(
             name: "Settings",
             dependencies: [
                 "AppCore",
+                "UIComponents",
             ]
         ),
         .testTarget(
@@ -110,13 +114,14 @@ let package = Package(
         .target(
             name: "Onboarding",
             dependencies: [
-                "AppCore"
+                "AppCore",
+                "UIComponents",
             ]
         ),
         .target(
             name: "Splash",
             dependencies: [
-                "AppCore",
+                "UIComponents",
                 .product(name: "Lottie", package: "lottie-spm")
             ]
         ),

@@ -4,12 +4,15 @@ import Foundation
 
 @MainActor
 public final class OnboardingPresenter: ObservableObject {
-    private let interactor: OnboardintInteractorProtocol
+    @Published var currentPage = 0
+    
+    let pages: [OnboardingItem]
+    
     private let router: OnboardingRouterProtocol
     
-    init(interactor: OnboardintInteractorProtocol, rotuter: OnboardingRouterProtocol) {
-        self.interactor = interactor
-        self.router = rotuter
+    init(interactor: OnboardingInteractorProtocol, router: OnboardingRouterProtocol) {
+        self.pages = interactor.fetchPages()
+        self.router = router
     }
     
     public func finish() {

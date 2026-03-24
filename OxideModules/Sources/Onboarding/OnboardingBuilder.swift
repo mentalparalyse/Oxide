@@ -5,10 +5,10 @@ import SwiftUI
 
 @MainActor
 public enum OnboardingBuilder {
-    public static func build(_ coordinator: any RootCoordinatorProtocol) -> some View {
-        let interactor = OnboardintInteractor()
+    public static func build(coordinator: any RootCoordinatorProtocol) -> some View {
+        let interactor = OnboardingInteractor()
         let router = OnboardingRouter(coordinator: coordinator)
-        let presenter = OnboardingPresenter(interactor: interactor, rotuter: router)
+        let presenter = OnboardingPresenter(interactor: interactor, router: router)
         return OnboardingView(presenter: presenter)
     }
 }
