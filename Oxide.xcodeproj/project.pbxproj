@@ -286,6 +286,11 @@
 				DEVELOPMENT_TEAM = Z347LN4W5G;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					CI_SILENCE_GL_DEPRECATION,
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Oxide/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;

@@ -1,8 +1,7 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
 import SwiftUI
-import AppCore
-import Lottie
+import UIComponents
 
 public struct OnboardingView: View {
     
@@ -13,7 +12,7 @@ public struct OnboardingView: View {
     }
     
     public var body: some View {
-        ZStack(alignment: .leading) {
+        ZStack {
             AppColours.appColor
                 .edgesIgnoringSafeArea(.all)
             content
@@ -23,34 +22,34 @@ public struct OnboardingView: View {
     
     @ViewBuilder
     private var content: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(spacing: 8) {
             Spacer()
-            Text("Welcome to Oxide")
-                .font(AppFonts.medium)
-            Text("Apply cinematic colour with fast, native processing.")
-                .font(AppFonts.medium)
+            OnboardingCarouselView(
+                currentIndex: $presenter.currentPage,
+                pages: presenter.pages
+            )
             Spacer()
-            Button {
-                presenter.finish()
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("Get Started")
-                        .font(AppFonts.small)
-                    Spacer()
-                }
-                .padding(.vertical, 8)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(
-                            AppColours.navigationForegroundColor,
-                            lineWidth: 2
-                        )
-                }
-            }
+            continueButton
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
         .foregroundStyle(AppColours.appForegroundColor)
     }
+    
+    
+    private var continueButton: some View {
+        Button {
+            presenter.finish()
+        } label: {
+            HStack {
+                Text("Get Started")
+                    .font(AppFonts.large)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(AppColours.buttonBacground.clipShape(Capsule()))
+        }
+        .padding(.horizontal, 16)
+    }
 }
+

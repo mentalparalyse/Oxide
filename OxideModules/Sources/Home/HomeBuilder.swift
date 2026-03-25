@@ -1,10 +1,10 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
-import Foundation
+import AppCore
 
 @MainActor
 public enum HomeBuilder {
-    public static func build() -> HomeView {
+    public static func build(coordinator: any RootCoordinatorProtocol) -> HomeView {
         HomeView()
     }
 }

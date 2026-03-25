@@ -1,6 +1,7 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
 import AppCore
+import UIComponents
 import Home
 import Onboarding
 import Splash
@@ -21,9 +22,9 @@ public struct RootView: View {
                 .ignoresSafeArea()
             switch appState.route {
             case .home:
-                HomeBuilder.build()
+                HomeBuilder.build(coordinator: coordinator)
             case .onboarding:
-                OnboardingBuilder.build(coordinator)
+                OnboardingBuilder.build(coordinator: coordinator)
             case .splash:
                 SplashBuilder.build(coordinator: coordinator)
             }

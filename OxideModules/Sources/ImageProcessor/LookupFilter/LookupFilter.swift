@@ -58,15 +58,13 @@ public final class LookupFilter: CIFilter {
         guard let inputImage = inputImage else {
             return nil
         }
+        
+        let lutExtent = inputColorLookupTable?.extent ?? .zero
 
         return Self.kernel.apply(
             extent: inputImage.extent,
             roiCallback: { index, rect in
-                if index == 0 {
-                    return rect
-                } else {
-                    return self.inputColorLookupTable?.extent ?? .zero
-                }
+                index == 0 ? rect : lutExtent
             },
             arguments: [
                 inputImage,
@@ -76,3 +74,5 @@ public final class LookupFilter: CIFilter {
         )
     }
 }
+
+extension LookupFilter: @unchecked Sendable {}

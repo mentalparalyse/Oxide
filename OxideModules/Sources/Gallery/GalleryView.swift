@@ -1,6 +1,6 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
-import AppCore
+import UIComponents
 import SwiftUI
 
 public struct GalleryView: View {
