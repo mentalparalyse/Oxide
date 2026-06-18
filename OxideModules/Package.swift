@@ -39,9 +39,7 @@ let package = Package(
             targets: ["ImageProcessor"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.2")
-    ],
+    dependencies: [],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -84,12 +82,16 @@ let package = Package(
             name: "Gallery",
             dependencies: [
                 "AppCore",
+                "ImageProcessor",
                 "UIComponents"
             ]
         ),
         .testTarget(
             name: "GalleryTests",
-            dependencies: ["Gallery"]
+            dependencies: [
+                "Gallery",
+                "ImageProcessor"
+            ]
         ),
         .target(
             name: "Settings",
@@ -105,7 +107,9 @@ let package = Package(
         .target(
             name: "ImageProcessor",
             dependencies: [],
-            resources: [.process("Shaders")]
+            resources: [
+                .process("FilterImgs2")
+            ]
         ),
         .testTarget(
             name: "ImageProcessorTests",
@@ -121,8 +125,8 @@ let package = Package(
         .target(
             name: "Splash",
             dependencies: [
-                "UIComponents",
-                .product(name: "Lottie", package: "lottie-spm")
+                "AppCore",
+                "UIComponents"
             ]
         ),
     ]
