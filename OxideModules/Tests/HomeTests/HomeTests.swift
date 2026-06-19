@@ -6,9 +6,38 @@ import Testing
 @MainActor
 struct HomeTests {
 
-    @Test func testTabSelected() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-   
+    @Test func presenterUsesInteractorDefaultTab() async throws {
+        let presenter = HomePresenter(
+            interactor: StubHomeInteractor(defaultTab: .settings),
+            router: StubHomeRouter()
+        )
+
+        #expect(presenter.selectedTab == .settings)
+    }
+
+    @Test func presenterAllowsTabSelectionBindingUpdates() async throws {
+        let presenter = HomePresenter(
+            interactor: StubHomeInteractor(defaultTab: .gallery),
+            router: StubHomeRouter()
+        )
+
+        presenter.selectedTab = .settings
+
+        #expect(presenter.selectedTab == .settings)
     }
 
 }
+
+private struct StubHomeInteractor: HomeInteractorProtocol {
+    let defaultTabValue: Tab
+
+    init(defaultTab: Tab) {
+        self.defaultTabValue = defaultTab
+    }
+
+    func defaultTab() -> Tab {
+        defaultTabValue
+    }
+}
+
+private struct StubHomeRouter: HomeRouterProtocol { }
