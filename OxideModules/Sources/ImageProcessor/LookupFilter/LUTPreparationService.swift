@@ -23,11 +23,11 @@ final class LUTPreparationService: @unchecked Sendable {
         lookupImageLoader: LookupImageLoader? = nil,
         cubeDataBuilder: CubeDataBuilder? = nil
     ) {
-        let context = context ?? Self.makeContext()
+        let context = SendableCIContext(context ?? Self.makeContext())
         self.cache = cache
         self.lookupImageLoader = lookupImageLoader ?? Self.loadLookupImage
         self.cubeDataBuilder = cubeDataBuilder ?? {
-            LUTColorCubeFactory.makeCubeData(from: $0, context: context)
+            LUTColorCubeFactory.makeCubeData(from: $0, context: context.value)
         }
     }
 
