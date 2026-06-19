@@ -23,18 +23,28 @@
 import CoreImage
 import Foundation
 
+// CIContext is intentionally reused across render calls to preserve Core Image caches.
+// The wrapper is immutable after initialization; callers cannot replace the context.
+private final class SharedCIContext: @unchecked Sendable {
+    let value: CIContext
+
+    init() {
+        value = CIContext(
+            options: [
+                .workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
+                .outputColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
+                .cacheIntermediates: false
+            ]
+        )
+    }
+}
+
 public final class LookupFilter: CIFilter {
     @objc dynamic public var inputImage: CIImage?
     @objc dynamic public var inputColorLookupTable: CIImage?
     @objc dynamic public var inputIntensity: NSNumber = 1.0
 
-    private static let context = CIContext(
-        options: [
-            .workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
-            .outputColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
-            .cacheIntermediates: false
-        ]
-    )
+    private static let sharedContext = SharedCIContext()
     private let cacheLock = NSLock()
     private var cachedLookupImage: CIImage?
     private var cachedCubeData: Data?
@@ -102,7 +112,7 @@ public final class LookupFilter: CIFilter {
 
         guard let cubeData = LUTColorCubeFactory.makeCubeData(
             from: lookupImage,
-            context: Self.context
+            context: Self.sharedContext.value
         ) else {
             return nil
         }
