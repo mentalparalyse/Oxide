@@ -6,6 +6,14 @@ import SwiftUI
 public enum AppColours {
     ///App background colour
     public static let appColor = Color(hex: 0x0A0A0A)
+    ///Secondary app surface colour
+    public static let appSurfaceColor = Color(hex: 0x1C1C1E)
+    ///Muted text colour
+    public static let appMutedForegroundColor = Color(hex: 0x8E8E93)
+    ///Divider and inactive border colour
+    public static let appBorderColor = Color(hex: 0x3A3A3C)
+    ///Destructive action colour
+    public static let appDestructiveColor = Color(hex: 0xFF453A)
     ///Colour applied to custom navigation title. .
     public static let navigationForegroundColor = Color(hex: 0x44D7B6)
     ///Colour applied to all texts in app.
