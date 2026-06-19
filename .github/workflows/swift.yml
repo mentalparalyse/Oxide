@@ -12,19 +12,9 @@ concurrency:
 
 jobs:
   test:
-    name: Test ${{ matrix.scheme }}
+    name: Test OxideModules
     runs-on: macos-15
     timeout-minutes: 30
-
-    strategy:
-      fail-fast: false
-      matrix:
-        scheme:
-          - Root
-          - Home
-          - Gallery
-          - Settings
-          - ImageProcessor
 
     steps:
       - name: Checkout repository
@@ -38,12 +28,12 @@ jobs:
           xcodebuild -version
           swift --version
 
-      - name: Test ${{ matrix.scheme }}
+      - name: Test package
+        working-directory: OxideModules
         run: |
           set -o pipefail
           xcodebuild test \
-            -project Oxide.xcodeproj \
-            -scheme "${{ matrix.scheme }}" \
+            -scheme OxideModules-Package \
             -destination "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5" \
             -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO
