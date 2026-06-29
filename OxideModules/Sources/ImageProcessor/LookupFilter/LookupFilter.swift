@@ -5,7 +5,7 @@
 ///
 /// `LookupFilter` is a subclass of `CIFilter` which accepts an input image, an optional color lookup table image,
 /// an optional intensity, and a filter name. The filter can be used to apply complex color grading or mapping
-/// operations by using a LUT texture, typically for stylistic color effects or film emulation.
+/// operations by converting a Hald LUT texture into Core Image color cube data.
 ///
 /// - Note: This class does not expose its properties as standard `@objc dynamic` CIFilter properties,
 ///         so it should be used directly with its initializer.
@@ -16,33 +16,28 @@
 ///   - inputIntensity: An optional `NSNumber` specifying the intensity of the LUT effect (where supported).
 ///
 /// - Important:
-///   - This filter does not perform any image processing unless further implementation is provided.
-///   - For use in production, override the `outputImage` property and implement the LUT application logic.
+///   - `ImageProcessor` caches color cube data per preset and should be preferred for production rendering.
 ///
 /// - Author: Lex Sava
 /// - Since: 21.09.2025
 import CoreImage
-#if canImport(UIKit)
-import UIKit
-#else
-import AppKit
-#endif
+import Foundation
 
 public final class LookupFilter: CIFilter {
     @objc dynamic public var inputImage: CIImage?
     @objc dynamic public var inputColorLookupTable: CIImage?
     @objc dynamic public var inputIntensity: NSNumber = 1.0
-    
-    private static let kernel: CIKernel = {
-        guard
-            let url = Bundle.main.url(forResource: "LookupFilter", withExtension: "cikernel"),
-            let code = try? String(contentsOf: url, encoding: .utf8),
-            let kernel = CIKernel.makeKernels(source: code)?.first
-        else {
-            fatalError("❌ Failed to load kernel")
-        }
-        return kernel
-    }()
+
+    private static let sharedContext = SendableCIContext(
+        options: [
+            .workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
+            .outputColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
+            .cacheIntermediates: false
+        ]
+    )
+    private let cacheLock = NSLock()
+    private var cachedLookupImage: CIImage?
+    private var cachedCubeData: Data?
 
 
     public override var inputKeys: [String] {
@@ -52,26 +47,71 @@ public final class LookupFilter: CIFilter {
             "inputIntensity"
         ]
     }
-    
+
 
     public override var outputImage: CIImage? {
         guard let inputImage = inputImage else {
             return nil
         }
-        
-        let lutExtent = inputColorLookupTable?.extent ?? .zero
+        guard let inputColorLookupTable else {
+            return inputImage
+        }
 
-        return Self.kernel.apply(
-            extent: inputImage.extent,
-            roiCallback: { index, rect in
-                index == 0 ? rect : lutExtent
-            },
-            arguments: [
-                inputImage,
-                inputColorLookupTable as Any,
-                inputIntensity
+        guard let cubeData = cubeData(for: inputColorLookupTable) else {
+            return inputImage
+        }
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) else {
+            return inputImage
+        }
+
+        let intensity = min(max(inputIntensity.doubleValue, 0), 1)
+        let filteredImage = inputImage.applyingFilter(
+            "CIColorCubeWithColorSpace",
+            parameters: [
+                "inputCubeDimension": LUTColorCubeFactory.dimension,
+                "inputCubeData": cubeData,
+                "inputColorSpace": colorSpace
             ]
         )
+
+        guard intensity < 1 else {
+            return filteredImage
+        }
+
+        let mask = CIImage(
+            color: CIColor(red: intensity, green: intensity, blue: intensity, alpha: intensity)
+        )
+        .cropped(to: inputImage.extent)
+
+        return filteredImage.applyingFilter(
+            "CIBlendWithAlphaMask",
+            parameters: [
+                kCIInputBackgroundImageKey: inputImage,
+                kCIInputMaskImageKey: mask
+            ]
+        )
+    }
+
+    private func cubeData(for lookupImage: CIImage) -> Data? {
+        cacheLock.lock()
+        if cachedLookupImage === lookupImage, let cachedCubeData {
+            cacheLock.unlock()
+            return cachedCubeData
+        }
+        cacheLock.unlock()
+
+        guard let cubeData = LUTColorCubeFactory.makeCubeData(
+            from: lookupImage,
+            context: Self.sharedContext.value
+        ) else {
+            return nil
+        }
+
+        cacheLock.lock()
+        cachedLookupImage = lookupImage
+        cachedCubeData = cubeData
+        cacheLock.unlock()
+        return cubeData
     }
 }
 

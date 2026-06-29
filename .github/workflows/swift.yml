@@ -1,117 +1,39 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
-
 name: Swift CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+concurrency:
+  group: swift-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    runs-on: macos-latest
+  test:
+    name: Test OxideModules
+    runs-on: macos-15
+    timeout-minutes: 30
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
-    - name: Cache DerivedData
-      uses: actions/cache@v4
-      with:
-        path: ~/Library/Developer/Xcode/DerivedData
-        key: ${{ runner.os }}-deriveddata-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-deriveddata-
+      - name: Select Xcode 16.4
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
-    - name: Xcode setup
-      run: |
-        xcodebuild -version
-        swift --version
+      - name: Print toolchain
+        run: |
+          xcodebuild -version
+          swift --version
 
-    - name: Detect and boot simulator
-      run: |
-        # Берём первый iPhone 17 Pro Max в состоянии Shutdown
-        DEVICE_INFO=$(xcrun simctl list devices | grep "iPhone 17 Pro Max (" | grep Shutdown | head -n 1)
-        UDID=$(echo $DEVICE_INFO | awk -F '[()]' '{print $2}')
-        echo "Booting simulator $UDID ..."
-        xcrun simctl boot "$UDID"
-        # Ждём пока симулятор будет запущен
-        booted=false
-        for i in {1..10}; do
-          STATUS=$(xcrun simctl list devices | grep "$UDID" | grep -o "Booted")
-          if [ "$STATUS" = "Booted" ]; then
-            booted=true
-            break
-          fi
-          sleep 2
-        done
-        if [ "$booted" = false ]; then
-          echo "Simulator did not boot in time"
-          exit 1
-        fi
-        echo "DESTINATION=platform=iOS Simulator,UDID=$UDID" >> $GITHUB_ENV
-
-    - name: Print selected destination
-      run: echo "$DESTINATION"
-
-    - name: Build Root
-      run: |
-        xcodebuild build \
-        -scheme Root \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-    - name: Build Home
-      run: |
-        xcodebuild build \
-        -scheme Home \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-    - name: Build Gallery
-      run: |
-        xcodebuild build \
-        -scheme Gallery \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-    - name: Build Settings
-      run: |
-        xcodebuild build \
-        -scheme Settings \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-    - name: Run Root tests
-      run: |
-        xcodebuild test \
-        -scheme Root \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-    - name: Run Home tests
-      run: |
-        xcodebuild test \
-        -scheme Home \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-    - name: Run Gallery tests
-      run: |
-        xcodebuild test \
-        -scheme Gallery \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-    - name: Run Settings tests
-      run: |
-        xcodebuild test \
-        -scheme Settings \
-        -destination "$DESTINATION" \
-        -skipPackagePluginValidation
-
-
-
-      
+      - name: Test package
+        working-directory: OxideModules
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -scheme OxideModules-Package \
+            -destination "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5" \
+            -skipPackagePluginValidation \
+            CODE_SIGNING_ALLOWED=NO
