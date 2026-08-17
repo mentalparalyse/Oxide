@@ -82,6 +82,21 @@ editor functionality intact. Developers can add LUT resources they own to
 `OxideModules/Sources/ImageProcessor/LUTs/`; that directory is excluded from
 Git apart from its setup notice.
 
+Project maintainers with access to the private asset repository can install the
+official LUT set with:
+
+```sh
+./Scripts/install-luts.sh
+```
+
+The command clones `mentalparalyse/Oxide-LUTs` using the developer's existing
+GitHub credentials and copies its PNG resources into the ignored LUT directory.
+It also accepts an existing checkout, which avoids another network fetch:
+
+```sh
+./Scripts/install-luts.sh /path/to/Oxide-LUTs
+```
+
 ## Requirements
 
 - Xcode 17 or newer
