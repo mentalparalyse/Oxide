@@ -7,13 +7,13 @@ import UIComponents
 struct GalleryGridView: View {
     @ObservedObject var presenter: GalleryPresenter
     @State private var selectedPhotoItem: PhotosPickerItem?
-    
+
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 3)
-    
+
     var body: some View {
         VStack(spacing: 0) {
             header
-            
+
             if presenter.photos.isEmpty {
                 EmptyGalleryView(openCapture: presenter.openCapture)
             } else {
@@ -54,15 +54,15 @@ struct GalleryGridView: View {
             }
         }
     }
-    
+
     private var header: some View {
         HStack {
             Text("Oxide")
                 .font(.system(size: 28, weight: .bold))
                 .foregroundStyle(AppColours.appForegroundColor)
-            
+
             Spacer()
-            
+
             PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                 Image(systemName: "photo.on.rectangle")
                     .font(.system(size: 22, weight: .semibold))
@@ -72,7 +72,7 @@ struct GalleryGridView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Import photo")
-            
+
             Button(action: presenter.openCapture) {
                 Image(systemName: "camera")
                     .font(.system(size: 22, weight: .semibold))
@@ -91,11 +91,11 @@ struct GalleryGridView: View {
 
 private struct EmptyGalleryView: View {
     let openCapture: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-            
+
             Button(action: openCapture) {
                 Image(systemName: "plus")
                     .font(.system(size: 44, weight: .regular))
@@ -111,17 +111,17 @@ private struct EmptyGalleryView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Capture first photo")
-            
+
             Text("No photos yet")
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(AppColours.appForegroundColor)
                 .padding(.top, 24)
-            
+
             Text("Tap to capture your first moment")
                 .font(.system(size: 16))
                 .foregroundStyle(AppColours.appMutedForegroundColor)
                 .padding(.top, 8)
-            
+
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -132,11 +132,11 @@ private struct EmptyGalleryView: View {
 private struct PhotoThumbnailView: View {
     let photo: GalleryPhoto
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             GalleryThumbnailImage(
-                url: photo.imageURI,
+                photo: photo,
                 maxPixelSize: 480
             )
             .frame(maxWidth: .infinity)

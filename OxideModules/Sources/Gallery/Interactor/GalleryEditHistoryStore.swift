@@ -8,31 +8,27 @@ struct GalleryEditHistoryState: Equatable, Sendable {
     let canUndo: Bool
 }
 
-final class GalleryEditHistoryStore {
-    private let persistence: ImageProcessPersistence<GalleryDraft>
-    
-    init(persistence: ImageProcessPersistence<GalleryDraft> = ImageProcessPersistence()) {
+actor GalleryEditHistoryStore {
+    private let persistence: ImageEditHistoryPersistence<GalleryDraft>
+
+    init(persistence: ImageEditHistoryPersistence<GalleryDraft> = ImageEditHistoryPersistence()) {
         self.persistence = persistence
     }
-    
-    var canUndo: Bool {
-        persistence.canUndo
+
+    func reset(for photoID: GalleryPhoto.ID) async {
+        await persistence.resetHistory(for: photoID)
     }
-    
-    func reset(for photoID: GalleryPhoto.ID) {
-        persistence.resetHistory(for: photoID)
+
+    func record(_ draft: GalleryDraft) async -> GalleryEditHistoryState {
+        await persistence.record(draft, identifier: draft.photo.id).galleryState
     }
-    
-    func record(_ draft: GalleryDraft) -> GalleryEditHistoryState {
-        persistence.record(draft, identifier: draft.photo.id).galleryState
-    }
-    
-    func undo() -> GalleryEditHistoryState {
-        persistence.undo().galleryState
+
+    func undo() async -> GalleryEditHistoryState {
+        await persistence.undo().galleryState
     }
 }
 
-private extension ImageProcessHistoryState where Snapshot == GalleryDraft {
+private extension ImageEditHistoryState where Snapshot == GalleryDraft {
     var galleryState: GalleryEditHistoryState {
         GalleryEditHistoryState(currentDraft: currentSnapshot, canUndo: canUndo)
     }

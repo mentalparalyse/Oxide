@@ -11,18 +11,23 @@ struct GalleryEditorPreviewSurface: View {
     let onResize: (ImageEditCropEdge, ImageEditCrop?, Double, Double) -> Void
     let onResizeEnded: () -> Void
 
-    @State private var zoomScale: CGFloat = 1
-    @State private var panOffset: CGSize = .zero
+    @State private var viewport = GalleryViewportState()
     @GestureState private var gestureScale: CGFloat = 1
     @GestureState private var gestureOffset: CGSize = .zero
 
     var body: some View {
         GeometryReader { proxy in
             let imageSize = fittedImageSize(in: proxy.size)
-            let effectiveScale = clampedScale(zoomScale * gestureScale)
-            let effectiveOffset = CGSize(
+            let effectiveScale = GalleryViewportState.clampedScale(viewport.scale * gestureScale)
+            let proposedOffset = CGSize(
                 width: panOffset.width + gestureOffset.width,
                 height: panOffset.height + gestureOffset.height
+            )
+            let effectiveOffset = GalleryViewportState.clampedOffset(
+                proposedOffset,
+                scale: effectiveScale,
+                imageSize: imageSize,
+                containerSize: proxy.size
             )
 
             ZStack {
@@ -53,38 +58,56 @@ struct GalleryEditorPreviewSurface: View {
                 .frame(width: imageSize.width, height: imageSize.height)
                 .scaleEffect(effectiveScale)
                 .offset(effectiveOffset)
-                .simultaneousGesture(magnificationGesture)
-                .simultaneousGesture(panGesture)
-                .onTapGesture(count: 2, perform: resetViewport)
+
+                GalleryZoomControlsView(
+                    scale: effectiveScale,
+                    zoomOut: { updateZoom(by: -GalleryViewportState.zoomStep, imageSize: imageSize, containerSize: proxy.size) },
+                    reset: resetViewport,
+                    zoomIn: { updateZoom(by: GalleryViewportState.zoomStep, imageSize: imageSize, containerSize: proxy.size) }
+                )
+                .padding(12)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
+            .contentShape(Rectangle())
             .clipped()
+            .simultaneousGesture(magnificationGesture(imageSize: imageSize, containerSize: proxy.size))
+            .simultaneousGesture(panGesture(imageSize: imageSize, containerSize: proxy.size))
+            .onTapGesture(count: 2) {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    viewport.toggleDoubleTapZoom()
+                }
+            }
         }
     }
 
-    private var magnificationGesture: some Gesture {
+    private func magnificationGesture(imageSize: CGSize, containerSize: CGSize) -> some Gesture {
         MagnificationGesture()
             .updating($gestureScale) { value, state, _ in
                 state = value
             }
             .onEnded { value in
-                zoomScale = clampedScale(zoomScale * value)
-                if zoomScale == 1 {
-                    panOffset = .zero
-                }
+                viewport.applyScale(viewport.scale * value)
+                viewport.applyOffset(viewport.offset, imageSize: imageSize, containerSize: containerSize)
             }
     }
 
-    private var panGesture: some Gesture {
+    private func panGesture(imageSize: CGSize, containerSize: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 8)
             .updating($gestureOffset) { value, state, _ in
-                guard !isCropping, zoomScale > 1 else { return }
+                guard !isCropping, viewport.scale > 1 else { return }
                 state = value.translation
             }
             .onEnded { value in
-                guard !isCropping, zoomScale > 1 else { return }
-                panOffset.width += value.translation.width
-                panOffset.height += value.translation.height
+                guard !isCropping, viewport.scale > 1 else { return }
+                viewport.applyOffset(
+                    CGSize(
+                        width: viewport.offset.width + value.translation.width,
+                        height: viewport.offset.height + value.translation.height
+                    ),
+                    imageSize: imageSize,
+                    containerSize: containerSize
+                )
             }
     }
 
@@ -103,14 +126,20 @@ struct GalleryEditorPreviewSurface: View {
         return CGSize(width: size.width * scale, height: size.height * scale)
     }
 
-    private func clampedScale(_ value: CGFloat) -> CGFloat {
-        min(max(value, 1), 5)
+    private var panOffset: CGSize {
+        viewport.offset
+    }
+
+    private func updateZoom(by delta: CGFloat, imageSize: CGSize, containerSize: CGSize) {
+        withAnimation(.easeOut(duration: 0.16)) {
+            viewport.applyScale(viewport.scale + delta)
+            viewport.applyOffset(viewport.offset, imageSize: imageSize, containerSize: containerSize)
+        }
     }
 
     private func resetViewport() {
         withAnimation(.easeOut(duration: 0.2)) {
-            zoomScale = 1
-            panOffset = .zero
+            viewport.reset()
         }
     }
 }

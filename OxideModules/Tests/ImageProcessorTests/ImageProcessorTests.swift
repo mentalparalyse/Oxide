@@ -3,6 +3,7 @@
 import Testing
 import CoreImage
 import Foundation
+import UIKit
 @testable import ImageProcessor
 
 struct ImageProcessorTests {
@@ -14,17 +15,26 @@ struct ImageProcessorTests {
         #expect(ids.first == LUTFilterPreset.original.id)
     }
 
-    @Test func bundledLUTPresetsAreLoadedFromFilterImgs2() async throws {
+    @Test func publicDemoPresetsDoNotRequirePrivateResources() {
+        #expect(LUTFilterPreset.demoPresets.isEmpty == false)
+        #expect(LUTFilterPreset.demoPresets.allSatisfy { $0.lutResourceName == nil })
+        #expect(LUTFilterPreset.all.starts(with: [.original] + LUTFilterPreset.demoPresets))
+    }
+
+    @Test func bundledLUTPresetsOnlyExposeAvailableResources() async throws {
         let presets = LUTFilterPreset.bundledPresets
 
-        #expect(presets.isEmpty == false)
-        #expect(presets.count == 120)
-        #expect(presets.contains { $0.id == "01_brooklyn" })
         #expect(presets.allSatisfy { $0.lutResourceName != nil })
+        #expect(presets.allSatisfy {
+            guard let resourceName = $0.lutResourceName else { return false }
+            return LUTFilterPreset.bundledResourceURL(for: resourceName) != nil
+        })
     }
 
     @Test func numberedLUTPresetsUseThemedDisplayNames() async throws {
-        let names = LUTFilterPreset.bundledPresets.map(\.name)
+        let names = LUTFilterPreset.bundledResourceNames.map {
+            LUTFilterPreset.displayName(for: $0)
+        }
 
         #expect(names.contains("Cinematic 01"))
         #expect(names.contains("Vintage 01"))
@@ -32,14 +42,15 @@ struct ImageProcessorTests {
         #expect(names.allSatisfy { !$0.localizedCaseInsensitiveContains("loot") })
     }
 
-    @Test func bundledLUTResourcesResolveByNameWithoutDirectoryEnumeration() async throws {
-        let resourceURL = LUTFilterPreset.bundledResourceURL(for: "01_brooklyn")
+    @Test func missingLUTResourceIsNotExposed() async throws {
+        let resourceURL = LUTFilterPreset.bundledResourceURL(for: "missing-resource")
 
-        #expect(resourceURL != nil)
+        #expect(resourceURL == nil)
     }
 
     @Test func generatedLookupImageHasExpectedHaldSize() async throws {
-        let image = try #require(LUTImageFactory.makeLookupImage(for: LUTFilterPreset.all[1]))
+        let preset = LUTFilterPreset(id: "cinematic", name: "Cinematic")
+        let image = try #require(LUTImageFactory.makeLookupImage(for: preset))
 
         #expect(image.extent.width == 512)
         #expect(image.extent.height == 512)
@@ -50,7 +61,8 @@ struct ImageProcessorTests {
     }
 
     @Test func generatedLookupImageBuildsColorCubeData() async throws {
-        let image = try #require(LUTImageFactory.makeLookupImage(for: LUTFilterPreset.all[1]))
+        let preset = LUTFilterPreset(id: "cinematic", name: "Cinematic")
+        let image = try #require(LUTImageFactory.makeLookupImage(for: preset))
         let context = CIContext()
         let cubeData = try #require(LUTColorCubeFactory.makeCubeData(from: image, context: context))
         let expectedByteCount = 64 * 64 * 64 * 4 * MemoryLayout<Float>.size
@@ -96,12 +108,12 @@ struct ImageProcessorTests {
     @Test func processPersistenceRecordsAndUndoesSnapshots() async throws {
         let rootDirectory = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
-        let persistence = ImageProcessPersistence<TestSnapshot>(rootDirectory: rootDirectory)
+        let persistence = ImageEditHistoryPersistence<TestSnapshot>(rootDirectory: rootDirectory)
 
-        persistence.resetHistory(for: "photo")
-        _ = persistence.record(TestSnapshot(id: "original", value: 0), identifier: "photo")
-        _ = persistence.record(TestSnapshot(id: "edited", value: 1), identifier: "photo")
-        let undoState = persistence.undo()
+        await persistence.resetHistory(for: "photo")
+        _ = await persistence.record(TestSnapshot(id: "original", value: 0), identifier: "photo")
+        _ = await persistence.record(TestSnapshot(id: "edited", value: 1), identifier: "photo")
+        let undoState = await persistence.undo()
 
         #expect(undoState.currentSnapshot == TestSnapshot(id: "original", value: 0))
         #expect(undoState.canUndo == false)
@@ -112,19 +124,129 @@ struct ImageProcessorTests {
     @Test func processPersistencePrunesRedoSnapshotsAfterNewRecord() async throws {
         let rootDirectory = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
-        let persistence = ImageProcessPersistence<TestSnapshot>(rootDirectory: rootDirectory)
+        let persistence = ImageEditHistoryPersistence<TestSnapshot>(rootDirectory: rootDirectory)
 
-        persistence.resetHistory(for: "photo")
-        _ = persistence.record(TestSnapshot(id: "original", value: 0), identifier: "photo")
-        _ = persistence.record(TestSnapshot(id: "first", value: 1), identifier: "photo")
-        _ = persistence.record(TestSnapshot(id: "second", value: 2), identifier: "photo")
-        _ = persistence.undo()
-        _ = persistence.record(TestSnapshot(id: "replacement", value: 3), identifier: "photo")
-        let undoState = persistence.undo()
+        await persistence.resetHistory(for: "photo")
+        _ = await persistence.record(TestSnapshot(id: "original", value: 0), identifier: "photo")
+        _ = await persistence.record(TestSnapshot(id: "first", value: 1), identifier: "photo")
+        _ = await persistence.record(TestSnapshot(id: "second", value: 2), identifier: "photo")
+        _ = await persistence.undo()
+        _ = await persistence.record(TestSnapshot(id: "replacement", value: 3), identifier: "photo")
+        let undoState = await persistence.undo()
 
         #expect(undoState.currentSnapshot == TestSnapshot(id: "first", value: 1))
 
         try? FileManager.default.removeItem(at: rootDirectory)
+    }
+
+    @Test func defaultHistoryStoresIsolateMatchingIdentifiers() async {
+        let first = ImageEditHistoryPersistence<TestSnapshot>()
+        let second = ImageEditHistoryPersistence<TestSnapshot>()
+
+        await first.resetHistory(for: "shared-photo")
+        _ = await first.record(TestSnapshot(id: "first-original", value: 0), identifier: "shared-photo")
+        _ = await first.record(TestSnapshot(id: "first-edit", value: 1), identifier: "shared-photo")
+
+        await second.resetHistory(for: "shared-photo")
+        _ = await second.record(TestSnapshot(id: "second-original", value: 10), identifier: "shared-photo")
+
+        let firstUndo = await first.undo()
+        let secondState = await second.undo()
+
+        #expect(firstUndo.currentSnapshot == TestSnapshot(id: "first-original", value: 0))
+        #expect(secondState.currentSnapshot == TestSnapshot(id: "second-original", value: 10))
+    }
+
+    @Test func imageFileStoreCreatesDirectoryAndWritesJPEG() async throws {
+        let rootDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let store = ImageFileStore(rootDirectory: rootDirectory)
+        let image = makeSolidImage(size: CGSize(width: 12, height: 8), color: .blue)
+        let data = try #require(image.pngData())
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+
+        let url = try await store.writeImageData(data, id: "photo")
+        let storedImage = try #require(UIImage(data: Data(contentsOf: url)))
+
+        #expect(url == rootDirectory.appendingPathComponent("photo.jpg"))
+        #expect(storedImage.size == CGSize(width: 12, height: 8))
+    }
+
+    @Test func imageFileStorePreservesUnrecognizedDataWhenNormalizationIsUnavailable() async throws {
+        let rootDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let store = ImageFileStore(rootDirectory: rootDirectory)
+        let data = Data([0x01, 0x02, 0x03])
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+
+        let url = try await store.writeImageData(data, id: "raw")
+
+        #expect(try Data(contentsOf: url) == data)
+    }
+
+    @Test func exportServiceAcceptsClientOwnedSourceModel() async throws {
+        let rootDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let sourceURL = rootDirectory.appendingPathComponent("source.png")
+        let outputDirectory = rootDirectory.appendingPathComponent("exports", isDirectory: true)
+        try FileManager.default.createDirectory(at: rootDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+        let image = makeSolidImage(size: CGSize(width: 80, height: 40), color: .orange)
+        try #require(image.pngData()).write(to: sourceURL, options: .atomic)
+        let source = TestProcessingSource(
+            imageSourceURL: sourceURL,
+            imageEditRecipe: ImageEditRecipe(
+                rotationDegrees: 90,
+                crop: ImageEditCrop(x: 0, y: 0, width: 0.75, height: 1)
+            )
+        )
+
+        let url = try await ImageExportService(outputDirectory: outputDirectory)
+            .exportJPEG(from: source, filename: "result")
+        let result = try #require(UIImage(data: Data(contentsOf: url)))
+
+        #expect(url.lastPathComponent == "result.jpg")
+        #expect(result.size == CGSize(width: 40, height: 60))
+    }
+
+    @Test @MainActor func previewProviderAppliesClientEditRecipe() async throws {
+        let rootDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let sourceURL = rootDirectory.appendingPathComponent("source.png")
+        try FileManager.default.createDirectory(at: rootDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+        let image = makeSolidImage(size: CGSize(width: 80, height: 40), color: .purple)
+        try #require(image.pngData()).write(to: sourceURL, options: .atomic)
+        let source = TestProcessingSource(
+            imageSourceURL: sourceURL,
+            imageEditRecipe: ImageEditRecipe(
+                rotationDegrees: 90,
+                crop: ImageEditCrop(x: 0, y: 0, width: 0.75, height: 1)
+            )
+        )
+
+        let renderedPreview = await ImagePreviewProvider().preview(
+            from: source,
+            maxPixelSize: 480
+        )
+        let preview = try #require(renderedPreview)
+
+        #expect(preview.size == CGSize(width: 40, height: 60))
+    }
+
+    @Test @MainActor func previewProviderReturnsNilForMissingSource() async {
+        let source = TestProcessingSource(
+            imageSourceURL: FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString),
+            imageEditRecipe: ImageEditRecipe()
+        )
+
+        let preview = await ImagePreviewProvider().preview(
+            from: source,
+            maxPixelSize: 480
+        )
+
+        #expect(preview == nil)
     }
 
     @Test func centeredCropReducesWiderSourceWidth() async throws {
@@ -155,6 +277,15 @@ struct ImageProcessorTests {
         #expect(ImageEditRotation.normalized(-90) == 270)
         #expect(ImageEditRotation.normalized(450) == 90)
         #expect(ImageEditRotation.normalized(720) == 0)
+    }
+
+    @Test func cameraPositionToggleMovesBetweenFrontAndBack() {
+        #expect(CameraPositionToggle.opposite(of: .back) == .front)
+        #expect(CameraPositionToggle.opposite(of: .front) == .back)
+    }
+
+    @Test func unspecifiedCameraPositionDefaultsToFrontWhenToggled() {
+        #expect(CameraPositionToggle.opposite(of: .unspecified) == .front)
     }
 
     @Test func cropResizeMovesLeadingEdgeAndClampsMinimumWidth() async throws {
@@ -193,9 +324,73 @@ struct ImageProcessorTests {
         #expect(resized.height == 0.8)
     }
 
+    @Test func editorCropConvertsTopLeftOriginToCoreImageCoordinates() {
+        let crop = ImageEditCrop(x: 0.1, y: 0.2, width: 0.5, height: 0.3)
+
+        #expect(crop.coreImageNormalizedRect == CGRect(x: 0.1, y: 0.5, width: 0.5, height: 0.3))
+    }
+
+    @Test func fullEditorCropIsIdentityInCoreImageCoordinates() {
+        let crop = ImageEditCrop(x: 0, y: 0, width: 1, height: 1)
+
+        #expect(crop.coreImageNormalizedRect == CGRect(x: 0, y: 0, width: 1, height: 1))
+    }
+
+    @Test func editorTopAndBottomCropsMapToOppositeCoreImageEdges() {
+        let top = ImageEditCrop(x: 0, y: 0, width: 1, height: 0.25)
+        let bottom = ImageEditCrop(x: 0, y: 0.75, width: 1, height: 0.25)
+
+        #expect(top.coreImageNormalizedRect == CGRect(x: 0, y: 0.75, width: 1, height: 0.25))
+        #expect(bottom.coreImageNormalizedRect == CGRect(x: 0, y: 0, width: 1, height: 0.25))
+    }
+
+    @Test func cropResizeMovesTopEdgeAndPreservesBottomCoordinate() {
+        let crop = ImageEditCrop(x: 0.1, y: 0.2, width: 0.5, height: 0.6)
+
+        let resized = ImageEditCropper.resized(
+            crop,
+            edge: .top,
+            horizontalDelta: 0,
+            verticalDelta: 0.25
+        )
+
+        #expect(abs(resized.y - 0.45) < 0.001)
+        #expect(abs(resized.height - 0.35) < 0.001)
+        #expect(abs((resized.y + resized.height) - 0.8) < 0.001)
+    }
+
+    @Test func cropResizeTrailingEdgeClampsToImageBounds() {
+        let crop = ImageEditCrop(x: 0.2, y: 0.1, width: 0.4, height: 0.7)
+
+        let resized = ImageEditCropper.resized(
+            crop,
+            edge: .trailing,
+            horizontalDelta: 0.8,
+            verticalDelta: 0
+        )
+
+        #expect(resized.x == crop.x)
+        #expect(resized.width == 0.8)
+    }
+
+    private func makeSolidImage(size: CGSize, color: UIColor) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            color.setFill()
+            context.cgContext.fill(CGRect(origin: .zero, size: size))
+        }
+    }
+
 }
 
 private struct TestSnapshot: Codable, Equatable, Sendable {
     let id: String
     let value: Int
+}
+
+private struct TestProcessingSource: ImageProcessingSource {
+    let imageSourceURL: URL
+    let imageEditRecipe: ImageEditRecipe
 }

@@ -6,11 +6,11 @@ import UIComponents
 struct GalleryPreviewView: View {
     let photo: GalleryPhoto
     @ObservedObject var presenter: GalleryPresenter
-    
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            
+
             LUTPreviewImage(
                 imageURL: photo.imageURI,
                 presetID: photo.filterID,
@@ -21,7 +21,7 @@ struct GalleryPreviewView: View {
                 contentMode: .fit
             )
             .padding(.horizontal, 4)
-            
+
             VStack {
                 HStack {
                     CircleIconButton(systemName: "xmark", label: "Close", action: presenter.dismissPreview)
@@ -30,13 +30,24 @@ struct GalleryPreviewView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
-                
+
                 Spacer()
-                
+
                 HStack {
-                    PreviewActionButton(systemName: "pencil", title: "Edit", action: presenter.startEditingSelectedPhoto)
-                    PreviewActionButton(systemName: "square.and.arrow.up", title: "Share", action: { })
-                    PreviewActionButton(systemName: "square.and.arrow.down", title: "Save", action: { })
+                    PreviewActionButton(systemName: "pencil", title: "Edit") {
+                        Task { await presenter.startEditingSelectedPhoto() }
+                    }
+                    PreviewActionButton(systemName: "square.and.arrow.up", title: "Share") {
+                        Task { await presenter.shareSelectedPhoto() }
+                    }
+                    .disabled(presenter.isPreparingShare)
+                    PreviewActionButton(
+                        systemName: presenter.previewSaveState == .saved ? "checkmark" : "square.and.arrow.down",
+                        title: presenter.previewSaveState == .saved ? "Saved" : "Save"
+                    ) {
+                        Task { await presenter.saveSelectedPhotoToLibrary() }
+                    }
+                    .disabled(presenter.previewSaveState != .idle)
                     PreviewActionButton(
                         systemName: "trash",
                         title: "Delete",
