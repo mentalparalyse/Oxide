@@ -64,8 +64,20 @@ struct GalleryPreviewView: View {
         .sheet(isPresented: $presenter.isInfoPresented) {
             if let info = presenter.selectedPhotoInfo {
                 GalleryPhotoInfoView(info: info)
-                    .presentationDetents([.height(info.filterName == nil ? 180 : 260)])
+                    .presentationDetents([.height(infoSheetHeight(for: info))])
             }
         }
+    }
+
+    private func infoSheetHeight(for info: GalleryPhotoInfo) -> CGFloat {
+        var height: CGFloat = 180
+        height += 70
+        if let originalDimensions = info.originalDimensions,
+           let editedDimensions = info.editedDimensions,
+           originalDimensions != editedDimensions {
+            height += 70
+        }
+        if info.filterName != nil { height += 80 }
+        return height
     }
 }

@@ -13,6 +13,17 @@ struct GalleryPhotoInfoView: View {
                 .foregroundStyle(AppColours.appForegroundColor)
             
             infoRow(title: "Captured", value: info.capturedAt.formatted(date: .abbreviated, time: .shortened))
+
+            infoRow(
+                title: "Resolution",
+                value: info.editedDimensions?.formatted ?? "Unavailable"
+            )
+
+            if let originalDimensions = info.originalDimensions,
+               let editedDimensions = info.editedDimensions,
+               originalDimensions != editedDimensions {
+                infoRow(title: "Original", value: originalDimensions.formatted)
+            }
             
             if let filterName = info.filterName, let filterIntensity = info.filterIntensity {
                 infoRow(title: "Filter", value: filterName)
