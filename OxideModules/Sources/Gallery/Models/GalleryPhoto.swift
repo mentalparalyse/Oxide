@@ -12,7 +12,7 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
     public var rotationDegrees: Int
     public var crop: ImageEditCrop?
     public var adjustments: ImageAdjustments
-    
+
     public init(
         id: String,
         imageURI: URL,
@@ -67,6 +67,20 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
         try container.encode(rotationDegrees, forKey: .rotationDegrees)
         try container.encodeIfPresent(crop, forKey: .crop)
         try container.encode(adjustments, forKey: .adjustments)
+    }
+}
+
+extension GalleryPhoto: ImageProcessingSource {
+    public var imageSourceURL: URL { imageURI }
+
+    public var imageEditRecipe: ImageEditRecipe {
+        ImageEditRecipe(
+            presetID: filterID,
+            filterIntensity: filterIntensity,
+            rotationDegrees: rotationDegrees,
+            crop: crop,
+            adjustments: adjustments
+        )
     }
 }
 
