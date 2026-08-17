@@ -1,24 +1,123 @@
 # Oxide
 
-A SwiftUI-based foundation for modern visual effects, rendering, and app polish on iOS.  
-Private, work-in-progress.
+Oxide is a LUT-based photo editor for iOS, built as a production-minded showcase of modern Swift engineering. It combines camera capture, photo-library import, nondestructive editing, GPU-accelerated rendering, and a modular VIPER architecture in a compact open-source project.
 
-## Status
-Early WIP. Interfaces and modules may change without notice.
+> The project is under active development. APIs and persisted edit metadata may evolve.
 
-## Getting Started
-- Xcode 15+  
-- Clone the repo, open the workspace/project, build & run.
+## Highlights
 
-## What’s Inside (initial)
-- Splash experience (SwiftUI)
-- App icon set
-- Core modules scaffold for future effects
+- Front and rear camera capture with live torch control
+- Photo-library import and export
+- 120 bundled LUT presets with adjustable intensity
+- Nondestructive crop, rotation, exposure, contrast, saturation, brightness, and monochrome edits
+- Pinch, pan, double-tap, and button-based editor zoom
+- Undo history for editing operations
+- Full-resolution export and the native iOS share sheet
+- Metal-backed Core Image rendering with cached LUT cube data
+- Swift 6 concurrency and Swift Package Manager modularization
 
-## Roadmap (high-level)
-- Extensible effects pipeline
-- Reusable animation/primitives
-- Import/export presets
+## Screenshots
+
+| Gallery | Editor | Camera |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/gallery.png" width="260" alt="Oxide photo gallery"> | <img src="docs/screenshots/editor.png" width="260" alt="Oxide LUT photo editor"> | <img src="docs/screenshots/camera.png" width="260" alt="Oxide camera capture screen"> |
+
+## Architecture
+
+The app uses VIPER at the feature level and SPM targets for module boundaries:
+
+```text
+Oxide (app target)
+└── OxideModules
+    ├── Root
+    ├── Home
+    ├── Gallery
+    ├── ImageProcessor
+    ├── Onboarding
+    ├── Settings
+    ├── Splash
+    ├── AppCore
+    └── UIComponents
+```
+
+Within `Gallery`, SwiftUI Views render presenter state, the Presenter coordinates user intent, Interactors adapt reusable services to the feature, and the Router owns system presentation. `ImageProcessor` owns camera capture, edit recipes, storage primitives, LUT preparation, and rendering through a shared Metal-backed `CIContext`.
+
+### Reusing ImageProcessor
+
+`ImageProcessor` is independent from Gallery and organized as a portable subsystem:
+
+```text
+ImageProcessor/
+├── Capture/       Camera session, authorization, preview, and configuration
+├── Processing/    Edit recipes, crop/adjustment models, LUTs, rendering, export
+└── Store/         Image files, Photos export, and actor-isolated edit history
+```
+
+Client applications keep their own photo models and conform them to `ImageProcessingSource`:
+
+```swift
+struct ProjectPhoto: ImageProcessingSource, Sendable {
+    let imageSourceURL: URL
+    let imageEditRecipe: ImageEditRecipe
+}
+
+let outputURL = try await ImageExportService()
+    .exportJPEG(from: projectPhoto, filename: "edited-photo")
+```
+
+Camera capture is configured without Gallery dependencies:
+
+```swift
+let camera = CameraSessionController(
+    configuration: CameraCaptureConfiguration(position: .back)
+)
+```
+
+## Requirements
+
+- Xcode 17 or newer
+- Swift 6.1 or newer
+- iOS 16 or newer
+- A physical iPhone for camera and torch testing
+
+## Getting started
+
+1. Clone the repository.
+2. Open `Oxide.xcodeproj` in Xcode.
+3. Select the `Oxide` scheme and a signing team.
+4. Build and run.
+
+The app already declares camera, photo-library read, and photo-library add usage descriptions in `Oxide/Info.plist`.
+
+## Tests
+
+Run the package tests from Xcode, or from the repository root:
+
+```sh
+swift test --package-path OxideModules
+```
+
+Camera and Photos authorization flows still require device-level verification because the corresponding Apple frameworks are not fully represented by unit tests.
+
+## Performance notes
+
+- A reusable Metal-backed `CIContext` avoids repeated GPU setup.
+- LUT cube data is cached and previews are prepared with bounded concurrency.
+- Full-resolution rendering and image encoding run away from the main actor.
+- Camera configuration and session operations are serialized on a dedicated queue.
+- Thumbnail rendering is pixel-bounded to reduce decode cost and memory pressure.
+
+## Roadmap
+
+- Add UI and snapshot test coverage
+- Add filter-pack discovery and StoreKit 2 purchases
+- Improve crop gestures with corner handles and locked aspect ratios
+- Add export format and quality controls
+
+## Contributing
+
+Issues and focused pull requests are welcome. Please keep business logic out of SwiftUI Views, include tests for behavior changes, and preserve the module boundaries described above.
 
 ## License
-Private / Internal use only (TBD).
+
+Oxide is available under the MIT License. See [`LICENSE`](LICENSE).
