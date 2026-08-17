@@ -161,10 +161,7 @@ struct ImageProcessorTests {
         let rootDirectory = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
         let store = ImageFileStore(rootDirectory: rootDirectory)
-        let image = UIGraphicsImageRenderer(size: CGSize(width: 12, height: 8)).image { context in
-            UIColor.blue.setFill()
-            context.cgContext.fill(CGRect(x: 0, y: 0, width: 12, height: 8))
-        }
+        let image = makeSolidImage(size: CGSize(width: 12, height: 8), color: .blue)
         let data = try #require(image.pngData())
         defer { try? FileManager.default.removeItem(at: rootDirectory) }
 
@@ -194,10 +191,7 @@ struct ImageProcessorTests {
         let outputDirectory = rootDirectory.appendingPathComponent("exports", isDirectory: true)
         try FileManager.default.createDirectory(at: rootDirectory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: rootDirectory) }
-        let image = UIGraphicsImageRenderer(size: CGSize(width: 80, height: 40)).image { context in
-            UIColor.orange.setFill()
-            context.cgContext.fill(CGRect(x: 0, y: 0, width: 80, height: 40))
-        }
+        let image = makeSolidImage(size: CGSize(width: 80, height: 40), color: .orange)
         try #require(image.pngData()).write(to: sourceURL, options: .atomic)
         let source = TestProcessingSource(
             imageSourceURL: sourceURL,
@@ -221,10 +215,7 @@ struct ImageProcessorTests {
         let sourceURL = rootDirectory.appendingPathComponent("source.png")
         try FileManager.default.createDirectory(at: rootDirectory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: rootDirectory) }
-        let image = UIGraphicsImageRenderer(size: CGSize(width: 80, height: 40)).image { context in
-            UIColor.purple.setFill()
-            context.cgContext.fill(CGRect(x: 0, y: 0, width: 80, height: 40))
-        }
+        let image = makeSolidImage(size: CGSize(width: 80, height: 40), color: .purple)
         try #require(image.pngData()).write(to: sourceURL, options: .atomic)
         let source = TestProcessingSource(
             imageSourceURL: sourceURL,
@@ -380,6 +371,16 @@ struct ImageProcessorTests {
 
         #expect(resized.x == crop.x)
         #expect(resized.width == 0.8)
+    }
+
+    private func makeSolidImage(size: CGSize, color: UIColor) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            color.setFill()
+            context.cgContext.fill(CGRect(origin: .zero, size: size))
+        }
     }
 
 }

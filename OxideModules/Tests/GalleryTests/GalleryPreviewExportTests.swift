@@ -138,10 +138,7 @@ struct GalleryPreviewExportTests {
         let sourceURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
             .appendingPathExtension("png")
-        let source = UIGraphicsImageRenderer(size: CGSize(width: 80, height: 40)).image { context in
-            UIColor.red.setFill()
-            context.cgContext.fill(CGRect(x: 0, y: 0, width: 80, height: 40))
-        }
+        let source = makeSolidImage(size: CGSize(width: 80, height: 40), color: .red)
         try #require(source.pngData()).write(to: sourceURL, options: .atomic)
         defer { try? FileManager.default.removeItem(at: sourceURL) }
         let photo = GalleryPhoto(
@@ -166,6 +163,16 @@ struct GalleryPreviewExportTests {
             imageURI: URL(fileURLWithPath: "/tmp/photo.jpg"),
             createdAt: Date()
         )
+    }
+
+    private func makeSolidImage(size: CGSize, color: UIColor) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            color.setFill()
+            context.cgContext.fill(CGRect(origin: .zero, size: size))
+        }
     }
 
     private func makePresenter(
