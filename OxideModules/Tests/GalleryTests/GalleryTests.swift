@@ -8,6 +8,47 @@ import ImageProcessor
 @MainActor
 struct GalleryTests {
 
+    @Test func viewportScaleClampsAndResetClearsPan() {
+        var viewport = GalleryViewportState()
+        viewport.applyScale(20)
+        viewport.applyOffset(
+            CGSize(width: 100, height: -100),
+            imageSize: CGSize(width: 200, height: 200),
+            containerSize: CGSize(width: 200, height: 200)
+        )
+
+        #expect(viewport.scale == GalleryViewportState.maximumScale)
+        #expect(viewport.offset != .zero)
+
+        viewport.reset()
+
+        #expect(viewport.scale == 1)
+        #expect(viewport.offset == .zero)
+    }
+
+    @Test func viewportPanIsBoundedByScaledImageEdges() {
+        var viewport = GalleryViewportState()
+        viewport.applyScale(2)
+        viewport.applyOffset(
+            CGSize(width: 500, height: -500),
+            imageSize: CGSize(width: 200, height: 100),
+            containerSize: CGSize(width: 200, height: 200)
+        )
+
+        #expect(viewport.offset == CGSize(width: 100, height: 0))
+    }
+
+    @Test func viewportDoubleTapTogglesInspectionZoom() {
+        var viewport = GalleryViewportState()
+
+        viewport.toggleDoubleTapZoom()
+        #expect(viewport.scale == GalleryViewportState.doubleTapScale)
+
+        viewport.toggleDoubleTapZoom()
+        #expect(viewport.scale == GalleryViewportState.minimumScale)
+        #expect(viewport.offset == .zero)
+    }
+
     @Test func interactorSortsPhotosByNewestDate() async throws {
         let older = GalleryPhoto(
             id: "older",
@@ -68,7 +109,7 @@ struct GalleryTests {
         let presenter = makePresenter()
         let uri = try #require(URL(string: "https://example.com/capture.jpg"))
 
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: uri,
             now: Date(timeIntervalSince1970: 100),
             id: "capture"
@@ -81,13 +122,13 @@ struct GalleryTests {
 
     @Test func presenterSavesDraftAndReturnsToGallery() async throws {
         let presenter = makePresenter()
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             now: Date(timeIntervalSince1970: 100),
             id: "capture"
         )
-        presenter.selectFilter("01_brooklyn")
-        presenter.rotateDraft(by: 90)
+        await presenter.selectFilter("01_brooklyn")
+        await presenter.rotateDraft(by: 90)
 
         presenter.saveDraft()
 
@@ -133,12 +174,12 @@ struct GalleryTests {
 
     @Test func presenterTracksFilterIntensityAndInfo() async throws {
         let presenter = makePresenter()
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             now: Date(timeIntervalSince1970: 100),
             id: "capture"
         )
-        presenter.selectFilter("01_brooklyn")
+        await presenter.selectFilter("01_brooklyn")
         presenter.setFilterIntensity(0.42)
         presenter.saveDraft()
 
@@ -155,15 +196,15 @@ struct GalleryTests {
         let presenter = makePresenter()
         let firstFilter = try #require(presenter.filters.first { $0.id != GalleryFilter.original.id })
         let secondFilter = try #require(presenter.filters.first { $0.id != GalleryFilter.original.id && $0.id != firstFilter.id })
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             now: Date(timeIntervalSince1970: 100),
             id: "capture"
         )
 
-        presenter.selectFilter(firstFilter.id)
+        await presenter.selectFilter(firstFilter.id)
         presenter.setFilterIntensity(0.2)
-        presenter.selectFilter(secondFilter.id)
+        await presenter.selectFilter(secondFilter.id)
 
         #expect(presenter.draft?.selectedFilterID == secondFilter.id)
         #expect(presenter.draft?.filterIntensity == 1)
@@ -171,17 +212,17 @@ struct GalleryTests {
 
     @Test func intensityDragRecordsHistoryOnlyWhenCommitted() async throws {
         let presenter = makePresenter()
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             id: "capture"
         )
-        presenter.selectFilter("01_brooklyn")
+        await presenter.selectFilter("01_brooklyn")
 
         presenter.setFilterIntensity(0.8)
         presenter.setFilterIntensity(0.5)
         presenter.setFilterIntensity(0.2)
-        presenter.commitFilterIntensity()
-        presenter.undoLastEdit()
+        await presenter.commitFilterIntensity()
+        await presenter.undoLastEdit()
 
         #expect(presenter.draft?.selectedFilterID == "01_brooklyn")
         #expect(presenter.draft?.filterIntensity == 1)
@@ -189,7 +230,7 @@ struct GalleryTests {
 
     @Test func cropDragRecordsHistoryOnlyWhenCommitted() async throws {
         let presenter = makePresenter()
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             id: "capture"
         )
@@ -206,21 +247,21 @@ struct GalleryTests {
             horizontalDelta: 0.2,
             verticalDelta: 0
         )
-        presenter.commitCropResize()
-        presenter.undoLastEdit()
+        await presenter.commitCropResize()
+        await presenter.undoLastEdit()
 
         #expect(presenter.draft?.crop == nil)
     }
 
     @Test func presenterRejectsUnknownFilter() async throws {
         let presenter = makePresenter()
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             now: Date(),
             id: "capture"
         )
 
-        presenter.selectFilter("unknown")
+        await presenter.selectFilter("unknown")
 
         #expect(presenter.draft?.selectedFilterID == GalleryFilter.original.id)
         #expect(presenter.toast == .error("Filter unavailable"))
@@ -235,12 +276,12 @@ struct GalleryTests {
         let store = GalleryEditHistoryStore()
         var draft = GalleryDraft(photo: photo)
 
-        store.reset(for: photo.id)
-        _ = store.record(draft)
+        await store.reset(for: photo.id)
+        _ = await store.record(draft)
         draft.selectedFilterID = "01_brooklyn"
-        _ = store.record(draft)
+        _ = await store.record(draft)
 
-        let state = store.undo()
+        let state = await store.undo()
 
         #expect(state.currentDraft?.selectedFilterID == GalleryFilter.original.id)
         #expect(state.canUndo == false)
@@ -255,21 +296,22 @@ struct GalleryTests {
         let store = GalleryEditHistoryStore()
         var draft = GalleryDraft(photo: photo)
 
-        store.reset(for: photo.id)
-        _ = store.record(draft)
+        await store.reset(for: photo.id)
+        _ = await store.record(draft)
         draft.selectedFilterID = "01_brooklyn"
-        _ = store.record(draft)
+        _ = await store.record(draft)
         draft.selectedFilterID = "02_poprocket"
-        _ = store.record(draft)
-        _ = store.undo()
+        _ = await store.record(draft)
+        _ = await store.undo()
 
         draft.selectedFilterID = "03_nashville"
-        let replacementState = store.record(draft)
-        let undoState = store.undo()
+        let replacementState = await store.record(draft)
+        let undoState = await store.undo()
 
         #expect(replacementState.canUndo == true)
         #expect(undoState.currentDraft?.selectedFilterID == "01_brooklyn")
-        #expect(store.undo().currentDraft?.selectedFilterID == GalleryFilter.original.id)
+        let originalState = await store.undo()
+        #expect(originalState.currentDraft?.selectedFilterID == GalleryFilter.original.id)
     }
 
     @Test func presenterShowsImportFailureToast() async throws {
@@ -287,7 +329,7 @@ struct GalleryTests {
 
     @Test func presenterCancelsNewDraftBackToGallery() async throws {
         let presenter = makePresenter()
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             now: Date(),
             id: "capture"
@@ -355,17 +397,17 @@ struct GalleryTests {
 
     @Test func adjustmentDragClampsAndRecordsOneUndoStep() async throws {
         let presenter = makePresenter()
-        presenter.startEditingCapturedPhoto(
+        await presenter.startEditingCapturedPhoto(
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             id: "capture"
         )
 
         presenter.setAdjustment(.exposure, value: 1)
         presenter.setAdjustment(.exposure, value: 4)
-        presenter.commitAdjustment()
+        await presenter.commitAdjustment()
         #expect(presenter.draft?.adjustments.exposure == 2)
 
-        presenter.undoLastEdit()
+        await presenter.undoLastEdit()
         #expect(presenter.draft?.adjustments == .neutral)
     }
 
@@ -429,11 +471,11 @@ private struct FailingImportInteractor: GalleryInteractorProtocol {
     func loadPhotos() -> [GalleryPhoto] { [] }
     func save(_ photo: GalleryPhoto) -> [GalleryPhoto] { [photo] }
     func delete(photoID: GalleryPhoto.ID) -> [GalleryPhoto] { [] }
-    func beginEditHistory(for photo: GalleryPhoto) { }
-    func recordEditStep(_ draft: GalleryDraft) -> GalleryEditHistoryState {
+    func beginEditHistory(for photo: GalleryPhoto) async { }
+    func recordEditStep(_ draft: GalleryDraft) async -> GalleryEditHistoryState {
         GalleryEditHistoryState(currentDraft: draft, canUndo: true)
     }
-    func undoEditStep() -> GalleryEditHistoryState {
+    func undoEditStep() async -> GalleryEditHistoryState {
         GalleryEditHistoryState(currentDraft: nil, canUndo: false)
     }
     func preloadFilterPreviews(for imageURL: URL, filters: [GalleryFilter]) { }
