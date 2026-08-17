@@ -9,7 +9,7 @@ struct PreviewActionButton: View {
     var foreground: Color = AppColours.appForegroundColor
     var background: Color = Color.white.opacity(0.1)
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 6) {
@@ -32,7 +32,7 @@ struct CircleIconButton: View {
     let systemName: String
     let label: String
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Image(systemName: systemName)
@@ -49,12 +49,12 @@ struct CircleIconButton: View {
 struct LastPhotoButton: View {
     let photo: GalleryPhoto?
     let action: () -> Void
-    
+
     var body: some View {
         if let photo {
             Button(action: action) {
                 GalleryThumbnailImage(
-                    url: photo.imageURI,
+                    photo: photo,
                     maxPixelSize: 128
                 )
                 .frame(width: 48, height: 48)
