@@ -133,7 +133,7 @@ public final class ImageProcessor: @unchecked Sendable {
                 )
             )
             guard !Task.isCancelled else { return nil }
-            guard let cgImage = context.createCGImage(rotatedImage, from: rotatedImage.extent) else {
+            guard let cgImage = createCGImage(rotatedImage) else {
                 return nil
             }
 
@@ -215,6 +215,22 @@ public final class ImageProcessor: @unchecked Sendable {
         LUTFilterPreset.all.first {
             $0.id == (presetID ?? LUTFilterPreset.original.id)
         }
+    }
+
+    private func createCGImage(_ image: CIImage) -> CGImage? {
+        if let image = context.createCGImage(image, from: image.extent) {
+            return image
+        }
+
+        let softwareContext = CIContext(
+            options: [
+                .useSoftwareRenderer: true,
+                .workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
+                .outputColorSpace: CGColorSpace(name: CGColorSpace.sRGB) as Any,
+                .cacheIntermediates: false
+            ]
+        )
+        return softwareContext.createCGImage(image, from: image.extent)
     }
 
     public func process(

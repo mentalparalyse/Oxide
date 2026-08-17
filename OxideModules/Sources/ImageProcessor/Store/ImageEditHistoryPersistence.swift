@@ -19,12 +19,14 @@ public actor ImageEditHistoryPersistence<Snapshot: Codable & Sendable> {
     private var currentIndex = -1
 
     public init(
-        rootDirectory: URL = FileManager.default.temporaryDirectory,
+        rootDirectory: URL? = nil,
         fileManager: FileManager = .default,
         encoder: JSONEncoder = JSONEncoder(),
         decoder: JSONDecoder = JSONDecoder()
     ) {
-        self.rootDirectory = rootDirectory
+        self.rootDirectory = rootDirectory ?? fileManager.temporaryDirectory
+            .appendingPathComponent("OxideEditHistorySessions", isDirectory: true)
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
         self.fileManager = fileManager
         self.encoder = encoder
         self.decoder = decoder

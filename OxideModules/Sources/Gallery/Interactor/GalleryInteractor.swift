@@ -76,7 +76,8 @@ final class GalleryInteractor: GalleryInteractorProtocol {
     }
 
     func preloadFilterPreviews(for _: URL, filters: [GalleryFilter]) {
-        let previewFilters = Array(filters.prefix(5))
+        let previewFilters = GalleryFilterPreloadPolicy.presets(from: filters)
+        guard !previewFilters.isEmpty else { return }
         Task.detached(priority: .utility) { [imageProcessor] in
             await withTaskGroup(of: Void.self) { group in
                 var iterator = previewFilters.makeIterator()
@@ -100,5 +101,11 @@ final class GalleryInteractor: GalleryInteractorProtocol {
 
     func sourceImageSize(for imageURL: URL) -> CGSize? {
         imageProcessor.sourceSize(for: imageURL)
+    }
+}
+
+enum GalleryFilterPreloadPolicy {
+    static func presets(from filters: [GalleryFilter]) -> [GalleryFilter] {
+        Array(filters.filter { $0.lutResourceName != nil }.prefix(5))
     }
 }

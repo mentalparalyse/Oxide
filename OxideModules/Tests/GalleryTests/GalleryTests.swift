@@ -68,6 +68,20 @@ struct GalleryTests {
         #expect(interactor.loadPhotos().map(\.id) == ["newer", "older"])
     }
 
+    @Test func generatedDemoFiltersAreNotEagerlyPrepared() {
+        let bundled = LUTFilterPreset(
+            id: "bundled",
+            name: "Bundled",
+            lutResourceName: "bundled"
+        )
+
+        let presets = GalleryFilterPreloadPolicy.presets(
+            from: LUTFilterPreset.demoPresets + [bundled]
+        )
+
+        #expect(presets == [bundled])
+    }
+
     @Test func saveUpdatesExistingPhotoWithoutDuplicatingIt() async throws {
         let photo = GalleryPhoto(
             id: "photo",
@@ -127,14 +141,14 @@ struct GalleryTests {
             now: Date(timeIntervalSince1970: 100),
             id: "capture"
         )
-        await presenter.selectFilter("01_brooklyn")
+        await presenter.selectFilter("cinematic")
         await presenter.rotateDraft(by: 90)
 
         presenter.saveDraft()
 
         #expect(presenter.screen == .gallery)
         #expect(presenter.photos.count == 1)
-        #expect(presenter.photos.first?.filterID == "01_brooklyn")
+        #expect(presenter.photos.first?.filterID == "cinematic")
         #expect(presenter.photos.first?.rotationDegrees == 90)
         #expect(presenter.draft == nil)
         #expect(presenter.toast == .success("Photo saved"))
@@ -179,7 +193,7 @@ struct GalleryTests {
             now: Date(timeIntervalSince1970: 100),
             id: "capture"
         )
-        await presenter.selectFilter("01_brooklyn")
+        await presenter.selectFilter("cinematic")
         presenter.setFilterIntensity(0.42)
         presenter.saveDraft()
 
@@ -188,7 +202,7 @@ struct GalleryTests {
         let info = try #require(presenter.selectedPhotoInfo)
 
         #expect(saved.filterIntensity == 0.42)
-        #expect(info.filterName == "Brooklyn")
+        #expect(info.filterName == "Cinematic")
         #expect(info.filterIntensity == 0.42)
     }
 
@@ -216,7 +230,7 @@ struct GalleryTests {
             uri: try #require(URL(string: "https://example.com/capture.jpg")),
             id: "capture"
         )
-        await presenter.selectFilter("01_brooklyn")
+        await presenter.selectFilter("cinematic")
 
         presenter.setFilterIntensity(0.8)
         presenter.setFilterIntensity(0.5)
@@ -224,7 +238,7 @@ struct GalleryTests {
         await presenter.commitFilterIntensity()
         await presenter.undoLastEdit()
 
-        #expect(presenter.draft?.selectedFilterID == "01_brooklyn")
+        #expect(presenter.draft?.selectedFilterID == "cinematic")
         #expect(presenter.draft?.filterIntensity == 1)
     }
 

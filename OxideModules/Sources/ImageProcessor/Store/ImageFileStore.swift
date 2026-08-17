@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 public actor ImageFileStore {
     private let fileManager: FileManager
@@ -16,7 +15,10 @@ public actor ImageFileStore {
     public func writeImageData(_ data: Data, id: String) throws -> URL {
         let directory = try imageDirectory()
         let url = directory.appendingPathComponent(id).appendingPathExtension("jpg")
-        let normalizedData = normalizedJPEGData(from: data) ?? data
+        let normalizedData = ImageJPEGEncoder.normalize(
+            data,
+            compressionQuality: 0.95
+        ) ?? data
         try normalizedData.write(to: url, options: .atomic)
         return url
     }
@@ -37,17 +39,5 @@ public actor ImageFileStore {
             create: false
         )
         .appendingPathComponent("OxidePhotoLibrary", isDirectory: true)
-    }
-
-    private func normalizedJPEGData(from data: Data) -> Data? {
-        guard let image = UIImage(data: data) else { return nil }
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = image.scale
-        format.opaque = true
-        let renderer = UIGraphicsImageRenderer(size: image.size, format: format)
-        return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: image.size))
-        }
-        .jpegData(compressionQuality: 0.95)
     }
 }

@@ -1,5 +1,5 @@
 import Foundation
-import UIKit
+import CoreGraphics
 
 public enum ImageExportError: Error {
     case renderingFailed
@@ -55,7 +55,13 @@ public final class ImageExportService: ImageExporting, @unchecked Sendable {
         ) else {
             throw ImageExportError.renderingFailed
         }
-        guard let data = image.jpegData(compressionQuality: compressionQuality) else {
+        guard
+            let cgImage = image.cgImage,
+            let data = ImageJPEGEncoder.encode(
+                cgImage,
+                compressionQuality: compressionQuality
+            )
+        else {
             throw ImageExportError.encodingFailed
         }
         try FileManager.default.createDirectory(

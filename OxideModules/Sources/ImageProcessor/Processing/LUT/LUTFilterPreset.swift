@@ -18,8 +18,17 @@ public struct LUTFilterPreset: Identifiable, Equatable, Sendable {
     public static let original = LUTFilterPreset(id: "original", name: "Original", intensity: 0)
 
     public static var all: [LUTFilterPreset] {
-        [.original] + bundledPresets
+        [.original] + demoPresets + bundledPresets
     }
+
+    public static let demoPresets: [LUTFilterPreset] = [
+        LUTFilterPreset(id: "cinematic", name: "Cinematic"),
+        LUTFilterPreset(id: "vintage", name: "Vintage"),
+        LUTFilterPreset(id: "travel", name: "Travel"),
+        LUTFilterPreset(id: "portrait", name: "Portrait"),
+        LUTFilterPreset(id: "film", name: "Film"),
+        LUTFilterPreset(id: "blackwhite", name: "Black & White")
+    ]
 
     public static var bundledPresets: [LUTFilterPreset] {
         bundledResourceNames

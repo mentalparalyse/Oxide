@@ -15,6 +15,12 @@ struct ImageProcessorTests {
         #expect(ids.first == LUTFilterPreset.original.id)
     }
 
+    @Test func publicDemoPresetsDoNotRequirePrivateResources() {
+        #expect(LUTFilterPreset.demoPresets.isEmpty == false)
+        #expect(LUTFilterPreset.demoPresets.allSatisfy { $0.lutResourceName == nil })
+        #expect(LUTFilterPreset.all.starts(with: [.original] + LUTFilterPreset.demoPresets))
+    }
+
     @Test func bundledLUTPresetsOnlyExposeAvailableResources() async throws {
         let presets = LUTFilterPreset.bundledPresets
 
@@ -131,6 +137,24 @@ struct ImageProcessorTests {
         #expect(undoState.currentSnapshot == TestSnapshot(id: "first", value: 1))
 
         try? FileManager.default.removeItem(at: rootDirectory)
+    }
+
+    @Test func defaultHistoryStoresIsolateMatchingIdentifiers() async {
+        let first = ImageEditHistoryPersistence<TestSnapshot>()
+        let second = ImageEditHistoryPersistence<TestSnapshot>()
+
+        await first.resetHistory(for: "shared-photo")
+        _ = await first.record(TestSnapshot(id: "first-original", value: 0), identifier: "shared-photo")
+        _ = await first.record(TestSnapshot(id: "first-edit", value: 1), identifier: "shared-photo")
+
+        await second.resetHistory(for: "shared-photo")
+        _ = await second.record(TestSnapshot(id: "second-original", value: 10), identifier: "shared-photo")
+
+        let firstUndo = await first.undo()
+        let secondState = await second.undo()
+
+        #expect(firstUndo.currentSnapshot == TestSnapshot(id: "first-original", value: 0))
+        #expect(secondState.currentSnapshot == TestSnapshot(id: "second-original", value: 10))
     }
 
     @Test func imageFileStoreCreatesDirectoryAndWritesJPEG() async throws {
