@@ -8,7 +8,7 @@ Oxide is a LUT-based photo editor for iOS, built as a production-minded showcase
 
 - Front and rear camera capture with live torch control
 - Photo-library import and export
-- 120 bundled LUT presets with adjustable intensity
+- A reusable LUT engine with adjustable filter intensity
 - Nondestructive crop, rotation, exposure, contrast, saturation, brightness, and monochrome edits
 - Pinch, pan, double-tap, and button-based editor zoom
 - Undo history for editing operations
@@ -72,6 +72,15 @@ let camera = CameraSessionController(
     configuration: CameraCaptureConfiguration(position: .back)
 )
 ```
+
+### LUT assets
+
+The image-processing engine and LUT integration are open source, but the
+proprietary LUT image assets shown in the screenshots are intentionally not
+distributed. A clean clone runs with the Original preset and the rest of the
+editor functionality intact. Developers can add LUT resources they own to
+`OxideModules/Sources/ImageProcessor/LUTs/`; that directory is excluded from
+Git apart from its setup notice.
 
 ## Requirements
 
