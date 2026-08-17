@@ -108,7 +108,7 @@ let package = Package(
             name: "ImageProcessor",
             dependencies: [],
             resources: [
-                .process("FilterImgs2")
+                .process("LUTs")
             ]
         ),
         .testTarget(
