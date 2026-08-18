@@ -43,15 +43,18 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     public var filmGrain: ImageFilmGrain
     public var lightLeak: ImageLightLeak
     public var chromaticAberration: ImageChromaticAberration
+    public var halation: ImageHalation
 
     public init(
         filmGrain: ImageFilmGrain = .disabled,
         lightLeak: ImageLightLeak = .disabled,
-        chromaticAberration: ImageChromaticAberration = .disabled
+        chromaticAberration: ImageChromaticAberration = .disabled,
+        halation: ImageHalation = .disabled
     ) {
         self.filmGrain = filmGrain
         self.lightLeak = lightLeak
         self.chromaticAberration = chromaticAberration
+        self.halation = halation
     }
 
     public static let neutral = ImageEffects()
@@ -60,6 +63,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         case filmGrain
         case lightLeak
         case chromaticAberration
+        case halation
     }
 
     public init(from decoder: Decoder) throws {
@@ -76,6 +80,43 @@ public struct ImageEffects: Equatable, Codable, Sendable {
             ImageChromaticAberration.self,
             forKey: .chromaticAberration
         ) ?? .disabled
+        halation = try container.decodeIfPresent(
+            ImageHalation.self,
+            forKey: .halation
+        ) ?? .disabled
+    }
+}
+
+public struct ImageHalation: Equatable, Codable, Sendable {
+    public var amount: Double
+    public var radius: Double
+    public var threshold: Double
+
+    public var isEnabled: Bool { amount > 0 }
+
+    public init(amount: Double = 0, radius: Double = 0.5, threshold: Double = 0.72) {
+        self.amount = Self.clamp(amount)
+        self.radius = Self.clamp(radius)
+        self.threshold = Self.clamp(threshold)
+    }
+
+    public static let disabled = ImageHalation()
+
+    private static func clamp(_ value: Double) -> Double {
+        min(max(value, 0), 1)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case amount, radius, threshold
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            amount: try container.decodeIfPresent(Double.self, forKey: .amount) ?? 0,
+            radius: try container.decodeIfPresent(Double.self, forKey: .radius) ?? 0.5,
+            threshold: try container.decodeIfPresent(Double.self, forKey: .threshold) ?? 0.72
+        )
     }
 }
 

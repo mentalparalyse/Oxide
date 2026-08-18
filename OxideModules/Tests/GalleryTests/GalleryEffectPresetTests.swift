@@ -7,7 +7,8 @@ struct GalleryEffectPresetTests {
         let enabled = ImageEffects(
             filmGrain: ImageFilmGrain(amount: 0.5),
             lightLeak: ImageLightLeak(amount: 0.5),
-            chromaticAberration: ImageChromaticAberration(amount: 0.5)
+            chromaticAberration: ImageChromaticAberration(amount: 0.5),
+            halation: ImageHalation(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -29,6 +30,14 @@ struct GalleryEffectPresetTests {
         let identifiers = GalleryEffectPreset.all.map(\.id)
 
         #expect(Set(identifiers).count == identifiers.count)
+    }
+
+    @Test func applyingHalationPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(filmGrain: ImageFilmGrain(amount: 0.3))
+        let result = preset("halation-dream").applying(to: current)
+
+        #expect(result.halation.amount == 0.68)
+        #expect(result.filmGrain == current.filmGrain)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

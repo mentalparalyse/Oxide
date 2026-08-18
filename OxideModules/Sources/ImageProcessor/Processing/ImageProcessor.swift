@@ -242,6 +242,11 @@ public final class ImageProcessor: @unchecked Sendable {
                     amount: effects.chromaticAberration.amount,
                     direction: effects.chromaticAberration.direction,
                     falloff: effects.chromaticAberration.falloff
+                ),
+                halation: HalationSettings(
+                    amount: effects.halation.amount,
+                    radius: effects.halation.radius,
+                    threshold: effects.halation.threshold
                 )
             ),
             to: image

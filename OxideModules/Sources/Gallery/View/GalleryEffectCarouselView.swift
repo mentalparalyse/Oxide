@@ -72,12 +72,15 @@ struct GalleryEffectCarouselView: View {
             return !draft.effects.filmGrain.isEnabled
                 && draft.effects.lightLeak.amount == 0
                 && draft.effects.chromaticAberration.amount == 0
+                && !draft.effects.halation.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
             guard draft.effects.lightLeak.amount > 0 else { return false }
         case .chromaticAberration:
             guard draft.effects.chromaticAberration.amount > 0 else { return false }
+        case .halation:
+            guard draft.effects.halation.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -104,6 +107,10 @@ struct GalleryEffectCarouselView: View {
             return abs(draft.effects.chromaticAberration.amount - preset.previewEffects.chromaticAberration.amount)
                 + abs(draft.effects.chromaticAberration.direction - preset.previewEffects.chromaticAberration.direction)
                 + abs(draft.effects.chromaticAberration.falloff - preset.previewEffects.chromaticAberration.falloff)
+        case .halation:
+            return abs(draft.effects.halation.amount - preset.previewEffects.halation.amount)
+                + abs(draft.effects.halation.radius - preset.previewEffects.halation.radius)
+                + abs(draft.effects.halation.threshold - preset.previewEffects.halation.threshold)
         }
     }
 }

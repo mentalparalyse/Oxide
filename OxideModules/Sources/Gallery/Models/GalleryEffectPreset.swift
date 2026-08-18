@@ -5,6 +5,7 @@ enum GalleryEffectKind: String, Sendable {
     case filmGrain
     case lightLeak
     case chromaticAberration
+    case halation
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -27,11 +28,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.lightLeak = previewEffects.lightLeak
         case .chromaticAberration:
             result.chromaticAberration = previewEffects.chromaticAberration
+        case .halation:
+            result.halation = previewEffects.halation
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.halation.isEnabled { return "halation-soft" }
         if effects.chromaticAberration.amount > 0 { return "chromatic-soft" }
         if effects.lightLeak.amount > 0 { return "leak-left" }
         if effects.filmGrain.isEnabled { return "grain-fine" }
@@ -81,6 +85,18 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             name: "Shift",
             kind: .chromaticAberration,
             previewEffects: ImageEffects(chromaticAberration: ImageChromaticAberration(amount: 0.55, direction: 0.125, falloff: 0.45))
+        ),
+        GalleryEffectPreset(
+            id: "halation-soft",
+            name: "Halo",
+            kind: .halation,
+            previewEffects: ImageEffects(halation: ImageHalation(amount: 0.42, radius: 0.45, threshold: 0.72))
+        ),
+        GalleryEffectPreset(
+            id: "halation-dream",
+            name: "Dream",
+            kind: .halation,
+            previewEffects: ImageEffects(halation: ImageHalation(amount: 0.68, radius: 0.72, threshold: 0.55))
         )
     ]
 }

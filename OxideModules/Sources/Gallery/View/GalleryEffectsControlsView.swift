@@ -112,6 +112,9 @@ struct GalleryEffectsControlsView: View {
         case .chromaticAberration:
             EffectControlRow(title: "Direction", value: draft.effects.chromaticAberration.direction, range: 0...1, onChange: updateChromaticDirection, onEnd: onChangeEnded)
             EffectControlRow(title: "Falloff", value: draft.effects.chromaticAberration.falloff, range: 0...1, onChange: updateChromaticFalloff, onEnd: onChangeEnded)
+        case .halation:
+            EffectControlRow(title: "Radius", value: draft.effects.halation.radius, range: 0...1, onChange: updateHalationRadius, onEnd: onChangeEnded)
+            EffectControlRow(title: "Threshold", value: draft.effects.halation.threshold, range: 0...1, onChange: updateHalationThreshold, onEnd: onChangeEnded)
         }
     }
 
@@ -121,6 +124,7 @@ struct GalleryEffectsControlsView: View {
         case .filmGrain: draft.effects.filmGrain.amount
         case .lightLeak: draft.effects.lightLeak.amount
         case .chromaticAberration: draft.effects.chromaticAberration.amount
+        case .halation: draft.effects.halation.amount
         }
     }
 
@@ -138,6 +142,7 @@ struct GalleryEffectsControlsView: View {
             case .filmGrain: $0.filmGrain.amount = value
             case .lightLeak: $0.lightLeak.amount = value
             case .chromaticAberration: $0.chromaticAberration.amount = value
+            case .halation: $0.halation.amount = value
             }
         }
     }
@@ -147,51 +152,12 @@ struct GalleryEffectsControlsView: View {
     private func updateLeakWarmth(_ value: Double) { mutateEffects { $0.lightLeak.warmth = value } }
     private func updateChromaticDirection(_ value: Double) { mutateEffects { $0.chromaticAberration.direction = value } }
     private func updateChromaticFalloff(_ value: Double) { mutateEffects { $0.chromaticAberration.falloff = value } }
+    private func updateHalationRadius(_ value: Double) { mutateEffects { $0.halation.radius = value } }
+    private func updateHalationThreshold(_ value: Double) { mutateEffects { $0.halation.threshold = value } }
 
     private func mutateEffects(_ mutation: (inout ImageEffects) -> Void) {
         var effects = draft.effects
         mutation(&effects)
         onEffectsChange(effects)
-    }
-}
-
-private struct EffectControlRow: View {
-    let title: String
-    let value: Double
-    let range: ClosedRange<Double>
-    let onChange: (Double) -> Void
-    let onEnd: () -> Void
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Text(title)
-                .font(.system(size: 11))
-                .foregroundStyle(AppColours.appMutedForegroundColor)
-                .frame(width: 58, alignment: .leading)
-            EffectValueSlider(externalValue: value, range: range, onChange: onChange, onEnd: onEnd)
-        }
-    }
-}
-
-private struct EffectValueSlider: View {
-    let externalValue: Double
-    let range: ClosedRange<Double>
-    let onChange: (Double) -> Void
-    let onEnd: () -> Void
-    @State private var value: Double
-
-    init(externalValue: Double, range: ClosedRange<Double>, onChange: @escaping (Double) -> Void, onEnd: @escaping () -> Void) {
-        self.externalValue = externalValue
-        self.range = range
-        self.onChange = onChange
-        self.onEnd = onEnd
-        _value = State(initialValue: externalValue)
-    }
-
-    var body: some View {
-        Slider(value: $value, in: range, onEditingChanged: { if !$0 { onEnd() } })
-            .tint(AppColours.buttonBacground)
-            .onChange(of: value) { onChange($0) }
-            .onChange(of: externalValue) { value = $0 }
     }
 }

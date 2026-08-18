@@ -71,7 +71,8 @@ struct ImageEffectSettingsTests {
         let effects = ImageEffects(
             filmGrain: ImageFilmGrain(amount: 0.3),
             lightLeak: ImageLightLeak(amount: 0.4),
-            chromaticAberration: ImageChromaticAberration(amount: 0.7)
+            chromaticAberration: ImageChromaticAberration(amount: 0.7),
+            halation: ImageHalation(amount: 0.5)
         )
 
         let output = try #require(ImageProcessor().outputImage(
@@ -81,5 +82,13 @@ struct ImageEffectSettingsTests {
         ))
 
         #expect(output.extent == input.extent)
+    }
+
+    @Test func halationSettingsClampInvalidValues() {
+        let settings = ImageHalation(amount: 2, radius: -1, threshold: 3)
+
+        #expect(settings.amount == 1)
+        #expect(settings.radius == 0)
+        #expect(settings.threshold == 1)
     }
 }
