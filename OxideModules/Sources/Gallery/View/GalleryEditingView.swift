@@ -105,7 +105,11 @@ struct GalleryEditingView: View {
                     onLeakAmountChange: presenter.setLightLeakAmount,
                     onLeakPositionChange: presenter.setLightLeakPosition,
                     onLeakWarmthChange: presenter.setLightLeakWarmth,
-                    onLightLeakChangeEnded: { Task { await presenter.commitLightLeak() } }
+                    onLightLeakChangeEnded: { Task { await presenter.commitLightLeak() } },
+                    onChromaticAmountChange: presenter.setChromaticAmount,
+                    onChromaticDirectionChange: presenter.setChromaticDirection,
+                    onChromaticFalloffChange: presenter.setChromaticFalloff,
+                    onChromaticChangeEnded: { Task { await presenter.commitChromaticAberration() } }
                 )
             }
         case .crop:

@@ -56,4 +56,30 @@ struct ImageEffectSettingsTests {
 
         #expect(output.extent == input.extent)
     }
+
+    @Test func chromaticSettingsClampInvalidValues() {
+        let settings = ImageChromaticAberration(amount: 2, direction: -1, falloff: 3)
+
+        #expect(settings.amount == 1)
+        #expect(settings.direction == 0)
+        #expect(settings.falloff == 1)
+    }
+
+    @Test func processorCombinesAllEffects() throws {
+        let input = CIImage(color: .gray)
+            .cropped(to: CGRect(x: 0, y: 0, width: 48, height: 32))
+        let effects = ImageEffects(
+            filmGrain: ImageFilmGrain(amount: 0.3),
+            lightLeak: ImageLightLeak(amount: 0.4),
+            chromaticAberration: ImageChromaticAberration(amount: 0.7)
+        )
+
+        let output = try #require(ImageProcessor().outputImage(
+            for: input,
+            presetID: nil,
+            effects: effects
+        ))
+
+        #expect(output.extent == input.extent)
+    }
 }

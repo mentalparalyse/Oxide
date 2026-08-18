@@ -245,6 +245,10 @@ public final class GalleryPresenter: ObservableObject {
     public func setLightLeakPosition(_ value: Double) { draft?.effects.lightLeak.position = min(max(value, 0), 1) }
     public func setLightLeakWarmth(_ value: Double) { draft?.effects.lightLeak.warmth = min(max(value, 0), 1) }
     public func commitLightLeak() async { await recordCurrentEditStep() }
+    public func setChromaticAmount(_ value: Double) { draft?.effects.chromaticAberration.amount = min(max(value, 0), 1) }
+    public func setChromaticDirection(_ value: Double) { draft?.effects.chromaticAberration.direction = min(max(value, 0), 1) }
+    public func setChromaticFalloff(_ value: Double) { draft?.effects.chromaticAberration.falloff = min(max(value, 0), 1) }
+    public func commitChromaticAberration() async { await recordCurrentEditStep() }
 
     public func undoLastEdit() async {
         let state = await interactor.undoEditStep()

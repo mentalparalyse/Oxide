@@ -237,6 +237,11 @@ public final class ImageProcessor: @unchecked Sendable {
                     position: effects.lightLeak.position,
                     warmth: effects.lightLeak.warmth,
                     seed: effects.lightLeak.seed
+                ),
+                chromaticAberration: ChromaticAberrationSettings(
+                    amount: effects.chromaticAberration.amount,
+                    direction: effects.chromaticAberration.direction,
+                    falloff: effects.chromaticAberration.falloff
                 )
             ),
             to: image

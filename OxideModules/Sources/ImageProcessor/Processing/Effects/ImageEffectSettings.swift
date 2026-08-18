@@ -42,13 +42,16 @@ public struct ImageFilmGrain: Equatable, Codable, Sendable {
 public struct ImageEffects: Equatable, Codable, Sendable {
     public var filmGrain: ImageFilmGrain
     public var lightLeak: ImageLightLeak
+    public var chromaticAberration: ImageChromaticAberration
 
     public init(
         filmGrain: ImageFilmGrain = .disabled,
-        lightLeak: ImageLightLeak = .disabled
+        lightLeak: ImageLightLeak = .disabled,
+        chromaticAberration: ImageChromaticAberration = .disabled
     ) {
         self.filmGrain = filmGrain
         self.lightLeak = lightLeak
+        self.chromaticAberration = chromaticAberration
     }
 
     public static let neutral = ImageEffects()
@@ -56,6 +59,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case filmGrain
         case lightLeak
+        case chromaticAberration
     }
 
     public init(from decoder: Decoder) throws {
@@ -68,6 +72,41 @@ public struct ImageEffects: Equatable, Codable, Sendable {
             ImageLightLeak.self,
             forKey: .lightLeak
         ) ?? .disabled
+        chromaticAberration = try container.decodeIfPresent(
+            ImageChromaticAberration.self,
+            forKey: .chromaticAberration
+        ) ?? .disabled
+    }
+}
+
+public struct ImageChromaticAberration: Equatable, Codable, Sendable {
+    public var amount: Double
+    public var direction: Double
+    public var falloff: Double
+
+    public init(amount: Double = 0, direction: Double = 0, falloff: Double = 0.55) {
+        self.amount = Self.clamp(amount)
+        self.direction = Self.clamp(direction)
+        self.falloff = Self.clamp(falloff)
+    }
+
+    public static let disabled = ImageChromaticAberration()
+
+    private static func clamp(_ value: Double) -> Double {
+        min(max(value, 0), 1)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case amount, direction, falloff
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            amount: try container.decodeIfPresent(Double.self, forKey: .amount) ?? 0,
+            direction: try container.decodeIfPresent(Double.self, forKey: .direction) ?? 0,
+            falloff: try container.decodeIfPresent(Double.self, forKey: .falloff) ?? 0.55
+        )
     }
 }
 

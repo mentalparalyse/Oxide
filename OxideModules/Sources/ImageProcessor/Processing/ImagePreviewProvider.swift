@@ -56,6 +56,7 @@ public final class ImagePreviewProvider {
         let adjustments = recipe.adjustments
         let grain = recipe.effects.filmGrain
         let leak = recipe.effects.lightLeak
+        let aberration = recipe.effects.chromaticAberration
         return [
             source.imageSourceURL.absoluteString,
             String(Int(maxPixelSize)),
@@ -66,7 +67,8 @@ public final class ImagePreviewProvider {
             "\(adjustments.exposure),\(adjustments.contrast),\(adjustments.saturation)",
             "\(adjustments.brightness),\(adjustments.isMonochrome)",
             "grain:\(grain.amount),\(grain.size),\(grain.seed)",
-            "leak:\(leak.amount),\(leak.position),\(leak.warmth),\(leak.seed)"
+            "leak:\(leak.amount),\(leak.position),\(leak.warmth),\(leak.seed)",
+            "aberration:\(aberration.amount),\(aberration.direction),\(aberration.falloff)"
         ].joined(separator: "|")
     }
 }

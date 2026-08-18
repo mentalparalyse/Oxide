@@ -5,6 +5,7 @@ import UIComponents
 private enum GalleryEffect: String, CaseIterable, Identifiable {
     case filmGrain = "Film Grain"
     case lightLeak = "Light Leak"
+    case chromaticAberration = "Chromatic"
 
     var id: Self { self }
 }
@@ -18,17 +19,30 @@ struct GalleryEffectsControlsView: View {
     let onLeakPositionChange: (Double) -> Void
     let onLeakWarmthChange: (Double) -> Void
     let onLightLeakChangeEnded: () -> Void
+    let onChromaticAmountChange: (Double) -> Void
+    let onChromaticDirectionChange: (Double) -> Void
+    let onChromaticFalloffChange: (Double) -> Void
+    let onChromaticChangeEnded: () -> Void
 
     @State private var selection: GalleryEffect = .filmGrain
 
     var body: some View {
         VStack(spacing: 10) {
             effectPicker
-            if selection == .filmGrain { filmGrainControls } else { lightLeakControls }
+            selectedControls
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .foregroundStyle(AppColours.appForegroundColor)
+    }
+
+    @ViewBuilder
+    private var selectedControls: some View {
+        switch selection {
+        case .filmGrain: filmGrainControls
+        case .lightLeak: lightLeakControls
+        case .chromaticAberration: chromaticControls
+        }
     }
 
     private var effectPicker: some View {
@@ -58,6 +72,14 @@ struct GalleryEffectsControlsView: View {
             effectSlider("Amount", value: effects.lightLeak.amount, range: 0...1, onChange: onLeakAmountChange, onEnd: onLightLeakChangeEnded)
             effectSlider("Position", value: effects.lightLeak.position, range: 0...1, onChange: onLeakPositionChange, onEnd: onLightLeakChangeEnded)
             effectSlider("Warmth", value: effects.lightLeak.warmth, range: 0...1, onChange: onLeakWarmthChange, onEnd: onLightLeakChangeEnded)
+        }
+    }
+
+    private var chromaticControls: some View {
+        VStack(spacing: 6) {
+            effectSlider("Amount", value: effects.chromaticAberration.amount, range: 0...1, onChange: onChromaticAmountChange, onEnd: onChromaticChangeEnded)
+            effectSlider("Direction", value: effects.chromaticAberration.direction, range: 0...1, onChange: onChromaticDirectionChange, onEnd: onChromaticChangeEnded)
+            effectSlider("Falloff", value: effects.chromaticAberration.falloff, range: 0...1, onChange: onChromaticFalloffChange, onEnd: onChromaticChangeEnded)
         }
     }
 
