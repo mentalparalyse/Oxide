@@ -101,7 +101,11 @@ struct GalleryEditingView: View {
                     effects: effects,
                     onAmountChange: presenter.setFilmGrainAmount,
                     onSizeChange: presenter.setFilmGrainSize,
-                    onChangeEnded: { Task { await presenter.commitFilmGrain() } }
+                    onFilmGrainChangeEnded: { Task { await presenter.commitFilmGrain() } },
+                    onLeakAmountChange: presenter.setLightLeakAmount,
+                    onLeakPositionChange: presenter.setLightLeakPosition,
+                    onLeakWarmthChange: presenter.setLightLeakWarmth,
+                    onLightLeakChangeEnded: { Task { await presenter.commitLightLeak() } }
                 )
             }
         case .crop:

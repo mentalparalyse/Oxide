@@ -225,11 +225,19 @@ public final class ImageProcessor: @unchecked Sendable {
     }
 
     private func applyEffects(_ effects: ImageEffects, to image: CIImage) -> CIImage {
-        FilmGrainRenderer().apply(
-            FilmGrainSettings(
-                amount: effects.filmGrain.amount,
-                size: effects.filmGrain.size,
-                seed: effects.filmGrain.seed
+        EffectPipelineRenderer().apply(
+            EffectRecipe(
+                filmGrain: FilmGrainSettings(
+                    amount: effects.filmGrain.amount,
+                    size: effects.filmGrain.size,
+                    seed: effects.filmGrain.seed
+                ),
+                lightLeak: LightLeakSettings(
+                    amount: effects.lightLeak.amount,
+                    position: effects.lightLeak.position,
+                    warmth: effects.lightLeak.warmth,
+                    seed: effects.lightLeak.seed
+                )
             ),
             to: image
         )

@@ -241,6 +241,10 @@ public final class GalleryPresenter: ObservableObject {
         draft?.effects.filmGrain.size = min(max(size, 0.5), 4)
     }
     public func commitFilmGrain() async { await recordCurrentEditStep() }
+    public func setLightLeakAmount(_ value: Double) { draft?.effects.lightLeak.amount = min(max(value, 0), 1) }
+    public func setLightLeakPosition(_ value: Double) { draft?.effects.lightLeak.position = min(max(value, 0), 1) }
+    public func setLightLeakWarmth(_ value: Double) { draft?.effects.lightLeak.warmth = min(max(value, 0), 1) }
+    public func commitLightLeak() async { await recordCurrentEditStep() }
 
     public func undoLastEdit() async {
         let state = await interactor.undoEditStep()

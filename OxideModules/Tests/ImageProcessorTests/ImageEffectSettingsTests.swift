@@ -31,4 +31,29 @@ struct ImageEffectSettingsTests {
 
         #expect(output.extent == input.extent)
     }
+
+    @Test func lightLeakSettingsClampInvalidValues() {
+        let leak = ImageLightLeak(amount: 2, position: -1, warmth: 3)
+
+        #expect(leak.amount == 1)
+        #expect(leak.position == 0)
+        #expect(leak.warmth == 1)
+    }
+
+    @Test func processorCombinesLightLeakAndFilmGrain() throws {
+        let input = CIImage(color: .gray)
+            .cropped(to: CGRect(x: 0, y: 0, width: 32, height: 24))
+        let effects = ImageEffects(
+            filmGrain: ImageFilmGrain(amount: 0.4),
+            lightLeak: ImageLightLeak(amount: 0.7)
+        )
+
+        let output = try #require(ImageProcessor().outputImage(
+            for: input,
+            presetID: nil,
+            effects: effects
+        ))
+
+        #expect(output.extent == input.extent)
+    }
 }
