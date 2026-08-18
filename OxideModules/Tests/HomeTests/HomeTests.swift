@@ -28,6 +28,7 @@ struct HomeTests {
 
 }
 
+@MainActor
 private struct StubHomeInteractor: HomeInteractorProtocol {
     let defaultTabValue: Tab
 
@@ -40,4 +41,5 @@ private struct StubHomeInteractor: HomeInteractorProtocol {
     }
 }
 
+@MainActor
 private struct StubHomeRouter: HomeRouterProtocol { }
