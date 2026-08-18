@@ -42,7 +42,7 @@ struct GalleryPhotoResolutionTests {
         #expect(GalleryPhotoResolution.originalDimensions(from: .zero) == nil)
         #expect(
             GalleryPhotoResolution.editedDimensions(
-                from: CGSize(width: .infinity, height: 100),
+                from: CGSize(width: CGFloat.infinity, height: 100),
                 crop: nil,
                 rotationDegrees: 0
             ) == nil
