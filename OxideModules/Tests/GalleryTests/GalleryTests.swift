@@ -221,7 +221,7 @@ struct GalleryTests {
         await presenter.selectFilter(secondFilter.id)
 
         #expect(presenter.draft?.selectedFilterID == secondFilter.id)
-        #expect(presenter.draft?.filterIntensity == 1)
+        #expect(presenter.draft?.filterIntensity == 0.5)
     }
 
     @Test func intensityDragRecordsHistoryOnlyWhenCommitted() async throws {
@@ -239,7 +239,7 @@ struct GalleryTests {
         await presenter.undoLastEdit()
 
         #expect(presenter.draft?.selectedFilterID == "cinematic")
-        #expect(presenter.draft?.filterIntensity == 1)
+        #expect(presenter.draft?.filterIntensity == 0.5)
     }
 
     @Test func cropDragRecordsHistoryOnlyWhenCommitted() async throws {
