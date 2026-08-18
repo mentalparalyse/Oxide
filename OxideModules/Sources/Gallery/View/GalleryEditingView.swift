@@ -5,18 +5,7 @@ import UIComponents
 
 struct GalleryEditingView: View {
     @ObservedObject var presenter: GalleryPresenter
-    @State private var activeTool: EditingTool = .filters
-
-    private enum EditingTool: String, CaseIterable {
-        case filters
-        case adjustments
-        case crop
-        case rotate
-
-        var title: String {
-            rawValue.prefix(1).uppercased() + rawValue.dropFirst()
-        }
-    }
+    @State private var activeTool: GalleryEditingTool = .filters
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,13 +34,10 @@ struct GalleryEditingView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.horizontal, 16)
 
-            toolPicker
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-
             toolContent
                 .frame(height: 176)
-                .padding(.bottom, 20)
+
+            GalleryEditingToolTabBar(selection: $activeTool)
         }
     }
 
@@ -69,26 +55,6 @@ struct GalleryEditingView: View {
                 AppColours.appColor
             }
         }
-    }
-
-    private var toolPicker: some View {
-        HStack(spacing: 4) {
-            ForEach(EditingTool.allCases, id: \.self) { tool in
-                Button {
-                    activeTool = tool
-                } label: {
-                    Text(tool.title)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(activeTool == tool ? AppColours.appForegroundColor : AppColours.appMutedForegroundColor)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(activeTool == tool ? AppColours.appBorderColor : Color.clear, in: RoundedRectangle(cornerRadius: 8))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(4)
-        .background(AppColours.appSurfaceColor, in: RoundedRectangle(cornerRadius: 12))
     }
 
     @ViewBuilder
