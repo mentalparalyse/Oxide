@@ -41,6 +41,7 @@ struct GalleryEditorPreviewSurface: View {
                         rotationDegrees: draft.rotationDegrees,
                         crop: isCropping ? nil : draft.crop,
                         adjustments: draft.adjustments,
+                        effects: draft.effects,
                         contentMode: .fit
                     )
                     .frame(width: imageSize.width, height: imageSize.height)

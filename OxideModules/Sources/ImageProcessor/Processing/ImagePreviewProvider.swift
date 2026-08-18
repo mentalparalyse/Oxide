@@ -32,6 +32,7 @@ public final class ImagePreviewProvider {
             rotationDegrees: recipe.rotationDegrees,
             crop: recipe.crop,
             adjustments: recipe.adjustments,
+            effects: recipe.effects,
             maxPixelSize: maxPixelSize
         ), !Task.isCancelled else {
             return nil
@@ -53,6 +54,7 @@ public final class ImagePreviewProvider {
         let recipe = source.imageEditRecipe
         let crop = recipe.crop
         let adjustments = recipe.adjustments
+        let grain = recipe.effects.filmGrain
         return [
             source.imageSourceURL.absoluteString,
             String(Int(maxPixelSize)),
@@ -61,7 +63,8 @@ public final class ImagePreviewProvider {
             String(ImageEditRotation.normalized(recipe.rotationDegrees)),
             crop.map { "\($0.x),\($0.y),\($0.width),\($0.height)" } ?? "no-crop",
             "\(adjustments.exposure),\(adjustments.contrast),\(adjustments.saturation)",
-            "\(adjustments.brightness),\(adjustments.isMonochrome)"
+            "\(adjustments.brightness),\(adjustments.isMonochrome)",
+            "grain:\(grain.amount),\(grain.size),\(grain.seed)"
         ].joined(separator: "|")
     }
 }

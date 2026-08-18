@@ -12,6 +12,7 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
     public var rotationDegrees: Int
     public var crop: ImageEditCrop?
     public var adjustments: ImageAdjustments
+    public var effects: ImageEffects
 
     public init(
         id: String,
@@ -21,7 +22,8 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
         filterIntensity: Double = 1.0,
         rotationDegrees: Int = 0,
         crop: ImageEditCrop? = nil,
-        adjustments: ImageAdjustments = .neutral
+        adjustments: ImageAdjustments = .neutral,
+        effects: ImageEffects = .neutral
     ) {
         self.id = id
         self.imageURI = imageURI
@@ -31,6 +33,7 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
         self.rotationDegrees = rotationDegrees
         self.crop = crop
         self.adjustments = adjustments
+        self.effects = effects
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -42,6 +45,7 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
         case rotationDegrees
         case crop
         case adjustments
+        case effects
     }
 
     public init(from decoder: Decoder) throws {
@@ -55,6 +59,7 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
         rotationDegrees = try container.decodeIfPresent(Int.self, forKey: .rotationDegrees) ?? 0
         crop = try container.decodeIfPresent(ImageEditCrop.self, forKey: .crop)
         adjustments = try container.decodeIfPresent(ImageAdjustments.self, forKey: .adjustments) ?? .neutral
+        effects = try container.decodeIfPresent(ImageEffects.self, forKey: .effects) ?? .neutral
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -67,6 +72,7 @@ public struct GalleryPhoto: Identifiable, Equatable, Codable, Sendable {
         try container.encode(rotationDegrees, forKey: .rotationDegrees)
         try container.encodeIfPresent(crop, forKey: .crop)
         try container.encode(adjustments, forKey: .adjustments)
+        try container.encode(effects, forKey: .effects)
     }
 }
 
@@ -79,7 +85,8 @@ extension GalleryPhoto: ImageProcessingSource {
             filterIntensity: filterIntensity,
             rotationDegrees: rotationDegrees,
             crop: crop,
-            adjustments: adjustments
+            adjustments: adjustments,
+            effects: effects
         )
     }
 }

@@ -6,6 +6,7 @@ import UIComponents
 enum GalleryEditingTool: String, CaseIterable, Identifiable {
     case filters
     case adjustments
+    case effects
     case crop
     case rotate
 
@@ -15,6 +16,7 @@ enum GalleryEditingTool: String, CaseIterable, Identifiable {
         switch self {
         case .filters: "Filters"
         case .adjustments: "Adjust"
+        case .effects: "Effects"
         case .crop: "Crop"
         case .rotate: "Rotate"
         }
@@ -24,6 +26,7 @@ enum GalleryEditingTool: String, CaseIterable, Identifiable {
         switch self {
         case .filters: "camera.filters"
         case .adjustments: "slider.horizontal.3"
+        case .effects: "sparkles"
         case .crop: "crop"
         case .rotate: "rotate.right"
         }

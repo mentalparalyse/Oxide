@@ -234,6 +234,14 @@ public final class GalleryPresenter: ObservableObject {
         await recordCurrentEditStep()
     }
 
+    public func setFilmGrainAmount(_ amount: Double) {
+        draft?.effects.filmGrain.amount = min(max(amount, 0), 1)
+    }
+    public func setFilmGrainSize(_ size: Double) {
+        draft?.effects.filmGrain.size = min(max(size, 0.5), 4)
+    }
+    public func commitFilmGrain() async { await recordCurrentEditStep() }
+
     public func undoLastEdit() async {
         let state = await interactor.undoEditStep()
         draft = state.currentDraft

@@ -95,6 +95,15 @@ struct GalleryEditingView: View {
                     onToggleMonochrome: { Task { await presenter.toggleMonochrome() } }
                 )
             }
+        case .effects:
+            if let effects = presenter.draft?.effects {
+                GalleryEffectsControlsView(
+                    effects: effects,
+                    onAmountChange: presenter.setFilmGrainAmount,
+                    onSizeChange: presenter.setFilmGrainSize,
+                    onChangeEnded: { Task { await presenter.commitFilmGrain() } }
+                )
+            }
         case .crop:
             GalleryCropControlsView(
                 selectedAspectRatio: presenter.draft?.cropAspectRatio,

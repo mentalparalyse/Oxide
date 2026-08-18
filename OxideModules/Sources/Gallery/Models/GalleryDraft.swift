@@ -11,6 +11,7 @@ public struct GalleryDraft: Equatable, Codable, Sendable {
     public var crop: ImageEditCrop?
     public var cropAspectRatio: Double?
     public var adjustments: ImageAdjustments
+    public var effects: ImageEffects
     
     public init(photo: GalleryPhoto) {
         self.photo = photo
@@ -20,6 +21,7 @@ public struct GalleryDraft: Equatable, Codable, Sendable {
         self.crop = photo.crop
         self.cropAspectRatio = nil
         self.adjustments = photo.adjustments
+        self.effects = photo.effects
     }
     
     public func committed() -> GalleryPhoto {
@@ -29,6 +31,7 @@ public struct GalleryDraft: Equatable, Codable, Sendable {
         updatedPhoto.rotationDegrees = ImageEditRotation.normalized(rotationDegrees)
         updatedPhoto.crop = crop
         updatedPhoto.adjustments = adjustments
+        updatedPhoto.effects = effects
         return updatedPhoto
     }
 }

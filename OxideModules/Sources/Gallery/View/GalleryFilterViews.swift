@@ -44,6 +44,7 @@ struct LUTPreviewImage: View {
     let rotationDegrees: Int
     var crop: ImageEditCrop? = nil
     var adjustments: ImageAdjustments = .neutral
+    var effects: ImageEffects = .neutral
     let contentMode: ContentMode
     var maxPixelSize: CGFloat?
     
@@ -73,7 +74,7 @@ struct LUTPreviewImage: View {
     
     private var taskID: String {
         let roundedIntensity = (intensity * 1_000).rounded() / 1_000
-        return "\(imageURL?.absoluteString ?? "nil")-\(presetID ?? "original")-\(rotationDegrees)-\(roundedIntensity)-\(cropID)-\(adjustments)"
+        return "\(imageURL?.absoluteString ?? "nil")-\(presetID ?? "original")-\(rotationDegrees)-\(roundedIntensity)-\(cropID)-\(adjustments)-\(effects)"
     }
     
     private var cropID: String {
@@ -108,6 +109,7 @@ struct LUTPreviewImage: View {
             rotationDegrees: rotationDegrees,
             crop: crop,
             adjustments: adjustments,
+            effects: effects,
             maxPixelSize: maxPixelSize
         )
 
