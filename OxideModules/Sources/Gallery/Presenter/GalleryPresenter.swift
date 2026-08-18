@@ -234,21 +234,8 @@ public final class GalleryPresenter: ObservableObject {
         await recordCurrentEditStep()
     }
 
-    public func setFilmGrainAmount(_ amount: Double) {
-        draft?.effects.filmGrain.amount = min(max(amount, 0), 1)
-    }
-    public func setFilmGrainSize(_ size: Double) {
-        draft?.effects.filmGrain.size = min(max(size, 0.5), 4)
-    }
-    public func commitFilmGrain() async { await recordCurrentEditStep() }
-    public func setLightLeakAmount(_ value: Double) { draft?.effects.lightLeak.amount = min(max(value, 0), 1) }
-    public func setLightLeakPosition(_ value: Double) { draft?.effects.lightLeak.position = min(max(value, 0), 1) }
-    public func setLightLeakWarmth(_ value: Double) { draft?.effects.lightLeak.warmth = min(max(value, 0), 1) }
-    public func commitLightLeak() async { await recordCurrentEditStep() }
-    public func setChromaticAmount(_ value: Double) { draft?.effects.chromaticAberration.amount = min(max(value, 0), 1) }
-    public func setChromaticDirection(_ value: Double) { draft?.effects.chromaticAberration.direction = min(max(value, 0), 1) }
-    public func setChromaticFalloff(_ value: Double) { draft?.effects.chromaticAberration.falloff = min(max(value, 0), 1) }
-    public func commitChromaticAberration() async { await recordCurrentEditStep() }
+    public func setEffects(_ effects: ImageEffects) { draft?.effects = effects }
+    public func commitEffects() async { await recordCurrentEditStep() }
 
     public func undoLastEdit() async {
         let state = await interactor.undoEditStep()

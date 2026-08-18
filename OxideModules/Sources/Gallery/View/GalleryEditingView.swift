@@ -96,20 +96,11 @@ struct GalleryEditingView: View {
                 )
             }
         case .effects:
-            if let effects = presenter.draft?.effects {
+            if let draft = presenter.draft {
                 GalleryEffectsControlsView(
-                    effects: effects,
-                    onAmountChange: presenter.setFilmGrainAmount,
-                    onSizeChange: presenter.setFilmGrainSize,
-                    onFilmGrainChangeEnded: { Task { await presenter.commitFilmGrain() } },
-                    onLeakAmountChange: presenter.setLightLeakAmount,
-                    onLeakPositionChange: presenter.setLightLeakPosition,
-                    onLeakWarmthChange: presenter.setLightLeakWarmth,
-                    onLightLeakChangeEnded: { Task { await presenter.commitLightLeak() } },
-                    onChromaticAmountChange: presenter.setChromaticAmount,
-                    onChromaticDirectionChange: presenter.setChromaticDirection,
-                    onChromaticFalloffChange: presenter.setChromaticFalloff,
-                    onChromaticChangeEnded: { Task { await presenter.commitChromaticAberration() } }
+                    draft: draft,
+                    onEffectsChange: presenter.setEffects,
+                    onChangeEnded: { Task { await presenter.commitEffects() } }
                 )
             }
         case .crop:

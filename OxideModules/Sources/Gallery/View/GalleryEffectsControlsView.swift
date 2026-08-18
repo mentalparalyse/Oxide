@@ -1,122 +1,186 @@
 import ImageProcessor
-@preconcurrency import SwiftUI
+import SwiftUI
 import UIComponents
 
-private enum GalleryEffect: String, CaseIterable, Identifiable {
-    case filmGrain = "Film Grain"
-    case lightLeak = "Light Leak"
-    case chromaticAberration = "Chromatic"
-
-    var id: Self { self }
-}
-
 struct GalleryEffectsControlsView: View {
-    let effects: ImageEffects
-    let onAmountChange: (Double) -> Void
-    let onSizeChange: (Double) -> Void
-    let onFilmGrainChangeEnded: () -> Void
-    let onLeakAmountChange: (Double) -> Void
-    let onLeakPositionChange: (Double) -> Void
-    let onLeakWarmthChange: (Double) -> Void
-    let onLightLeakChangeEnded: () -> Void
-    let onChromaticAmountChange: (Double) -> Void
-    let onChromaticDirectionChange: (Double) -> Void
-    let onChromaticFalloffChange: (Double) -> Void
-    let onChromaticChangeEnded: () -> Void
+    let draft: GalleryDraft
+    let onEffectsChange: (ImageEffects) -> Void
+    let onChangeEnded: () -> Void
 
-    @State private var selection: GalleryEffect = .filmGrain
+    @State private var selectionID: GalleryEffectPreset.ID
+    @State private var showsAdvancedControls = false
+
+    init(
+        draft: GalleryDraft,
+        onEffectsChange: @escaping (ImageEffects) -> Void,
+        onChangeEnded: @escaping () -> Void
+    ) {
+        self.draft = draft
+        self.onEffectsChange = onEffectsChange
+        self.onChangeEnded = onChangeEnded
+        _selectionID = State(initialValue: GalleryEffectPreset.initialSelectionID(for: draft.effects))
+    }
+
+    private var selectedPreset: GalleryEffectPreset {
+        GalleryEffectPreset.all.first { $0.id == selectionID } ?? GalleryEffectPreset.all[0]
+    }
 
     var body: some View {
-        VStack(spacing: 10) {
-            effectPicker
-            selectedControls
+        VStack(spacing: 8) {
+            if showsAdvancedControls, !selectedPreset.isNone {
+                advancedControls
+            } else {
+                GalleryEffectCarouselView(
+                    draft: draft,
+                    presets: GalleryEffectPreset.all,
+                    selectionID: selectionID,
+                    onSelect: select
+                )
+                primaryControls
+                    .padding(.horizontal, 16)
+            }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .padding(.vertical, 8)
         .foregroundStyle(AppColours.appForegroundColor)
     }
 
-    @ViewBuilder
-    private var selectedControls: some View {
-        switch selection {
-        case .filmGrain: filmGrainControls
-        case .lightLeak: lightLeakControls
-        case .chromaticAberration: chromaticControls
-        }
-    }
+    private var primaryControls: some View {
+        HStack(spacing: 10) {
+            Text(selectedPreset.isNone ? "Choose an effect" : "Intensity")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(AppColours.appMutedForegroundColor)
+                .frame(width: 86, alignment: .leading)
 
-    private var effectPicker: some View {
-        HStack(spacing: 8) {
-            ForEach(GalleryEffect.allCases) { effect in
-                Button(effect.rawValue) { selection = effect }
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(selection == effect ? Color.white : AppColours.appMutedForegroundColor)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 6)
-                    .background(selection == effect ? AppColours.buttonBacground : AppColours.appSurfaceColor, in: Capsule())
-                    .buttonStyle(.plain)
+            if !selectedPreset.isNone {
+                EffectValueSlider(
+                    externalValue: amount,
+                    range: 0...1,
+                    onChange: updateAmount,
+                    onEnd: onChangeEnded
+                )
+                Button { showsAdvancedControls = true } label: {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 14, weight: .semibold))
+                        .frame(width: 32, height: 32)
+                        .background(AppColours.appSurfaceColor, in: Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Advanced effect controls")
+            } else {
+                Spacer()
             }
-            Spacer()
         }
     }
 
-    private var filmGrainControls: some View {
+    private var advancedControls: some View {
         VStack(spacing: 8) {
-            effectSlider("Amount", value: effects.filmGrain.amount, range: 0...1, onChange: onAmountChange, onEnd: onFilmGrainChangeEnded)
-            effectSlider("Size", value: effects.filmGrain.size, range: 0.5...4, onChange: onSizeChange, onEnd: onFilmGrainChangeEnded)
+            HStack {
+                Button { showsAdvancedControls = false } label: {
+                    Label(selectedPreset.name, systemImage: "chevron.left")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .buttonStyle(.plain)
+                Spacer()
+                Button("Reset") { select(GalleryEffectPreset.all[0]) }
+                    .font(.system(size: 12, weight: .medium))
+                    .buttonStyle(.plain)
+                    .foregroundStyle(AppColours.appMutedForegroundColor)
+            }
+
+            EffectControlRow(
+                title: "Intensity",
+                value: amount,
+                range: 0...1,
+                onChange: updateAmount,
+                onEnd: onChangeEnded
+            )
+            secondaryControls
+        }
+        .padding(.horizontal, 18)
+    }
+
+    @ViewBuilder
+    private var secondaryControls: some View {
+        switch selectedPreset.kind {
+        case .none:
+            EmptyView()
+        case .filmGrain:
+            EffectControlRow(title: "Size", value: draft.effects.filmGrain.size, range: 0.5...4, onChange: updateGrainSize, onEnd: onChangeEnded)
+        case .lightLeak:
+            EffectControlRow(title: "Position", value: draft.effects.lightLeak.position, range: 0...1, onChange: updateLeakPosition, onEnd: onChangeEnded)
+            EffectControlRow(title: "Warmth", value: draft.effects.lightLeak.warmth, range: 0...1, onChange: updateLeakWarmth, onEnd: onChangeEnded)
+        case .chromaticAberration:
+            EffectControlRow(title: "Direction", value: draft.effects.chromaticAberration.direction, range: 0...1, onChange: updateChromaticDirection, onEnd: onChangeEnded)
+            EffectControlRow(title: "Falloff", value: draft.effects.chromaticAberration.falloff, range: 0...1, onChange: updateChromaticFalloff, onEnd: onChangeEnded)
         }
     }
 
-    private var lightLeakControls: some View {
-        VStack(spacing: 6) {
-            effectSlider("Amount", value: effects.lightLeak.amount, range: 0...1, onChange: onLeakAmountChange, onEnd: onLightLeakChangeEnded)
-            effectSlider("Position", value: effects.lightLeak.position, range: 0...1, onChange: onLeakPositionChange, onEnd: onLightLeakChangeEnded)
-            effectSlider("Warmth", value: effects.lightLeak.warmth, range: 0...1, onChange: onLeakWarmthChange, onEnd: onLightLeakChangeEnded)
+    private var amount: Double {
+        switch selectedPreset.kind {
+        case .none: 0
+        case .filmGrain: draft.effects.filmGrain.amount
+        case .lightLeak: draft.effects.lightLeak.amount
+        case .chromaticAberration: draft.effects.chromaticAberration.amount
         }
     }
 
-    private var chromaticControls: some View {
-        VStack(spacing: 6) {
-            effectSlider("Amount", value: effects.chromaticAberration.amount, range: 0...1, onChange: onChromaticAmountChange, onEnd: onChromaticChangeEnded)
-            effectSlider("Direction", value: effects.chromaticAberration.direction, range: 0...1, onChange: onChromaticDirectionChange, onEnd: onChromaticChangeEnded)
-            effectSlider("Falloff", value: effects.chromaticAberration.falloff, range: 0...1, onChange: onChromaticFalloffChange, onEnd: onChromaticChangeEnded)
+    private func select(_ preset: GalleryEffectPreset) {
+        selectionID = preset.id
+        showsAdvancedControls = false
+        onEffectsChange(preset.applying(to: draft.effects))
+        onChangeEnded()
+    }
+
+    private func updateAmount(_ value: Double) {
+        mutateEffects {
+            switch selectedPreset.kind {
+            case .none: break
+            case .filmGrain: $0.filmGrain.amount = value
+            case .lightLeak: $0.lightLeak.amount = value
+            case .chromaticAberration: $0.chromaticAberration.amount = value
+            }
         }
     }
 
-    private func effectSlider(
-        _ title: String,
-        value: Double,
-        range: ClosedRange<Double>,
-        onChange: @escaping (Double) -> Void,
-        onEnd: @escaping () -> Void
-    ) -> some View {
-        EffectSliderRow(
-            title: title,
-            externalValue: value,
-            range: range,
-            onChange: onChange,
-            onEnd: onEnd
-        )
+    private func updateGrainSize(_ value: Double) { mutateEffects { $0.filmGrain.size = value } }
+    private func updateLeakPosition(_ value: Double) { mutateEffects { $0.lightLeak.position = value } }
+    private func updateLeakWarmth(_ value: Double) { mutateEffects { $0.lightLeak.warmth = value } }
+    private func updateChromaticDirection(_ value: Double) { mutateEffects { $0.chromaticAberration.direction = value } }
+    private func updateChromaticFalloff(_ value: Double) { mutateEffects { $0.chromaticAberration.falloff = value } }
+
+    private func mutateEffects(_ mutation: (inout ImageEffects) -> Void) {
+        var effects = draft.effects
+        mutation(&effects)
+        onEffectsChange(effects)
     }
 }
 
-private struct EffectSliderRow: View {
+private struct EffectControlRow: View {
     let title: String
-    let externalValue: Double
+    let value: Double
     let range: ClosedRange<Double>
     let onChange: (Double) -> Void
     let onEnd: () -> Void
 
+    var body: some View {
+        HStack(spacing: 10) {
+            Text(title)
+                .font(.system(size: 11))
+                .foregroundStyle(AppColours.appMutedForegroundColor)
+                .frame(width: 58, alignment: .leading)
+            EffectValueSlider(externalValue: value, range: range, onChange: onChange, onEnd: onEnd)
+        }
+    }
+}
+
+private struct EffectValueSlider: View {
+    let externalValue: Double
+    let range: ClosedRange<Double>
+    let onChange: (Double) -> Void
+    let onEnd: () -> Void
     @State private var value: Double
 
-    init(
-        title: String,
-        externalValue: Double,
-        range: ClosedRange<Double>,
-        onChange: @escaping (Double) -> Void,
-        onEnd: @escaping () -> Void
-    ) {
-        self.title = title
+    init(externalValue: Double, range: ClosedRange<Double>, onChange: @escaping (Double) -> Void, onEnd: @escaping () -> Void) {
         self.externalValue = externalValue
         self.range = range
         self.onChange = onChange
@@ -125,15 +189,9 @@ private struct EffectSliderRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 10) {
-            Text(title)
-                .font(.system(size: 11))
-                .foregroundStyle(AppColours.appMutedForegroundColor)
-                .frame(width: 52, alignment: .leading)
-            Slider(value: $value, in: range, onEditingChanged: { if !$0 { onEnd() } })
-                .tint(AppColours.buttonBacground)
-        }
-        .onChange(of: value) { onChange($0) }
-        .onChange(of: externalValue) { value = $0 }
+        Slider(value: $value, in: range, onEditingChanged: { if !$0 { onEnd() } })
+            .tint(AppColours.buttonBacground)
+            .onChange(of: value) { onChange($0) }
+            .onChange(of: externalValue) { value = $0 }
     }
 }
