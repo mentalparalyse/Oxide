@@ -40,7 +40,7 @@ struct FilterChipView: View {
 struct LUTPreviewImage: View {
     let imageURL: URL?
     let presetID: String?
-    var intensity: Double = 1.0
+    var intensity: Double = 0.5
     let rotationDegrees: Int
     var crop: ImageEditCrop? = nil
     var adjustments: ImageAdjustments = .neutral

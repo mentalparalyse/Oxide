@@ -18,7 +18,6 @@ public final class GalleryPresenter: ObservableObject {
     @Published public private(set) var isPreparingShare = false
 
     public let filters = GalleryFilter.all
-
     private let interactor: GalleryInteractorProtocol
     private let router: GalleryRouterProtocol
     private let imageExporter: GalleryImageExporting
@@ -50,7 +49,11 @@ public final class GalleryPresenter: ObservableObject {
 
     public var selectedPhotoInfo: GalleryPhotoInfo? {
         guard let selectedPhoto else { return nil }
-        return GalleryPhotoInfo(photo: selectedPhoto, filter: filter(for: selectedPhoto.filterID))
+        return GalleryPhotoInfo(
+            photo: selectedPhoto,
+            filter: filter(for: selectedPhoto.filterID),
+            sourceSize: interactor.sourceImageSize(for: selectedPhoto.imageURI)
+        )
     }
 
     public func openCapture() {
@@ -145,7 +148,7 @@ public final class GalleryPresenter: ObservableObject {
 
         guard draft?.selectedFilterID != filterID else { return }
         draft?.selectedFilterID = filterID
-        draft?.filterIntensity = 1
+        draft?.filterIntensity = 0.5
         await recordCurrentEditStep()
     }
 
@@ -292,17 +295,5 @@ public final class GalleryPresenter: ObservableObject {
     private func filter(for filterID: String?) -> GalleryFilter? {
         guard let filterID else { return nil }
         return filters.first { $0.id == filterID }
-    }
-}
-
-public struct GalleryPhotoInfo: Equatable, Sendable {
-    public let capturedAt: Date
-    public let filterName: String?
-    public let filterIntensity: Double?
-
-    init(photo: GalleryPhoto, filter: GalleryFilter?) {
-        self.capturedAt = photo.createdAt
-        self.filterName = filter?.name
-        self.filterIntensity = photo.filterID == nil ? nil : photo.filterIntensity
     }
 }
