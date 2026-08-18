@@ -42,7 +42,8 @@ struct GalleryEditorPreviewSurface: View {
                         crop: isCropping ? nil : draft.crop,
                         adjustments: draft.adjustments,
                         effects: draft.effects,
-                        contentMode: .fit
+                        contentMode: .fit,
+                        maxPixelSize: 1_600
                     )
                     .frame(width: imageSize.width, height: imageSize.height)
 

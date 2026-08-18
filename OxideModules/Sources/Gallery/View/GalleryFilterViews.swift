@@ -68,7 +68,7 @@ struct LUTPreviewImage: View {
         }
         .clipped()
         .task(id: taskID) {
-            await renderAfterDebounce()
+            await renderLatestPreview()
         }
     }
     
@@ -83,7 +83,7 @@ struct LUTPreviewImage: View {
     }
     
     @MainActor
-    private func renderAfterDebounce() async {
+    private func renderLatestPreview() async {
         guard let imageURL else {
             renderedImage = nil
             return
@@ -91,16 +91,6 @@ struct LUTPreviewImage: View {
 
         renderGeneration += 1
         let generation = renderGeneration
-
-        do {
-            try await Task.sleep(for: .milliseconds(50))
-        } catch {
-            return
-        }
-
-        guard !Task.isCancelled, generation == renderGeneration else {
-            return
-        }
 
         let image = await Self.imageProcessor.renderUIImage(
             from: imageURL,
