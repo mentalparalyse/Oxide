@@ -29,25 +29,18 @@ struct EffectValueSlider: View {
     let range: ClosedRange<Double>
     let onChange: (Double) -> Void
     let onEnd: () -> Void
-    @State private var value: Double
-
-    init(
-        externalValue: Double,
-        range: ClosedRange<Double>,
-        onChange: @escaping (Double) -> Void,
-        onEnd: @escaping () -> Void
-    ) {
-        self.externalValue = externalValue
-        self.range = range
-        self.onChange = onChange
-        self.onEnd = onEnd
-        _value = State(initialValue: externalValue)
-    }
 
     var body: some View {
-        Slider(value: $value, in: range, onEditingChanged: { if !$0 { onEnd() } })
-            .tint(AppColours.buttonBacground)
-            .onChange(of: value) { onChange($0) }
-            .onChange(of: externalValue) { value = $0 }
+        Slider(
+            value: Binding(
+                get: { externalValue },
+                set: onChange
+            ),
+            in: range,
+            onEditingChanged: { isEditing in
+                if !isEditing { onEnd() }
+            }
+        )
+        .tint(AppColours.buttonBacground)
     }
 }
