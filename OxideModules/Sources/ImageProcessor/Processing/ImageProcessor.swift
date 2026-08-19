@@ -3,7 +3,9 @@
 import Foundation
 import CoreImage
 import Metal
+#if canImport(OxideEffects)
 import OxideEffects
+#endif
 import UIKit
 
 public final class ImageProcessor: @unchecked Sendable {
@@ -225,6 +227,7 @@ public final class ImageProcessor: @unchecked Sendable {
     }
 
     private func applyEffects(_ effects: ImageEffects, to image: CIImage) -> CIImage {
+#if canImport(OxideEffects)
         EffectPipelineRenderer().apply(
             EffectRecipe(
                 filmGrain: FilmGrainSettings(
@@ -251,6 +254,9 @@ public final class ImageProcessor: @unchecked Sendable {
             ),
             to: image
         )
+#else
+        image
+#endif
     }
 
     private func createCGImage(_ image: CIImage) -> CGImage? {
