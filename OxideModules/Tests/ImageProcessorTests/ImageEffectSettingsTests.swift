@@ -4,6 +4,30 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func spatialMaskClampsInvalidValues() {
+        let mask = ImageSpatialEffectMask(
+            mode: .spot,
+            centerX: -1,
+            centerY: 2,
+            radius: 0,
+            feather: 4
+        )
+
+        #expect(mask.centerX == 0)
+        #expect(mask.centerY == 1)
+        #expect(mask.radius == 0.05)
+        #expect(mask.feather == 1)
+    }
+
+    @Test func legacySpatialEffectsDecodeAsFullFrame() throws {
+        let chromatic = try JSONDecoder().decode(
+            ImageChromaticAberration.self,
+            from: Data(#"{"amount":0.5}"#.utf8)
+        )
+
+        #expect(chromatic.spatialMask == .fullFrame)
+    }
+
     @Test func filmGrainSettingsClampInvalidValues() {
         #expect(ImageFilmGrain(amount: -1, size: 0).amount == 0)
         #expect(ImageFilmGrain(amount: 2, size: 8).amount == 1)

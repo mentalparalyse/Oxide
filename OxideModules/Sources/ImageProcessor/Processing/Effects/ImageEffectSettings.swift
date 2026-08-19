@@ -146,13 +146,20 @@ public struct ImageHalation: Equatable, Codable, Sendable {
     public var amount: Double
     public var radius: Double
     public var threshold: Double
+    public var spatialMask: ImageSpatialEffectMask
 
     public var isEnabled: Bool { amount > 0 }
 
-    public init(amount: Double = 0, radius: Double = 0.5, threshold: Double = 0.72) {
+    public init(
+        amount: Double = 0,
+        radius: Double = 0.5,
+        threshold: Double = 0.72,
+        spatialMask: ImageSpatialEffectMask = .fullFrame
+    ) {
         self.amount = Self.clamp(amount)
         self.radius = Self.clamp(radius)
         self.threshold = Self.clamp(threshold)
+        self.spatialMask = spatialMask
     }
 
     public static let disabled = ImageHalation()
@@ -162,7 +169,7 @@ public struct ImageHalation: Equatable, Codable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case amount, radius, threshold
+        case amount, radius, threshold, spatialMask
     }
 
     public init(from decoder: Decoder) throws {
@@ -170,7 +177,8 @@ public struct ImageHalation: Equatable, Codable, Sendable {
         self.init(
             amount: try container.decodeIfPresent(Double.self, forKey: .amount) ?? 0,
             radius: try container.decodeIfPresent(Double.self, forKey: .radius) ?? 0.5,
-            threshold: try container.decodeIfPresent(Double.self, forKey: .threshold) ?? 0.72
+            threshold: try container.decodeIfPresent(Double.self, forKey: .threshold) ?? 0.72,
+            spatialMask: try container.decodeIfPresent(ImageSpatialEffectMask.self, forKey: .spatialMask) ?? .fullFrame
         )
     }
 }
@@ -179,11 +187,18 @@ public struct ImageChromaticAberration: Equatable, Codable, Sendable {
     public var amount: Double
     public var direction: Double
     public var falloff: Double
+    public var spatialMask: ImageSpatialEffectMask
 
-    public init(amount: Double = 0, direction: Double = 0, falloff: Double = 0.55) {
+    public init(
+        amount: Double = 0,
+        direction: Double = 0,
+        falloff: Double = 0.55,
+        spatialMask: ImageSpatialEffectMask = .fullFrame
+    ) {
         self.amount = Self.clamp(amount)
         self.direction = Self.clamp(direction)
         self.falloff = Self.clamp(falloff)
+        self.spatialMask = spatialMask
     }
 
     public static let disabled = ImageChromaticAberration()
@@ -193,7 +208,7 @@ public struct ImageChromaticAberration: Equatable, Codable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case amount, direction, falloff
+        case amount, direction, falloff, spatialMask
     }
 
     public init(from decoder: Decoder) throws {
@@ -201,7 +216,8 @@ public struct ImageChromaticAberration: Equatable, Codable, Sendable {
         self.init(
             amount: try container.decodeIfPresent(Double.self, forKey: .amount) ?? 0,
             direction: try container.decodeIfPresent(Double.self, forKey: .direction) ?? 0,
-            falloff: try container.decodeIfPresent(Double.self, forKey: .falloff) ?? 0.55
+            falloff: try container.decodeIfPresent(Double.self, forKey: .falloff) ?? 0.55,
+            spatialMask: try container.decodeIfPresent(ImageSpatialEffectMask.self, forKey: .spatialMask) ?? .fullFrame
         )
     }
 }
@@ -211,17 +227,20 @@ public struct ImageLightLeak: Equatable, Codable, Sendable {
     public var position: Double
     public var warmth: Double
     public var seed: UInt32
+    public var spatialMask: ImageSpatialEffectMask
 
     public init(
         amount: Double = 0,
         position: Double = 0.2,
         warmth: Double = 0.8,
-        seed: UInt32 = 1
+        seed: UInt32 = 1,
+        spatialMask: ImageSpatialEffectMask = .fullFrame
     ) {
         self.amount = Self.clamp(amount)
         self.position = Self.clamp(position)
         self.warmth = Self.clamp(warmth)
         self.seed = seed
+        self.spatialMask = spatialMask
     }
 
     public static let disabled = ImageLightLeak()
@@ -231,7 +250,7 @@ public struct ImageLightLeak: Equatable, Codable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case amount, position, warmth, seed
+        case amount, position, warmth, seed, spatialMask
     }
 
     public init(from decoder: Decoder) throws {
@@ -240,7 +259,8 @@ public struct ImageLightLeak: Equatable, Codable, Sendable {
             amount: try container.decodeIfPresent(Double.self, forKey: .amount) ?? 0,
             position: try container.decodeIfPresent(Double.self, forKey: .position) ?? 0.2,
             warmth: try container.decodeIfPresent(Double.self, forKey: .warmth) ?? 0.8,
-            seed: try container.decodeIfPresent(UInt32.self, forKey: .seed) ?? 1
+            seed: try container.decodeIfPresent(UInt32.self, forKey: .seed) ?? 1,
+            spatialMask: try container.decodeIfPresent(ImageSpatialEffectMask.self, forKey: .spatialMask) ?? .fullFrame
         )
     }
 }

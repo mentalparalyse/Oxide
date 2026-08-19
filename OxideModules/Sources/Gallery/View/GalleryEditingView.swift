@@ -1,11 +1,13 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
+import ImageProcessor
 import SwiftUI
 import UIComponents
 
 struct GalleryEditingView: View {
     @ObservedObject var presenter: GalleryPresenter
     @State private var activeTool: GalleryEditingTool = .filters
+    @State private var selectedSpatialEffectKind: GalleryEffectKind?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,7 +51,10 @@ struct GalleryEditingView: View {
                     sourceSize: presenter.editingSourceSize,
                     isCropping: activeTool == .crop,
                     onResize: presenter.resizeCrop,
-                    onResizeEnded: { Task { await presenter.commitCropResize() } }
+                    onResizeEnded: { Task { await presenter.commitCropResize() } },
+                    spatialEffectKind: activeTool == .effects ? selectedSpatialEffectKind : nil,
+                    onSpatialCenterChange: updateSpatialCenter,
+                    onSpatialCenterChangeEnded: { Task { await presenter.commitEffects() } }
                 )
             } else {
                 AppColours.appColor
@@ -100,7 +105,8 @@ struct GalleryEditingView: View {
                 GalleryEffectsControlsView(
                     draft: draft,
                     onEffectsChange: presenter.setEffects,
-                    onChangeEnded: { Task { await presenter.commitEffects() } }
+                    onChangeEnded: { Task { await presenter.commitEffects() } },
+                    onSelectedKindChange: { selectedSpatialEffectKind = $0 }
                 )
             }
         case .crop:
@@ -134,5 +140,24 @@ struct GalleryEditingView: View {
                 .accessibilityLabel("Rotate right 90 degrees")
             }
         }
+    }
+
+    private func updateSpatialCenter(_ centerX: Double, _ centerY: Double) {
+        guard let kind = selectedSpatialEffectKind,
+              var effects = presenter.draft?.effects,
+              let current = effects.spatialMask(for: kind)
+        else { return }
+
+        effects.setSpatialMask(
+            ImageSpatialEffectMask(
+                mode: current.mode,
+                centerX: centerX,
+                centerY: centerY,
+                radius: current.radius,
+                feather: current.feather
+            ),
+            for: kind
+        )
+        presenter.setEffects(effects)
     }
 }
