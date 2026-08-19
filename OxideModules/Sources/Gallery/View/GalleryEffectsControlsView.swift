@@ -6,6 +6,7 @@ struct GalleryEffectsControlsView: View {
     let draft: GalleryDraft
     let onEffectsChange: (ImageEffects) -> Void
     let onChangeEnded: () -> Void
+    let onSelectedKindChange: (GalleryEffectKind?) -> Void
 
     @State private var selectionID: GalleryEffectPreset.ID
     @State private var showsAdvancedControls = false
@@ -13,11 +14,13 @@ struct GalleryEffectsControlsView: View {
     init(
         draft: GalleryDraft,
         onEffectsChange: @escaping (ImageEffects) -> Void,
-        onChangeEnded: @escaping () -> Void
+        onChangeEnded: @escaping () -> Void,
+        onSelectedKindChange: @escaping (GalleryEffectKind?) -> Void
     ) {
         self.draft = draft
         self.onEffectsChange = onEffectsChange
         self.onChangeEnded = onChangeEnded
+        self.onSelectedKindChange = onSelectedKindChange
         _selectionID = State(initialValue: GalleryEffectPreset.initialSelectionID(for: draft.effects))
     }
 
@@ -28,7 +31,9 @@ struct GalleryEffectsControlsView: View {
     var body: some View {
         VStack(spacing: 8) {
             if showsAdvancedControls, !selectedPreset.isNone {
-                advancedControls
+                ScrollView(.vertical, showsIndicators: false) {
+                    advancedControls
+                }
             } else {
                 GalleryEffectCarouselView(
                     draft: draft,
@@ -42,6 +47,8 @@ struct GalleryEffectsControlsView: View {
         }
         .padding(.vertical, 8)
         .foregroundStyle(AppColours.appForegroundColor)
+        .onAppear { notifySelectedKind() }
+        .onChange(of: selectionID) { _ in notifySelectedKind() }
     }
 
     private var primaryControls: some View {
@@ -94,6 +101,13 @@ struct GalleryEffectsControlsView: View {
                 onChange: updateAmount,
                 onEnd: onChangeEnded
             )
+            if let spatialMask = draft.effects.spatialMask(for: selectedPreset.kind) {
+                GallerySpatialEffectControls(
+                    mask: spatialMask,
+                    onChange: updateSpatialMask,
+                    onChangeEnded: onChangeEnded
+                )
+            }
             secondaryControls
         }
         .padding(.horizontal, 18)
@@ -163,6 +177,14 @@ struct GalleryEffectsControlsView: View {
     private func updateDustAmount(_ value: Double) { mutateEffects { $0.dustAndScratches.dustAmount = value } }
     private func updateScratchAmount(_ value: Double) { mutateEffects { $0.dustAndScratches.scratchAmount = value } }
     private func updateParticleSize(_ value: Double) { mutateEffects { $0.dustAndScratches.particleSize = value } }
+
+    private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
+        mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
+    }
+
+    private func notifySelectedKind() {
+        onSelectedKindChange(selectedPreset.kind.supportsSpatialMask ? selectedPreset.kind : nil)
+    }
 
     private func mutateEffects(_ mutation: (inout ImageEffects) -> Void) {
         var effects = draft.effects

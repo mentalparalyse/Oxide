@@ -10,6 +10,9 @@ struct GalleryEditorPreviewSurface: View {
     let isCropping: Bool
     let onResize: (ImageEditCropEdge, ImageEditCrop?, Double, Double) -> Void
     let onResizeEnded: () -> Void
+    let spatialEffectKind: GalleryEffectKind?
+    let onSpatialCenterChange: (Double, Double) -> Void
+    let onSpatialCenterChangeEnded: () -> Void
 
     @State private var viewport = GalleryViewportState()
     @GestureState private var gestureScale: CGFloat = 1
@@ -56,6 +59,16 @@ struct GalleryEditorPreviewSurface: View {
                         )
                         .frame(width: imageSize.width, height: imageSize.height)
                     }
+
+                    if let mask = activeSpatialMask {
+                        GallerySpatialEffectOverlay(
+                            mask: mask,
+                            rotationDegrees: draft.rotationDegrees,
+                            onCenterChange: onSpatialCenterChange,
+                            onCenterChangeEnded: onSpatialCenterChangeEnded
+                        )
+                        .frame(width: imageSize.width, height: imageSize.height)
+                    }
                 }
                 .frame(width: imageSize.width, height: imageSize.height)
                 .scaleEffect(effectiveScale)
@@ -97,11 +110,11 @@ struct GalleryEditorPreviewSurface: View {
     private func panGesture(imageSize: CGSize, containerSize: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 8)
             .updating($gestureOffset) { value, state, _ in
-                guard !isCropping, viewport.scale > 1 else { return }
+                guard !isCropping, activeSpatialMask == nil, viewport.scale > 1 else { return }
                 state = value.translation
             }
             .onEnded { value in
-                guard !isCropping, viewport.scale > 1 else { return }
+                guard !isCropping, activeSpatialMask == nil, viewport.scale > 1 else { return }
                 viewport.applyOffset(
                     CGSize(
                         width: viewport.offset.width + value.translation.width,
@@ -130,6 +143,14 @@ struct GalleryEditorPreviewSurface: View {
 
     private var panOffset: CGSize {
         viewport.offset
+    }
+
+    private var activeSpatialMask: ImageSpatialEffectMask? {
+        guard let spatialEffectKind,
+              let mask = draft.effects.spatialMask(for: spatialEffectKind),
+              mask.mode == .spot
+        else { return nil }
+        return mask
     }
 
     private func updateZoom(by delta: CGFloat, imageSize: CGSize, containerSize: CGSize) {

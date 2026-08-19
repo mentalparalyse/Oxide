@@ -239,17 +239,20 @@ public final class ImageProcessor: @unchecked Sendable {
                     amount: effects.lightLeak.amount,
                     position: effects.lightLeak.position,
                     warmth: effects.lightLeak.warmth,
-                    seed: effects.lightLeak.seed
+                    seed: effects.lightLeak.seed,
+                    spatialMask: effects.lightLeak.spatialMask.effectMask
                 ),
                 chromaticAberration: ChromaticAberrationSettings(
                     amount: effects.chromaticAberration.amount,
                     direction: effects.chromaticAberration.direction,
-                    falloff: effects.chromaticAberration.falloff
+                    falloff: effects.chromaticAberration.falloff,
+                    spatialMask: effects.chromaticAberration.spatialMask.effectMask
                 ),
                 halation: HalationSettings(
                     amount: effects.halation.amount,
                     radius: effects.halation.radius,
-                    threshold: effects.halation.threshold
+                    threshold: effects.halation.threshold,
+                    spatialMask: effects.halation.spatialMask.effectMask
                 ),
                 dustAndScratches: DustAndScratchesSettings(
                     amount: effects.dustAndScratches.amount,
@@ -324,5 +327,19 @@ public final class ImageProcessor: @unchecked Sendable {
         }
     }
 }
+
+#if canImport(OxideEffects)
+private extension ImageSpatialEffectMask {
+    var effectMask: SpatialEffectMask {
+        SpatialEffectMask(
+            mode: mode == .spot ? .spot : .fullFrame,
+            centerX: centerX,
+            centerY: centerY,
+            radius: radius,
+            feather: feather
+        )
+    }
+}
+#endif
 
 extension CIFilter: @unchecked @retroactive Sendable { }
