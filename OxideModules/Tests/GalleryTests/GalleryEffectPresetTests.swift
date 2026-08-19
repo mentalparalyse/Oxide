@@ -8,7 +8,8 @@ struct GalleryEffectPresetTests {
             filmGrain: ImageFilmGrain(amount: 0.5),
             lightLeak: ImageLightLeak(amount: 0.5),
             chromaticAberration: ImageChromaticAberration(amount: 0.5),
-            halation: ImageHalation(amount: 0.5)
+            halation: ImageHalation(amount: 0.5),
+            dustAndScratches: ImageDustAndScratches(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -38,6 +39,14 @@ struct GalleryEffectPresetTests {
 
         #expect(result.halation.amount == 0.68)
         #expect(result.filmGrain == current.filmGrain)
+    }
+
+    @Test func applyingDustPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(halation: ImageHalation(amount: 0.3))
+        let result = preset("dust-archive").applying(to: current)
+
+        #expect(result.dustAndScratches.amount == 0.55)
+        #expect(result.halation == current.halation)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

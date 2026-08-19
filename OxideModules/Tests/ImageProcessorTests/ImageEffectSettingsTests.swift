@@ -72,7 +72,8 @@ struct ImageEffectSettingsTests {
             filmGrain: ImageFilmGrain(amount: 0.3),
             lightLeak: ImageLightLeak(amount: 0.4),
             chromaticAberration: ImageChromaticAberration(amount: 0.7),
-            halation: ImageHalation(amount: 0.5)
+            halation: ImageHalation(amount: 0.5),
+            dustAndScratches: ImageDustAndScratches(amount: 0.6)
         )
 
         let output = try #require(ImageProcessor().outputImage(
@@ -90,5 +91,19 @@ struct ImageEffectSettingsTests {
         #expect(settings.amount == 1)
         #expect(settings.radius == 0)
         #expect(settings.threshold == 1)
+    }
+
+    @Test func dustAndScratchesSettingsClampInvalidValues() {
+        let settings = ImageDustAndScratches(
+            amount: 2,
+            dustAmount: -1,
+            scratchAmount: 3,
+            particleSize: 4
+        )
+
+        #expect(settings.amount == 1)
+        #expect(settings.dustAmount == 0)
+        #expect(settings.scratchAmount == 1)
+        #expect(settings.particleSize == 1)
     }
 }

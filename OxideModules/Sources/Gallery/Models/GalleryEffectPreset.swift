@@ -6,6 +6,7 @@ enum GalleryEffectKind: String, Sendable {
     case lightLeak
     case chromaticAberration
     case halation
+    case dustAndScratches
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -30,11 +31,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.chromaticAberration = previewEffects.chromaticAberration
         case .halation:
             result.halation = previewEffects.halation
+        case .dustAndScratches:
+            result.dustAndScratches = previewEffects.dustAndScratches
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.dustAndScratches.isEnabled { return "dust-clean" }
         if effects.halation.isEnabled { return "halation-soft" }
         if effects.chromaticAberration.amount > 0 { return "chromatic-soft" }
         if effects.lightLeak.amount > 0 { return "leak-left" }
@@ -97,6 +101,24 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             name: "Dream",
             kind: .halation,
             previewEffects: ImageEffects(halation: ImageHalation(amount: 0.68, radius: 0.72, threshold: 0.55))
+        ),
+        GalleryEffectPreset(
+            id: "dust-clean",
+            name: "Clean Dust",
+            kind: .dustAndScratches,
+            previewEffects: ImageEffects(dustAndScratches: ImageDustAndScratches(amount: 0.38, dustAmount: 0.7, scratchAmount: 0.05, particleSize: 0.3, seed: 11))
+        ),
+        GalleryEffectPreset(
+            id: "dust-archive",
+            name: "Archive",
+            kind: .dustAndScratches,
+            previewEffects: ImageEffects(dustAndScratches: ImageDustAndScratches(amount: 0.55, dustAmount: 0.65, scratchAmount: 0.4, particleSize: 0.48, seed: 37))
+        ),
+        GalleryEffectPreset(
+            id: "dust-damaged",
+            name: "Damaged",
+            kind: .dustAndScratches,
+            previewEffects: ImageEffects(dustAndScratches: ImageDustAndScratches(amount: 0.78, dustAmount: 0.85, scratchAmount: 0.75, particleSize: 0.62, seed: 73))
         )
     ]
 }
