@@ -51,7 +51,8 @@ public final class ImageExportService: ImageExporting, @unchecked Sendable {
             intensity: recipe.filterIntensity,
             rotationDegrees: recipe.rotationDegrees,
             crop: recipe.crop,
-            adjustments: recipe.adjustments
+            adjustments: recipe.adjustments,
+            effects: recipe.effects
         ) else {
             throw ImageExportError.renderingFailed
         }

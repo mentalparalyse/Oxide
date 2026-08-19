@@ -65,5 +65,6 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 /AGENTS.md
 /oxide-app-design/
+/Oxide-Effects/
 OxideModules/Sources/ImageProcessor/LUTs/*
 !OxideModules/Sources/ImageProcessor/LUTs/README.md

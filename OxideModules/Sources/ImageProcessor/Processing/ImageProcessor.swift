@@ -3,6 +3,9 @@
 import Foundation
 import CoreImage
 import Metal
+#if canImport(OxideEffects)
+import OxideEffects
+#endif
 import UIKit
 
 public final class ImageProcessor: @unchecked Sendable {
@@ -43,25 +46,28 @@ public final class ImageProcessor: @unchecked Sendable {
         for inputImage: CIImage,
         presetID: String?,
         intensity: Double? = nil,
-        adjustments: ImageAdjustments = .neutral
+        adjustments: ImageAdjustments = .neutral,
+        effects: ImageEffects = .neutral
     ) -> CIImage? {
         guard
             let preset = LUTFilterPreset.all.first(where: { $0.id == (presetID ?? LUTFilterPreset.original.id) }),
             preset.id != LUTFilterPreset.original.id
         else {
-            return ImageAdjustmentFilter.apply(
+            let adjustedImage = ImageAdjustmentFilter.apply(
                 to: inputImage,
                 adjustments: adjustments
             )
+            return applyEffects(effects, to: adjustedImage)
         }
 
         guard
             let cubeData = lutPreparationService.cubeDataSynchronously(for: preset)
         else {
-            return ImageAdjustmentFilter.apply(
+            let adjustedImage = ImageAdjustmentFilter.apply(
                 to: inputImage,
                 adjustments: adjustments
             )
+            return applyEffects(effects, to: adjustedImage)
         }
 
         guard let filteredImage = LUTImageFilter.apply(
@@ -73,10 +79,11 @@ public final class ImageProcessor: @unchecked Sendable {
             return nil
         }
 
-        return ImageAdjustmentFilter.apply(
+        let adjustedImage = ImageAdjustmentFilter.apply(
             to: filteredImage,
             adjustments: adjustments
         )
+        return applyEffects(effects, to: adjustedImage)
     }
 
     public func renderUIImage(
@@ -87,6 +94,7 @@ public final class ImageProcessor: @unchecked Sendable {
         crop: ImageEditCrop? = nil,
         cropRect: CGRect? = nil,
         adjustments: ImageAdjustments = .neutral,
+        effects: ImageEffects = .neutral,
         maxPixelSize: CGFloat? = nil
     ) async -> UIImage? {
         let renderTask = Task.detached(priority: .userInitiated) { [self] () -> UIImage? in
@@ -126,7 +134,8 @@ public final class ImageProcessor: @unchecked Sendable {
                 to: processedImage,
                 adjustments: adjustments
             )
-            let rotatedImage = adjustedImage.transformed(
+            let effectedImage = applyEffects(effects, to: adjustedImage)
+            let rotatedImage = effectedImage.transformed(
                 by: rotationTransform(
                     degrees: rotationDegrees,
                     extent: adjustedImage.extent
@@ -215,6 +224,39 @@ public final class ImageProcessor: @unchecked Sendable {
         LUTFilterPreset.all.first {
             $0.id == (presetID ?? LUTFilterPreset.original.id)
         }
+    }
+
+    private func applyEffects(_ effects: ImageEffects, to image: CIImage) -> CIImage {
+#if canImport(OxideEffects)
+        EffectPipelineRenderer().apply(
+            EffectRecipe(
+                filmGrain: FilmGrainSettings(
+                    amount: effects.filmGrain.amount,
+                    size: effects.filmGrain.size,
+                    seed: effects.filmGrain.seed
+                ),
+                lightLeak: LightLeakSettings(
+                    amount: effects.lightLeak.amount,
+                    position: effects.lightLeak.position,
+                    warmth: effects.lightLeak.warmth,
+                    seed: effects.lightLeak.seed
+                ),
+                chromaticAberration: ChromaticAberrationSettings(
+                    amount: effects.chromaticAberration.amount,
+                    direction: effects.chromaticAberration.direction,
+                    falloff: effects.chromaticAberration.falloff
+                ),
+                halation: HalationSettings(
+                    amount: effects.halation.amount,
+                    radius: effects.halation.radius,
+                    threshold: effects.halation.threshold
+                )
+            ),
+            to: image
+        )
+#else
+        image
+#endif
     }
 
     private func createCGImage(_ image: CIImage) -> CGImage? {

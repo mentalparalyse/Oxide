@@ -8,12 +8,14 @@ struct GalleryEditingToolTests {
         #expect(GalleryEditingTool.allCases.map(\.title) == [
             "Filters",
             "Adjust",
+            "Effects",
             "Crop",
             "Rotate"
         ])
         #expect(GalleryEditingTool.allCases.map(\.systemImage) == [
             "camera.filters",
             "slider.horizontal.3",
+            "sparkles",
             "crop",
             "rotate.right"
         ])

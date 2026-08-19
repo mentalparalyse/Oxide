@@ -97,6 +97,27 @@ It also accepts an existing checkout, which avoids another network fetch:
 ./Scripts/install-luts.sh /path/to/Oxide-LUTs
 ```
 
+### Private effects
+
+The production effect renderer is maintained in the private
+`mentalparalyse/Oxide-Effects` repository. A public clone does not contain or
+download that implementation. Without it, `ImageProcessor` remains buildable
+and effect recipes pass images through unchanged.
+
+Maintainers with repository access can install the private package with:
+
+```sh
+./Scripts/install-effects.sh
+```
+
+The ignored checkout is placed at `Oxide-Effects/` and Swift Package Manager
+links it automatically on the next package resolution. An existing checkout
+can be installed without another network fetch:
+
+```sh
+./Scripts/install-effects.sh /path/to/Oxide-Effects
+```
+
 ## Requirements
 
 - Xcode 17 or newer

@@ -234,6 +234,9 @@ public final class GalleryPresenter: ObservableObject {
         await recordCurrentEditStep()
     }
 
+    public func setEffects(_ effects: ImageEffects) { draft?.effects = effects }
+    public func commitEffects() async { await recordCurrentEditStep() }
+
     public func undoLastEdit() async {
         let state = await interactor.undoEditStep()
         draft = state.currentDraft

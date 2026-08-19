@@ -44,16 +44,15 @@ struct LUTPreviewImage: View {
     let rotationDegrees: Int
     var crop: ImageEditCrop? = nil
     var adjustments: ImageAdjustments = .neutral
+    var effects: ImageEffects = .neutral
     let contentMode: ContentMode
     var maxPixelSize: CGFloat?
     
-    @State private var renderedImage: UIImage?
-    @State private var renderGeneration = 0
-    private static let imageProcessor = ImageProcessor()
+    @StateObject private var renderCoordinator = LUTPreviewRenderCoordinator()
     
     var body: some View {
         Group {
-            if let renderedImage {
+            if let renderedImage = renderCoordinator.image {
                 Image(uiImage: renderedImage)
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
@@ -66,59 +65,20 @@ struct LUTPreviewImage: View {
             }
         }
         .clipped()
-        .task(id: taskID) {
-            await renderAfterDebounce()
-        }
+        .onAppear { renderCoordinator.submit(renderRequest) }
+        .onChange(of: renderRequest) { renderCoordinator.submit($0) }
     }
-    
-    private var taskID: String {
-        let roundedIntensity = (intensity * 1_000).rounded() / 1_000
-        return "\(imageURL?.absoluteString ?? "nil")-\(presetID ?? "original")-\(rotationDegrees)-\(roundedIntensity)-\(cropID)-\(adjustments)"
-    }
-    
-    private var cropID: String {
-        guard let crop else { return "no-crop" }
-        return "\(crop.x)-\(crop.y)-\(crop.width)-\(crop.height)"
-    }
-    
-    @MainActor
-    private func renderAfterDebounce() async {
-        guard let imageURL else {
-            renderedImage = nil
-            return
-        }
 
-        renderGeneration += 1
-        let generation = renderGeneration
-
-        do {
-            try await Task.sleep(for: .milliseconds(50))
-        } catch {
-            return
-        }
-
-        guard !Task.isCancelled, generation == renderGeneration else {
-            return
-        }
-
-        let image = await Self.imageProcessor.renderUIImage(
-            from: imageURL,
+    private var renderRequest: LUTPreviewRenderRequest {
+        LUTPreviewRenderRequest(
+            imageURL: imageURL,
             presetID: presetID,
             intensity: intensity,
             rotationDegrees: rotationDegrees,
             crop: crop,
             adjustments: adjustments,
+            effects: effects,
             maxPixelSize: maxPixelSize
         )
-
-        guard
-            !Task.isCancelled,
-            generation == renderGeneration,
-            let image
-        else {
-            return
-        }
-
-        renderedImage = image
     }
 }

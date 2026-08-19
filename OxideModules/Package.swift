@@ -2,6 +2,38 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import Foundation
+
+let packageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+let installedEffectsPath = packageDirectory
+    .appendingPathComponent("../Oxide-Effects")
+    .standardizedFileURL
+    .path
+let legacyEffectsPath = packageDirectory
+    .appendingPathComponent("../../Oxide-Effects")
+    .standardizedFileURL
+    .path
+let privateEffectsPath: String? = {
+    guard ProcessInfo.processInfo.environment["OXIDE_DISABLE_PRIVATE_EFFECTS"] != "1" else {
+        return nil
+    }
+
+    for path in [installedEffectsPath, legacyEffectsPath] where
+        FileManager.default.fileExists(atPath: "\(path)/Package.swift")
+    {
+        return path
+    }
+    return nil
+}()
+
+let privateDependencies: [Package.Dependency] = privateEffectsPath.map {
+    [.package(path: $0)]
+} ?? []
+
+let imageProcessorDependencies: [Target.Dependency] = privateEffectsPath.map { _ in
+    [.product(name: "OxideEffects", package: "Oxide-Effects")]
+} ?? []
 
 let package = Package(
     name: "OxideModules",
@@ -39,7 +71,7 @@ let package = Package(
             targets: ["ImageProcessor"]
         ),
     ],
-    dependencies: [],
+    dependencies: privateDependencies,
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -106,7 +138,7 @@ let package = Package(
         ),
         .target(
             name: "ImageProcessor",
-            dependencies: [],
+            dependencies: imageProcessorDependencies,
             resources: [
                 .process("LUTs")
             ]
