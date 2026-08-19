@@ -260,6 +260,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     scratchAmount: effects.dustAndScratches.scratchAmount,
                     particleSize: effects.dustAndScratches.particleSize,
                     seed: effects.dustAndScratches.seed
+                ),
+                bloom: BloomSettings(
+                    amount: effects.bloom.amount,
+                    radius: effects.bloom.radius,
+                    threshold: effects.bloom.threshold,
+                    warmth: effects.bloom.warmth,
+                    spatialMask: effects.bloom.spatialMask.effectMask
                 )
             ),
             to: image

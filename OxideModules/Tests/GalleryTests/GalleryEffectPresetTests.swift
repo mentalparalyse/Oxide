@@ -9,7 +9,8 @@ struct GalleryEffectPresetTests {
             lightLeak: ImageLightLeak(amount: 0.5),
             chromaticAberration: ImageChromaticAberration(amount: 0.5),
             halation: ImageHalation(amount: 0.5),
-            dustAndScratches: ImageDustAndScratches(amount: 0.5)
+            dustAndScratches: ImageDustAndScratches(amount: 0.5),
+            bloom: ImageBloom(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -47,6 +48,14 @@ struct GalleryEffectPresetTests {
 
         #expect(result.dustAndScratches.amount == 0.55)
         #expect(result.halation == current.halation)
+    }
+
+    @Test func applyingBloomPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(dustAndScratches: ImageDustAndScratches(amount: 0.3))
+        let result = preset("bloom-dream").applying(to: current)
+
+        #expect(result.bloom.amount == 0.62)
+        #expect(result.dustAndScratches == current.dustAndScratches)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

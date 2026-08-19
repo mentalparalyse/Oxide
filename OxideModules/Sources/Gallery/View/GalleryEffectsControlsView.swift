@@ -135,6 +135,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Dust", value: draft.effects.dustAndScratches.dustAmount, range: 0...1, onChange: updateDustAmount, onEnd: onChangeEnded)
             EffectControlRow(title: "Scratches", value: draft.effects.dustAndScratches.scratchAmount, range: 0...1, onChange: updateScratchAmount, onEnd: onChangeEnded)
             EffectControlRow(title: "Size", value: draft.effects.dustAndScratches.particleSize, range: 0...1, onChange: updateParticleSize, onEnd: onChangeEnded)
+        case .bloom:
+            EffectControlRow(title: "Glow size", value: draft.effects.bloom.radius, range: 0...1, onChange: updateBloomRadius, onEnd: onChangeEnded)
+            EffectControlRow(title: "Threshold", value: draft.effects.bloom.threshold, range: 0...1, onChange: updateBloomThreshold, onEnd: onChangeEnded)
+            EffectControlRow(title: "Warmth", value: draft.effects.bloom.warmth, range: 0...1, onChange: updateBloomWarmth, onEnd: onChangeEnded)
         }
     }
 
@@ -146,6 +150,7 @@ struct GalleryEffectsControlsView: View {
         case .chromaticAberration: draft.effects.chromaticAberration.amount
         case .halation: draft.effects.halation.amount
         case .dustAndScratches: draft.effects.dustAndScratches.amount
+        case .bloom: draft.effects.bloom.amount
         }
     }
 
@@ -165,6 +170,7 @@ struct GalleryEffectsControlsView: View {
             case .chromaticAberration: $0.chromaticAberration.amount = value
             case .halation: $0.halation.amount = value
             case .dustAndScratches: $0.dustAndScratches.amount = value
+            case .bloom: $0.bloom.amount = value
             }
         }
     }
@@ -179,6 +185,9 @@ struct GalleryEffectsControlsView: View {
     private func updateDustAmount(_ value: Double) { mutateEffects { $0.dustAndScratches.dustAmount = value } }
     private func updateScratchAmount(_ value: Double) { mutateEffects { $0.dustAndScratches.scratchAmount = value } }
     private func updateParticleSize(_ value: Double) { mutateEffects { $0.dustAndScratches.particleSize = value } }
+    private func updateBloomRadius(_ value: Double) { mutateEffects { $0.bloom.radius = value } }
+    private func updateBloomThreshold(_ value: Double) { mutateEffects { $0.bloom.threshold = value } }
+    private func updateBloomWarmth(_ value: Double) { mutateEffects { $0.bloom.warmth = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

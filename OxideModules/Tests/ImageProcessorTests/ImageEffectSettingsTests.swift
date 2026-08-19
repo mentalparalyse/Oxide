@@ -4,6 +4,22 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func bloomSettingsClampInvalidValues() {
+        let settings = ImageBloom(amount: 2, radius: -1, threshold: 3, warmth: -2)
+        #expect(settings.amount == 1)
+        #expect(settings.radius == 0)
+        #expect(settings.threshold == 1)
+        #expect(settings.warmth == 0)
+    }
+
+    @Test func legacyBloomDecodesStableDefaults() throws {
+        let settings = try JSONDecoder().decode(
+            ImageBloom.self,
+            from: Data(#"{"amount":0.4}"#.utf8)
+        )
+        #expect(settings == ImageBloom(amount: 0.4))
+    }
+
     @Test func spatialMaskClampsInvalidValues() {
         let mask = ImageSpatialEffectMask(
             mode: .spot,
@@ -97,7 +113,8 @@ struct ImageEffectSettingsTests {
             lightLeak: ImageLightLeak(amount: 0.4),
             chromaticAberration: ImageChromaticAberration(amount: 0.7),
             halation: ImageHalation(amount: 0.5),
-            dustAndScratches: ImageDustAndScratches(amount: 0.6)
+            dustAndScratches: ImageDustAndScratches(amount: 0.6),
+            bloom: ImageBloom(amount: 0.5)
         )
 
         let output = try #require(ImageProcessor().outputImage(
