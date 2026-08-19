@@ -44,17 +44,20 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     public var lightLeak: ImageLightLeak
     public var chromaticAberration: ImageChromaticAberration
     public var halation: ImageHalation
+    public var dustAndScratches: ImageDustAndScratches
 
     public init(
         filmGrain: ImageFilmGrain = .disabled,
         lightLeak: ImageLightLeak = .disabled,
         chromaticAberration: ImageChromaticAberration = .disabled,
-        halation: ImageHalation = .disabled
+        halation: ImageHalation = .disabled,
+        dustAndScratches: ImageDustAndScratches = .disabled
     ) {
         self.filmGrain = filmGrain
         self.lightLeak = lightLeak
         self.chromaticAberration = chromaticAberration
         self.halation = halation
+        self.dustAndScratches = dustAndScratches
     }
 
     public static let neutral = ImageEffects()
@@ -64,6 +67,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         case lightLeak
         case chromaticAberration
         case halation
+        case dustAndScratches
     }
 
     public init(from decoder: Decoder) throws {
@@ -84,6 +88,57 @@ public struct ImageEffects: Equatable, Codable, Sendable {
             ImageHalation.self,
             forKey: .halation
         ) ?? .disabled
+        dustAndScratches = try container.decodeIfPresent(
+            ImageDustAndScratches.self,
+            forKey: .dustAndScratches
+        ) ?? .disabled
+    }
+}
+
+public struct ImageDustAndScratches: Equatable, Codable, Sendable {
+    public var amount: Double
+    public var dustAmount: Double
+    public var scratchAmount: Double
+    public var particleSize: Double
+    public var seed: UInt32
+
+    public var isEnabled: Bool {
+        amount > 0 && (dustAmount > 0 || scratchAmount > 0)
+    }
+
+    public init(
+        amount: Double = 0,
+        dustAmount: Double = 0.55,
+        scratchAmount: Double = 0.2,
+        particleSize: Double = 0.45,
+        seed: UInt32 = 1
+    ) {
+        self.amount = Self.clamp(amount)
+        self.dustAmount = Self.clamp(dustAmount)
+        self.scratchAmount = Self.clamp(scratchAmount)
+        self.particleSize = Self.clamp(particleSize)
+        self.seed = seed
+    }
+
+    public static let disabled = ImageDustAndScratches()
+
+    private static func clamp(_ value: Double) -> Double {
+        min(max(value, 0), 1)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case amount, dustAmount, scratchAmount, particleSize, seed
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            amount: try container.decodeIfPresent(Double.self, forKey: .amount) ?? 0,
+            dustAmount: try container.decodeIfPresent(Double.self, forKey: .dustAmount) ?? 0.55,
+            scratchAmount: try container.decodeIfPresent(Double.self, forKey: .scratchAmount) ?? 0.2,
+            particleSize: try container.decodeIfPresent(Double.self, forKey: .particleSize) ?? 0.45,
+            seed: try container.decodeIfPresent(UInt32.self, forKey: .seed) ?? 1
+        )
     }
 }
 

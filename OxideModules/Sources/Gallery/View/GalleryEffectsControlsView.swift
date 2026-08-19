@@ -115,6 +115,10 @@ struct GalleryEffectsControlsView: View {
         case .halation:
             EffectControlRow(title: "Radius", value: draft.effects.halation.radius, range: 0...1, onChange: updateHalationRadius, onEnd: onChangeEnded)
             EffectControlRow(title: "Threshold", value: draft.effects.halation.threshold, range: 0...1, onChange: updateHalationThreshold, onEnd: onChangeEnded)
+        case .dustAndScratches:
+            EffectControlRow(title: "Dust", value: draft.effects.dustAndScratches.dustAmount, range: 0...1, onChange: updateDustAmount, onEnd: onChangeEnded)
+            EffectControlRow(title: "Scratches", value: draft.effects.dustAndScratches.scratchAmount, range: 0...1, onChange: updateScratchAmount, onEnd: onChangeEnded)
+            EffectControlRow(title: "Size", value: draft.effects.dustAndScratches.particleSize, range: 0...1, onChange: updateParticleSize, onEnd: onChangeEnded)
         }
     }
 
@@ -125,6 +129,7 @@ struct GalleryEffectsControlsView: View {
         case .lightLeak: draft.effects.lightLeak.amount
         case .chromaticAberration: draft.effects.chromaticAberration.amount
         case .halation: draft.effects.halation.amount
+        case .dustAndScratches: draft.effects.dustAndScratches.amount
         }
     }
 
@@ -143,6 +148,7 @@ struct GalleryEffectsControlsView: View {
             case .lightLeak: $0.lightLeak.amount = value
             case .chromaticAberration: $0.chromaticAberration.amount = value
             case .halation: $0.halation.amount = value
+            case .dustAndScratches: $0.dustAndScratches.amount = value
             }
         }
     }
@@ -154,6 +160,9 @@ struct GalleryEffectsControlsView: View {
     private func updateChromaticFalloff(_ value: Double) { mutateEffects { $0.chromaticAberration.falloff = value } }
     private func updateHalationRadius(_ value: Double) { mutateEffects { $0.halation.radius = value } }
     private func updateHalationThreshold(_ value: Double) { mutateEffects { $0.halation.threshold = value } }
+    private func updateDustAmount(_ value: Double) { mutateEffects { $0.dustAndScratches.dustAmount = value } }
+    private func updateScratchAmount(_ value: Double) { mutateEffects { $0.dustAndScratches.scratchAmount = value } }
+    private func updateParticleSize(_ value: Double) { mutateEffects { $0.dustAndScratches.particleSize = value } }
 
     private func mutateEffects(_ mutation: (inout ImageEffects) -> Void) {
         var effects = draft.effects

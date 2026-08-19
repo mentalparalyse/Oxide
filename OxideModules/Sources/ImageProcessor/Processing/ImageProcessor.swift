@@ -250,6 +250,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     amount: effects.halation.amount,
                     radius: effects.halation.radius,
                     threshold: effects.halation.threshold
+                ),
+                dustAndScratches: DustAndScratchesSettings(
+                    amount: effects.dustAndScratches.amount,
+                    dustAmount: effects.dustAndScratches.dustAmount,
+                    scratchAmount: effects.dustAndScratches.scratchAmount,
+                    particleSize: effects.dustAndScratches.particleSize,
+                    seed: effects.dustAndScratches.seed
                 )
             ),
             to: image
