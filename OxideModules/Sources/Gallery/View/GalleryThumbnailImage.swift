@@ -74,7 +74,8 @@ struct GalleryThumbnailImage: View {
             String(recipe.filterIntensity),
             String(recipe.rotationDegrees),
             String(describing: recipe.crop),
-            String(describing: recipe.adjustments)
+            String(describing: recipe.adjustments),
+            String(describing: recipe.effects)
         ].joined(separator: "|")
     }
 }

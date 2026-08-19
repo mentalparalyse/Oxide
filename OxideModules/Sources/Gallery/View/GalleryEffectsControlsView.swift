@@ -48,7 +48,9 @@ struct GalleryEffectsControlsView: View {
         .padding(.vertical, 8)
         .foregroundStyle(AppColours.appForegroundColor)
         .onAppear { notifySelectedKind() }
+        .onDisappear { onSelectedKindChange(nil) }
         .onChange(of: selectionID) { _ in notifySelectedKind() }
+        .onChange(of: showsAdvancedControls) { _ in notifySelectedKind() }
     }
 
     private var primaryControls: some View {
@@ -180,10 +182,20 @@ struct GalleryEffectsControlsView: View {
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
+        onSelectedKindChange(
+            showsAdvancedControls && mask.mode == .spot ? selectedPreset.kind : nil
+        )
     }
 
     private func notifySelectedKind() {
-        onSelectedKindChange(selectedPreset.kind.supportsSpatialMask ? selectedPreset.kind : nil)
+        guard showsAdvancedControls,
+              selectedPreset.kind.supportsSpatialMask,
+              draft.effects.spatialMask(for: selectedPreset.kind)?.mode == .spot
+        else {
+            onSelectedKindChange(nil)
+            return
+        }
+        onSelectedKindChange(selectedPreset.kind)
     }
 
     private func mutateEffects(_ mutation: (inout ImageEffects) -> Void) {

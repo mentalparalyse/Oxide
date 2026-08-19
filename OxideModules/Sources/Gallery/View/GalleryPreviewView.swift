@@ -18,6 +18,7 @@ struct GalleryPreviewView: View {
                 rotationDegrees: photo.rotationDegrees,
                 crop: photo.crop,
                 adjustments: photo.adjustments,
+                effects: photo.effects,
                 contentMode: .fit
             )
             .padding(.horizontal, 4)
