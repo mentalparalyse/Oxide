@@ -4,6 +4,19 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func zoomBlurSettingsClampInvalidValues() {
+        let settings = ImageZoomBlur(amount: 2, strength: -1)
+        #expect(settings.amount == 1)
+        #expect(settings.strength == 0)
+    }
+
+    @Test func legacyZoomBlurDecodesStableDefaults() throws {
+        let settings = try JSONDecoder().decode(
+            ImageZoomBlur.self,
+            from: Data(#"{"amount":0.4}"#.utf8)
+        )
+        #expect(settings == ImageZoomBlur(amount: 0.4))
+    }
     @Test func motionBlurSettingsClampInvalidValues() {
         let settings = ImageMotionBlur(amount: 2, distance: -1, angle: 3)
         #expect(settings.amount == 1)

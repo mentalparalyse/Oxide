@@ -284,6 +284,11 @@ public final class ImageProcessor: @unchecked Sendable {
                     amount: effects.motionBlur.amount,
                     distance: effects.motionBlur.distance,
                     angle: effects.motionBlur.angle
+                ),
+                zoomBlur: ZoomBlurSettings(
+                    amount: effects.zoomBlur.amount,
+                    strength: effects.zoomBlur.strength,
+                    spatialMask: effects.zoomBlur.spatialMask.effectMask
                 )
             ),
             to: image

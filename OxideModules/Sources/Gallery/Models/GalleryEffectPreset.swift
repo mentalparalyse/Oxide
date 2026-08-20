@@ -11,6 +11,7 @@ enum GalleryEffectKind: String, Sendable {
     case vhs
     case lensWarp
     case motionBlur
+    case zoomBlur
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -45,11 +46,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.lensWarp = previewEffects.lensWarp
         case .motionBlur:
             result.motionBlur = previewEffects.motionBlur
+        case .zoomBlur:
+            result.zoomBlur = previewEffects.zoomBlur
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.zoomBlur.isEnabled { return "zoom-rush" }
         if effects.motionBlur.isEnabled { return "motion-soft" }
         if effects.lensWarp.isEnabled { return "lens-fisheye" }
         if effects.vhs.isEnabled { return "vhs-clean" }
@@ -192,6 +196,9 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         ),
         GalleryEffectPreset(id: "motion-soft", name: "Motion", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.38, distance: 0.32))),
         GalleryEffectPreset(id: "motion-speed", name: "Speed", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.68, distance: 0.78))),
-        GalleryEffectPreset(id: "motion-diagonal", name: "Diagonal", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.55, distance: 0.55, angle: 0.125)))
+        GalleryEffectPreset(id: "motion-diagonal", name: "Diagonal", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.55, distance: 0.55, angle: 0.125))),
+        GalleryEffectPreset(id: "zoom-rush", name: "Rush", kind: .zoomBlur, previewEffects: ImageEffects(zoomBlur: ImageZoomBlur(amount: 0.38, strength: 0.35))),
+        GalleryEffectPreset(id: "zoom-impact", name: "Impact", kind: .zoomBlur, previewEffects: ImageEffects(zoomBlur: ImageZoomBlur(amount: 0.62, strength: 0.62))),
+        GalleryEffectPreset(id: "zoom-warp", name: "Warp", kind: .zoomBlur, previewEffects: ImageEffects(zoomBlur: ImageZoomBlur(amount: 0.82, strength: 0.88)))
     ]
 }
