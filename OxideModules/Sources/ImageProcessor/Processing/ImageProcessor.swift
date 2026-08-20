@@ -295,6 +295,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     segments: effects.kaleidoscope.segments,
                     rotation: effects.kaleidoscope.rotation,
                     spatialMask: effects.kaleidoscope.spatialMask.effectMask
+                ),
+                sparkle: SparkleSettings(
+                    amount: effects.sparkle.amount,
+                    threshold: effects.sparkle.threshold,
+                    rayLength: effects.sparkle.rayLength,
+                    rotation: effects.sparkle.rotation,
+                    spatialMask: effects.sparkle.spatialMask.effectMask
                 )
             ),
             to: image

@@ -13,6 +13,7 @@ enum GalleryEffectKind: String, Sendable {
     case motionBlur
     case zoomBlur
     case kaleidoscope
+    case sparkle
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -51,11 +52,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.zoomBlur = previewEffects.zoomBlur
         case .kaleidoscope:
             result.kaleidoscope = previewEffects.kaleidoscope
+        case .sparkle:
+            result.sparkle = previewEffects.sparkle
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.sparkle.isEnabled { return "sparkle-soft" }
         if effects.kaleidoscope.isEnabled { return "kaleido-mirror" }
         if effects.zoomBlur.isEnabled { return "zoom-rush" }
         if effects.motionBlur.isEnabled { return "motion-soft" }
@@ -207,6 +211,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "kaleido-mirror", name: "Mirror", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.55, segments: 2))),
         GalleryEffectPreset(id: "kaleido-crystal", name: "Crystal", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.72, segments: 6, rotation: 0.08))),
         GalleryEffectPreset(id: "kaleido-prism", name: "Prism", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.82, segments: 8, rotation: 0.18))),
-        GalleryEffectPreset(id: "kaleido-portal", name: "Portal", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.9, segments: 12, rotation: 0.32)))
+        GalleryEffectPreset(id: "kaleido-portal", name: "Portal", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.9, segments: 12, rotation: 0.32))),
+        GalleryEffectPreset(id: "sparkle-soft", name: "Soft Sparkle", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.4, threshold: 0.78, rayLength: 0.28))),
+        GalleryEffectPreset(id: "sparkle-starburst", name: "Starburst", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.72, threshold: 0.62, rayLength: 0.72))),
+        GalleryEffectPreset(id: "sparkle-dream", name: "Dream Glitter", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.58, threshold: 0.48, rayLength: 0.42, rotation: 0.125))),
+        GalleryEffectPreset(id: "sparkle-neon", name: "Neon Glints", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.86, threshold: 0.7, rayLength: 0.88, rotation: 0.25)))
     ]
 }

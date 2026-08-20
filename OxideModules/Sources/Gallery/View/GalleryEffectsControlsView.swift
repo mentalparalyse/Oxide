@@ -153,6 +153,10 @@ struct GalleryEffectsControlsView: View {
         case .kaleidoscope:
             EffectControlRow(title: "Segments", value: Double(draft.effects.kaleidoscope.segments), range: 2...12, onChange: updateKaleidoscopeSegments, onEnd: onChangeEnded)
             EffectControlRow(title: "Rotation", value: draft.effects.kaleidoscope.rotation, range: 0...1, onChange: updateKaleidoscopeRotation, onEnd: onChangeEnded)
+        case .sparkle:
+            EffectControlRow(title: "Threshold", value: draft.effects.sparkle.threshold, range: 0...1, onChange: updateSparkleThreshold, onEnd: onChangeEnded)
+            EffectControlRow(title: "Ray length", value: draft.effects.sparkle.rayLength, range: 0...1, onChange: updateSparkleRayLength, onEnd: onChangeEnded)
+            EffectControlRow(title: "Rotation", value: draft.effects.sparkle.rotation, range: 0...1, onChange: updateSparkleRotation, onEnd: onChangeEnded)
         }
     }
 
@@ -170,6 +174,7 @@ struct GalleryEffectsControlsView: View {
         case .motionBlur: draft.effects.motionBlur.amount
         case .zoomBlur: draft.effects.zoomBlur.amount
         case .kaleidoscope: draft.effects.kaleidoscope.amount
+        case .sparkle: draft.effects.sparkle.amount
         }
     }
 
@@ -195,6 +200,7 @@ struct GalleryEffectsControlsView: View {
             case .motionBlur: $0.motionBlur.amount = value
             case .zoomBlur: $0.zoomBlur.amount = value
             case .kaleidoscope: $0.kaleidoscope.amount = value
+            case .sparkle: $0.sparkle.amount = value
             }
         }
     }
@@ -221,6 +227,9 @@ struct GalleryEffectsControlsView: View {
     private func updateZoomStrength(_ value: Double) { mutateEffects { $0.zoomBlur.strength = value } }
     private func updateKaleidoscopeSegments(_ value: Double) { mutateEffects { $0.kaleidoscope.segments = Int(value.rounded()) } }
     private func updateKaleidoscopeRotation(_ value: Double) { mutateEffects { $0.kaleidoscope.rotation = value } }
+    private func updateSparkleThreshold(_ value: Double) { mutateEffects { $0.sparkle.threshold = value } }
+    private func updateSparkleRayLength(_ value: Double) { mutateEffects { $0.sparkle.rayLength = value } }
+    private func updateSparkleRotation(_ value: Double) { mutateEffects { $0.sparkle.rotation = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
