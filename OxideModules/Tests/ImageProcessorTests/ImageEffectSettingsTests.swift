@@ -4,6 +4,19 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func lensWarpSettingsClampInvalidValues() {
+        let settings = ImageLensWarp(amount: 2, scale: -3)
+        #expect(settings.amount == 1)
+        #expect(settings.scale == -1)
+    }
+
+    @Test func legacyLensWarpDecodesStableDefaults() throws {
+        let settings = try JSONDecoder().decode(
+            ImageLensWarp.self,
+            from: Data(#"{"amount":0.4}"#.utf8)
+        )
+        #expect(settings == ImageLensWarp(amount: 0.4))
+    }
     @Test func vhsSettingsClampInvalidValues() {
         let settings = ImageVHS(amount: 2, distortion: -1, scanlines: 3, colorBleed: -2)
         #expect(settings.amount == 1)
@@ -130,7 +143,8 @@ struct ImageEffectSettingsTests {
             halation: ImageHalation(amount: 0.5),
             dustAndScratches: ImageDustAndScratches(amount: 0.6),
             bloom: ImageBloom(amount: 0.5),
-            vhs: ImageVHS(amount: 0.6)
+            vhs: ImageVHS(amount: 0.6),
+            lensWarp: ImageLensWarp(amount: 0.5)
         )
 
         let output = try #require(ImageProcessor().outputImage(

@@ -11,7 +11,8 @@ struct GalleryEffectPresetTests {
             halation: ImageHalation(amount: 0.5),
             dustAndScratches: ImageDustAndScratches(amount: 0.5),
             bloom: ImageBloom(amount: 0.5),
-            vhs: ImageVHS(amount: 0.5)
+            vhs: ImageVHS(amount: 0.5),
+            lensWarp: ImageLensWarp(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -65,6 +66,14 @@ struct GalleryEffectPresetTests {
 
         #expect(result.vhs.amount == 0.68)
         #expect(result.bloom == current.bloom)
+    }
+
+    @Test func applyingLensWarpPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(vhs: ImageVHS(amount: 0.3))
+        let result = preset("lens-pinch").applying(to: current)
+
+        #expect(result.lensWarp.scale == -0.65)
+        #expect(result.vhs == current.vhs)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

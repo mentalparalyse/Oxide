@@ -9,6 +9,7 @@ enum GalleryEffectKind: String, Sendable {
     case dustAndScratches
     case bloom
     case vhs
+    case lensWarp
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -39,11 +40,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.bloom = previewEffects.bloom
         case .vhs:
             result.vhs = previewEffects.vhs
+        case .lensWarp:
+            result.lensWarp = previewEffects.lensWarp
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.lensWarp.isEnabled { return "lens-fisheye" }
         if effects.vhs.isEnabled { return "vhs-clean" }
         if effects.bloom.isEnabled { return "bloom-soft" }
         if effects.dustAndScratches.isEnabled { return "dust-clean" }
@@ -163,6 +167,24 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             name: "RGB Tape",
             kind: .vhs,
             previewEffects: ImageEffects(vhs: ImageVHS(amount: 0.72, distortion: 0.4, scanlines: 0.32, colorBleed: 0.88, seed: 31))
+        ),
+        GalleryEffectPreset(
+            id: "lens-fisheye",
+            name: "Fisheye",
+            kind: .lensWarp,
+            previewEffects: ImageEffects(lensWarp: ImageLensWarp(amount: 0.68, scale: 0.72))
+        ),
+        GalleryEffectPreset(
+            id: "lens-bulge",
+            name: "Bulge",
+            kind: .lensWarp,
+            previewEffects: ImageEffects(lensWarp: ImageLensWarp(amount: 0.45, scale: 0.45))
+        ),
+        GalleryEffectPreset(
+            id: "lens-pinch",
+            name: "Pinch",
+            kind: .lensWarp,
+            previewEffects: ImageEffects(lensWarp: ImageLensWarp(amount: 0.62, scale: -0.65))
         )
     ]
 }

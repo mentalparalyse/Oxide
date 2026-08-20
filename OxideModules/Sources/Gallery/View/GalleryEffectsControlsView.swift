@@ -143,6 +143,8 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Distortion", value: draft.effects.vhs.distortion, range: 0...1, onChange: updateVHSDistortion, onEnd: onChangeEnded)
             EffectControlRow(title: "Scanlines", value: draft.effects.vhs.scanlines, range: 0...1, onChange: updateVHSScanlines, onEnd: onChangeEnded)
             EffectControlRow(title: "Color bleed", value: draft.effects.vhs.colorBleed, range: 0...1, onChange: updateVHSColorBleed, onEnd: onChangeEnded)
+        case .lensWarp:
+            EffectControlRow(title: "Warp", value: draft.effects.lensWarp.scale, range: -1...1, onChange: updateLensWarpScale, onEnd: onChangeEnded)
         }
     }
 
@@ -156,6 +158,7 @@ struct GalleryEffectsControlsView: View {
         case .dustAndScratches: draft.effects.dustAndScratches.amount
         case .bloom: draft.effects.bloom.amount
         case .vhs: draft.effects.vhs.amount
+        case .lensWarp: draft.effects.lensWarp.amount
         }
     }
 
@@ -177,6 +180,7 @@ struct GalleryEffectsControlsView: View {
             case .dustAndScratches: $0.dustAndScratches.amount = value
             case .bloom: $0.bloom.amount = value
             case .vhs: $0.vhs.amount = value
+            case .lensWarp: $0.lensWarp.amount = value
             }
         }
     }
@@ -197,6 +201,7 @@ struct GalleryEffectsControlsView: View {
     private func updateVHSDistortion(_ value: Double) { mutateEffects { $0.vhs.distortion = value } }
     private func updateVHSScanlines(_ value: Double) { mutateEffects { $0.vhs.scanlines = value } }
     private func updateVHSColorBleed(_ value: Double) { mutateEffects { $0.vhs.colorBleed = value } }
+    private func updateLensWarpScale(_ value: Double) { mutateEffects { $0.lensWarp.scale = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
