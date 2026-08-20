@@ -150,6 +150,9 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Angle", value: draft.effects.motionBlur.angle, range: 0...1, onChange: updateMotionAngle, onEnd: onChangeEnded)
         case .zoomBlur:
             EffectControlRow(title: "Strength", value: draft.effects.zoomBlur.strength, range: 0...1, onChange: updateZoomStrength, onEnd: onChangeEnded)
+        case .kaleidoscope:
+            EffectControlRow(title: "Segments", value: Double(draft.effects.kaleidoscope.segments), range: 2...12, onChange: updateKaleidoscopeSegments, onEnd: onChangeEnded)
+            EffectControlRow(title: "Rotation", value: draft.effects.kaleidoscope.rotation, range: 0...1, onChange: updateKaleidoscopeRotation, onEnd: onChangeEnded)
         }
     }
 
@@ -166,6 +169,7 @@ struct GalleryEffectsControlsView: View {
         case .lensWarp: draft.effects.lensWarp.amount
         case .motionBlur: draft.effects.motionBlur.amount
         case .zoomBlur: draft.effects.zoomBlur.amount
+        case .kaleidoscope: draft.effects.kaleidoscope.amount
         }
     }
 
@@ -190,6 +194,7 @@ struct GalleryEffectsControlsView: View {
             case .lensWarp: $0.lensWarp.amount = value
             case .motionBlur: $0.motionBlur.amount = value
             case .zoomBlur: $0.zoomBlur.amount = value
+            case .kaleidoscope: $0.kaleidoscope.amount = value
             }
         }
     }
@@ -214,6 +219,8 @@ struct GalleryEffectsControlsView: View {
     private func updateMotionDistance(_ value: Double) { mutateEffects { $0.motionBlur.distance = value } }
     private func updateMotionAngle(_ value: Double) { mutateEffects { $0.motionBlur.angle = value } }
     private func updateZoomStrength(_ value: Double) { mutateEffects { $0.zoomBlur.strength = value } }
+    private func updateKaleidoscopeSegments(_ value: Double) { mutateEffects { $0.kaleidoscope.segments = Int(value.rounded()) } }
+    private func updateKaleidoscopeRotation(_ value: Double) { mutateEffects { $0.kaleidoscope.rotation = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

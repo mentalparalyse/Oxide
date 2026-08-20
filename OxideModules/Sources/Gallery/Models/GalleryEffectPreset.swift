@@ -12,6 +12,7 @@ enum GalleryEffectKind: String, Sendable {
     case lensWarp
     case motionBlur
     case zoomBlur
+    case kaleidoscope
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -48,11 +49,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.motionBlur = previewEffects.motionBlur
         case .zoomBlur:
             result.zoomBlur = previewEffects.zoomBlur
+        case .kaleidoscope:
+            result.kaleidoscope = previewEffects.kaleidoscope
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.kaleidoscope.isEnabled { return "kaleido-mirror" }
         if effects.zoomBlur.isEnabled { return "zoom-rush" }
         if effects.motionBlur.isEnabled { return "motion-soft" }
         if effects.lensWarp.isEnabled { return "lens-fisheye" }
@@ -199,6 +203,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "motion-diagonal", name: "Diagonal", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.55, distance: 0.55, angle: 0.125))),
         GalleryEffectPreset(id: "zoom-rush", name: "Rush", kind: .zoomBlur, previewEffects: ImageEffects(zoomBlur: ImageZoomBlur(amount: 0.38, strength: 0.35))),
         GalleryEffectPreset(id: "zoom-impact", name: "Impact", kind: .zoomBlur, previewEffects: ImageEffects(zoomBlur: ImageZoomBlur(amount: 0.62, strength: 0.62))),
-        GalleryEffectPreset(id: "zoom-warp", name: "Warp", kind: .zoomBlur, previewEffects: ImageEffects(zoomBlur: ImageZoomBlur(amount: 0.82, strength: 0.88)))
+        GalleryEffectPreset(id: "zoom-warp", name: "Warp", kind: .zoomBlur, previewEffects: ImageEffects(zoomBlur: ImageZoomBlur(amount: 0.82, strength: 0.88))),
+        GalleryEffectPreset(id: "kaleido-mirror", name: "Mirror", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.55, segments: 2))),
+        GalleryEffectPreset(id: "kaleido-crystal", name: "Crystal", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.72, segments: 6, rotation: 0.08))),
+        GalleryEffectPreset(id: "kaleido-prism", name: "Prism", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.82, segments: 8, rotation: 0.18))),
+        GalleryEffectPreset(id: "kaleido-portal", name: "Portal", kind: .kaleidoscope, previewEffects: ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.9, segments: 12, rotation: 0.32)))
     ]
 }
