@@ -18,8 +18,19 @@ public enum AppColours {
     public static let navigationForegroundColor = Color(hex: 0x44D7B6)
     ///Colour applied to all texts in app.
     public static let appForegroundColor = Color.white
-    ///Color applied to buttons background
-    public static let buttonBacground = Color(hex: 0xFF6B35)
+    ///Primary accent used for actions and selected controls.
+    public static let accent = Color(hex: 0x8B7CFF)
+    ///Darker accent used while a control is pressed.
+    public static let accentPressed = Color(hex: 0x7566E8)
+    ///Lighter accent for high-contrast details on dark surfaces.
+    public static let accentHighContrast = Color(hex: 0xA89DFF)
+    ///Subtle accent fill used behind selected content.
+    public static let accentSelectionBackground = accent.opacity(0.16)
+    ///Accent glow used for focus and emphasis without adding a solid fill.
+    public static let accentFocusGlow = accent.opacity(0.30)
+
+    ///Compatibility alias for existing call sites. Prefer `accent` in new code.
+    public static let buttonBacground = accent
 }
 
 ///App uses system font as main so to make it easier to access I've created this enum
