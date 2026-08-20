@@ -145,6 +145,9 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Color bleed", value: draft.effects.vhs.colorBleed, range: 0...1, onChange: updateVHSColorBleed, onEnd: onChangeEnded)
         case .lensWarp:
             EffectControlRow(title: "Warp", value: draft.effects.lensWarp.scale, range: -1...1, onChange: updateLensWarpScale, onEnd: onChangeEnded)
+        case .motionBlur:
+            EffectControlRow(title: "Distance", value: draft.effects.motionBlur.distance, range: 0...1, onChange: updateMotionDistance, onEnd: onChangeEnded)
+            EffectControlRow(title: "Angle", value: draft.effects.motionBlur.angle, range: 0...1, onChange: updateMotionAngle, onEnd: onChangeEnded)
         }
     }
 
@@ -159,6 +162,7 @@ struct GalleryEffectsControlsView: View {
         case .bloom: draft.effects.bloom.amount
         case .vhs: draft.effects.vhs.amount
         case .lensWarp: draft.effects.lensWarp.amount
+        case .motionBlur: draft.effects.motionBlur.amount
         }
     }
 
@@ -181,6 +185,7 @@ struct GalleryEffectsControlsView: View {
             case .bloom: $0.bloom.amount = value
             case .vhs: $0.vhs.amount = value
             case .lensWarp: $0.lensWarp.amount = value
+            case .motionBlur: $0.motionBlur.amount = value
             }
         }
     }
@@ -202,6 +207,8 @@ struct GalleryEffectsControlsView: View {
     private func updateVHSScanlines(_ value: Double) { mutateEffects { $0.vhs.scanlines = value } }
     private func updateVHSColorBleed(_ value: Double) { mutateEffects { $0.vhs.colorBleed = value } }
     private func updateLensWarpScale(_ value: Double) { mutateEffects { $0.lensWarp.scale = value } }
+    private func updateMotionDistance(_ value: Double) { mutateEffects { $0.motionBlur.distance = value } }
+    private func updateMotionAngle(_ value: Double) { mutateEffects { $0.motionBlur.angle = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

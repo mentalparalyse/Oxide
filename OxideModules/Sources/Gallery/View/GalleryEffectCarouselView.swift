@@ -77,6 +77,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.bloom.isEnabled
                 && !draft.effects.vhs.isEnabled
                 && !draft.effects.lensWarp.isEnabled
+                && !draft.effects.motionBlur.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -93,6 +94,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.vhs.isEnabled else { return false }
         case .lensWarp:
             guard draft.effects.lensWarp.isEnabled else { return false }
+        case .motionBlur:
+            guard draft.effects.motionBlur.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -141,6 +144,10 @@ struct GalleryEffectCarouselView: View {
         case .lensWarp:
             return abs(draft.effects.lensWarp.amount - preset.previewEffects.lensWarp.amount)
                 + abs(draft.effects.lensWarp.scale - preset.previewEffects.lensWarp.scale)
+        case .motionBlur:
+            return abs(draft.effects.motionBlur.amount - preset.previewEffects.motionBlur.amount)
+                + abs(draft.effects.motionBlur.distance - preset.previewEffects.motionBlur.distance)
+                + abs(draft.effects.motionBlur.angle - preset.previewEffects.motionBlur.angle)
         }
     }
 }

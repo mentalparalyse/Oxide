@@ -10,6 +10,7 @@ enum GalleryEffectKind: String, Sendable {
     case bloom
     case vhs
     case lensWarp
+    case motionBlur
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -42,11 +43,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.vhs = previewEffects.vhs
         case .lensWarp:
             result.lensWarp = previewEffects.lensWarp
+        case .motionBlur:
+            result.motionBlur = previewEffects.motionBlur
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.motionBlur.isEnabled { return "motion-soft" }
         if effects.lensWarp.isEnabled { return "lens-fisheye" }
         if effects.vhs.isEnabled { return "vhs-clean" }
         if effects.bloom.isEnabled { return "bloom-soft" }
@@ -185,6 +189,9 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             name: "Pinch",
             kind: .lensWarp,
             previewEffects: ImageEffects(lensWarp: ImageLensWarp(amount: 0.62, scale: -0.65))
-        )
+        ),
+        GalleryEffectPreset(id: "motion-soft", name: "Motion", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.38, distance: 0.32))),
+        GalleryEffectPreset(id: "motion-speed", name: "Speed", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.68, distance: 0.78))),
+        GalleryEffectPreset(id: "motion-diagonal", name: "Diagonal", kind: .motionBlur, previewEffects: ImageEffects(motionBlur: ImageMotionBlur(amount: 0.55, distance: 0.55, angle: 0.125)))
     ]
 }

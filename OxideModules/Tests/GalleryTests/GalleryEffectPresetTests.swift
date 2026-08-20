@@ -76,6 +76,13 @@ struct GalleryEffectPresetTests {
         #expect(result.vhs == current.vhs)
     }
 
+    @Test func applyingMotionBlurPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(lensWarp: ImageLensWarp(amount: 0.3))
+        let result = preset("motion-speed").applying(to: current)
+        #expect(result.motionBlur.amount == 0.68)
+        #expect(result.lensWarp == current.lensWarp)
+    }
+
     @Test func initialSelectionPrioritizesVisibleTopLayer() {
         let effects = ImageEffects(
             filmGrain: ImageFilmGrain(amount: 0.2),
