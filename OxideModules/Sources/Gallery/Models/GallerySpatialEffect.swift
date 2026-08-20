@@ -5,7 +5,7 @@ extension GalleryEffectKind {
         switch self {
         case .lightLeak, .chromaticAberration, .halation, .bloom:
             true
-        case .none, .filmGrain, .dustAndScratches:
+        case .none, .filmGrain, .dustAndScratches, .vhs:
             false
         }
     }
@@ -18,7 +18,7 @@ extension ImageEffects {
         case .chromaticAberration: chromaticAberration.spatialMask
         case .halation: halation.spatialMask
         case .bloom: bloom.spatialMask
-        case .none, .filmGrain, .dustAndScratches: nil
+        case .none, .filmGrain, .dustAndScratches, .vhs: nil
         }
     }
 
@@ -31,7 +31,7 @@ extension ImageEffects {
         case .chromaticAberration: chromaticAberration.spatialMask = mask
         case .halation: halation.spatialMask = mask
         case .bloom: bloom.spatialMask = mask
-        case .none, .filmGrain, .dustAndScratches: break
+        case .none, .filmGrain, .dustAndScratches, .vhs: break
         }
     }
 }

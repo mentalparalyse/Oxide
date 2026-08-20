@@ -8,6 +8,7 @@ enum GalleryEffectKind: String, Sendable {
     case halation
     case dustAndScratches
     case bloom
+    case vhs
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -36,11 +37,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.dustAndScratches = previewEffects.dustAndScratches
         case .bloom:
             result.bloom = previewEffects.bloom
+        case .vhs:
+            result.vhs = previewEffects.vhs
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.vhs.isEnabled { return "vhs-clean" }
         if effects.bloom.isEnabled { return "bloom-soft" }
         if effects.dustAndScratches.isEnabled { return "dust-clean" }
         if effects.halation.isEnabled { return "halation-soft" }
@@ -141,6 +145,24 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             name: "Neon",
             kind: .bloom,
             previewEffects: ImageEffects(bloom: ImageBloom(amount: 0.7, radius: 0.32, threshold: 0.64, warmth: 0.18))
+        ),
+        GalleryEffectPreset(
+            id: "vhs-clean",
+            name: "VHS",
+            kind: .vhs,
+            previewEffects: ImageEffects(vhs: ImageVHS(amount: 0.42, distortion: 0.28, scanlines: 0.38, colorBleed: 0.3, seed: 7))
+        ),
+        GalleryEffectPreset(
+            id: "vhs-tracking",
+            name: "Tracking",
+            kind: .vhs,
+            previewEffects: ImageEffects(vhs: ImageVHS(amount: 0.68, distortion: 0.82, scanlines: 0.55, colorBleed: 0.44, seed: 19))
+        ),
+        GalleryEffectPreset(
+            id: "vhs-rgb",
+            name: "RGB Tape",
+            kind: .vhs,
+            previewEffects: ImageEffects(vhs: ImageVHS(amount: 0.72, distortion: 0.4, scanlines: 0.32, colorBleed: 0.88, seed: 31))
         )
     ]
 }

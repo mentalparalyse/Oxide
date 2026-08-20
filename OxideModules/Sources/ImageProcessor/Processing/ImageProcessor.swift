@@ -267,6 +267,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     threshold: effects.bloom.threshold,
                     warmth: effects.bloom.warmth,
                     spatialMask: effects.bloom.spatialMask.effectMask
+                ),
+                vhs: VHSSettings(
+                    amount: effects.vhs.amount,
+                    distortion: effects.vhs.distortion,
+                    scanlines: effects.vhs.scanlines,
+                    colorBleed: effects.vhs.colorBleed,
+                    seed: effects.vhs.seed
                 )
             ),
             to: image

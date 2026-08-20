@@ -4,6 +4,21 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func vhsSettingsClampInvalidValues() {
+        let settings = ImageVHS(amount: 2, distortion: -1, scanlines: 3, colorBleed: -2)
+        #expect(settings.amount == 1)
+        #expect(settings.distortion == 0)
+        #expect(settings.scanlines == 1)
+        #expect(settings.colorBleed == 0)
+    }
+
+    @Test func legacyVHSDecodesStableDefaults() throws {
+        let settings = try JSONDecoder().decode(
+            ImageVHS.self,
+            from: Data(#"{"amount":0.4}"#.utf8)
+        )
+        #expect(settings == ImageVHS(amount: 0.4))
+    }
     @Test func bloomSettingsClampInvalidValues() {
         let settings = ImageBloom(amount: 2, radius: -1, threshold: 3, warmth: -2)
         #expect(settings.amount == 1)
@@ -114,7 +129,8 @@ struct ImageEffectSettingsTests {
             chromaticAberration: ImageChromaticAberration(amount: 0.7),
             halation: ImageHalation(amount: 0.5),
             dustAndScratches: ImageDustAndScratches(amount: 0.6),
-            bloom: ImageBloom(amount: 0.5)
+            bloom: ImageBloom(amount: 0.5),
+            vhs: ImageVHS(amount: 0.6)
         )
 
         let output = try #require(ImageProcessor().outputImage(

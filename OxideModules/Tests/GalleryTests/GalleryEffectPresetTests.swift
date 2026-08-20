@@ -10,7 +10,8 @@ struct GalleryEffectPresetTests {
             chromaticAberration: ImageChromaticAberration(amount: 0.5),
             halation: ImageHalation(amount: 0.5),
             dustAndScratches: ImageDustAndScratches(amount: 0.5),
-            bloom: ImageBloom(amount: 0.5)
+            bloom: ImageBloom(amount: 0.5),
+            vhs: ImageVHS(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -56,6 +57,14 @@ struct GalleryEffectPresetTests {
 
         #expect(result.bloom.amount == 0.62)
         #expect(result.dustAndScratches == current.dustAndScratches)
+    }
+
+    @Test func applyingVHSPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(bloom: ImageBloom(amount: 0.3))
+        let result = preset("vhs-tracking").applying(to: current)
+
+        #expect(result.vhs.amount == 0.68)
+        #expect(result.bloom == current.bloom)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

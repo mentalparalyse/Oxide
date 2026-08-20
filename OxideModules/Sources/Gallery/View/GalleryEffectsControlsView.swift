@@ -139,6 +139,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Glow size", value: draft.effects.bloom.radius, range: 0...1, onChange: updateBloomRadius, onEnd: onChangeEnded)
             EffectControlRow(title: "Threshold", value: draft.effects.bloom.threshold, range: 0...1, onChange: updateBloomThreshold, onEnd: onChangeEnded)
             EffectControlRow(title: "Warmth", value: draft.effects.bloom.warmth, range: 0...1, onChange: updateBloomWarmth, onEnd: onChangeEnded)
+        case .vhs:
+            EffectControlRow(title: "Distortion", value: draft.effects.vhs.distortion, range: 0...1, onChange: updateVHSDistortion, onEnd: onChangeEnded)
+            EffectControlRow(title: "Scanlines", value: draft.effects.vhs.scanlines, range: 0...1, onChange: updateVHSScanlines, onEnd: onChangeEnded)
+            EffectControlRow(title: "Color bleed", value: draft.effects.vhs.colorBleed, range: 0...1, onChange: updateVHSColorBleed, onEnd: onChangeEnded)
         }
     }
 
@@ -151,6 +155,7 @@ struct GalleryEffectsControlsView: View {
         case .halation: draft.effects.halation.amount
         case .dustAndScratches: draft.effects.dustAndScratches.amount
         case .bloom: draft.effects.bloom.amount
+        case .vhs: draft.effects.vhs.amount
         }
     }
 
@@ -171,6 +176,7 @@ struct GalleryEffectsControlsView: View {
             case .halation: $0.halation.amount = value
             case .dustAndScratches: $0.dustAndScratches.amount = value
             case .bloom: $0.bloom.amount = value
+            case .vhs: $0.vhs.amount = value
             }
         }
     }
@@ -188,6 +194,9 @@ struct GalleryEffectsControlsView: View {
     private func updateBloomRadius(_ value: Double) { mutateEffects { $0.bloom.radius = value } }
     private func updateBloomThreshold(_ value: Double) { mutateEffects { $0.bloom.threshold = value } }
     private func updateBloomWarmth(_ value: Double) { mutateEffects { $0.bloom.warmth = value } }
+    private func updateVHSDistortion(_ value: Double) { mutateEffects { $0.vhs.distortion = value } }
+    private func updateVHSScanlines(_ value: Double) { mutateEffects { $0.vhs.scanlines = value } }
+    private func updateVHSColorBleed(_ value: Double) { mutateEffects { $0.vhs.colorBleed = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
