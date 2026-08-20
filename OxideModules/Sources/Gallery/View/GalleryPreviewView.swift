@@ -11,17 +11,20 @@ struct GalleryPreviewView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            LUTPreviewImage(
-                imageURL: photo.imageURI,
-                presetID: photo.filterID,
-                intensity: photo.filterIntensity,
-                rotationDegrees: photo.rotationDegrees,
-                crop: photo.crop,
-                adjustments: photo.adjustments,
-                effects: photo.effects,
-                contentMode: .fit
-            )
-            .padding(.horizontal, 4)
+            GalleryZoomablePreview {
+                LUTPreviewImage(
+                    imageURL: photo.imageURI,
+                    presetID: photo.filterID,
+                    intensity: photo.filterIntensity,
+                    rotationDegrees: photo.rotationDegrees,
+                    crop: photo.crop,
+                    adjustments: photo.adjustments,
+                    effects: photo.effects,
+                    contentMode: .fit
+                )
+                .padding(.horizontal, 4)
+            }
+            .id(photo.id)
 
             VStack {
                 HStack {
