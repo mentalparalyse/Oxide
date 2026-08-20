@@ -274,6 +274,11 @@ public final class ImageProcessor: @unchecked Sendable {
                     scanlines: effects.vhs.scanlines,
                     colorBleed: effects.vhs.colorBleed,
                     seed: effects.vhs.seed
+                ),
+                lensWarp: LensWarpSettings(
+                    amount: effects.lensWarp.amount,
+                    scale: effects.lensWarp.scale,
+                    spatialMask: effects.lensWarp.spatialMask.effectMask
                 )
             ),
             to: image
