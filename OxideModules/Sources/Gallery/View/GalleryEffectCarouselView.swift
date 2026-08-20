@@ -80,6 +80,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.motionBlur.isEnabled
                 && !draft.effects.zoomBlur.isEnabled
                 && !draft.effects.kaleidoscope.isEnabled
+                && !draft.effects.sparkle.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -102,6 +103,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.zoomBlur.isEnabled else { return false }
         case .kaleidoscope:
             guard draft.effects.kaleidoscope.isEnabled else { return false }
+        case .sparkle:
+            guard draft.effects.sparkle.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -161,6 +164,11 @@ struct GalleryEffectCarouselView: View {
             return abs(draft.effects.kaleidoscope.amount - preset.previewEffects.kaleidoscope.amount)
                 + abs(Double(draft.effects.kaleidoscope.segments - preset.previewEffects.kaleidoscope.segments))
                 + abs(draft.effects.kaleidoscope.rotation - preset.previewEffects.kaleidoscope.rotation)
+        case .sparkle:
+            return abs(draft.effects.sparkle.amount - preset.previewEffects.sparkle.amount)
+                + abs(draft.effects.sparkle.threshold - preset.previewEffects.sparkle.threshold)
+                + abs(draft.effects.sparkle.rayLength - preset.previewEffects.sparkle.rayLength)
+                + abs(draft.effects.sparkle.rotation - preset.previewEffects.sparkle.rotation)
         }
     }
 }

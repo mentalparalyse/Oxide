@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func sparkleSettingsClampAndDecodeLegacyDefaults() throws {
+        let settings = ImageSparkle(amount: 2, threshold: -1, rayLength: 3, rotation: -2)
+        #expect(settings == ImageSparkle(amount: 1, threshold: 0, rayLength: 1, rotation: 0))
+        let decoded = try JSONDecoder().decode(ImageSparkle.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageSparkle(amount: 0.4))
+    }
+
     @Test func kaleidoscopeSettingsClampInvalidValues() {
         let settings = ImageKaleidoscope(amount: 2, segments: 99, rotation: -1)
         #expect(settings.amount == 1)

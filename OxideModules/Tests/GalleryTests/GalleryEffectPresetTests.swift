@@ -14,7 +14,8 @@ struct GalleryEffectPresetTests {
             vhs: ImageVHS(amount: 0.5),
             lensWarp: ImageLensWarp(amount: 0.5),
             zoomBlur: ImageZoomBlur(amount: 0.5),
-            kaleidoscope: ImageKaleidoscope(amount: 0.5)
+            kaleidoscope: ImageKaleidoscope(amount: 0.5),
+            sparkle: ImageSparkle(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -97,6 +98,13 @@ struct GalleryEffectPresetTests {
         let result = preset("kaleido-crystal").applying(to: current)
         #expect(result.kaleidoscope.segments == 6)
         #expect(result.zoomBlur == current.zoomBlur)
+    }
+
+    @Test func applyingSparklePresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(kaleidoscope: ImageKaleidoscope(amount: 0.3))
+        let result = preset("sparkle-starburst").applying(to: current)
+        #expect(result.sparkle.rayLength == 0.72)
+        #expect(result.kaleidoscope == current.kaleidoscope)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {
