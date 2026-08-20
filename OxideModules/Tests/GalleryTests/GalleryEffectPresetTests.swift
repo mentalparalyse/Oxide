@@ -15,7 +15,8 @@ struct GalleryEffectPresetTests {
             lensWarp: ImageLensWarp(amount: 0.5),
             zoomBlur: ImageZoomBlur(amount: 0.5),
             kaleidoscope: ImageKaleidoscope(amount: 0.5),
-            sparkle: ImageSparkle(amount: 0.5)
+            sparkle: ImageSparkle(amount: 0.5),
+            pixelSort: ImagePixelSort(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -105,6 +106,13 @@ struct GalleryEffectPresetTests {
         let result = preset("sparkle-starburst").applying(to: current)
         #expect(result.sparkle.rayLength == 0.72)
         #expect(result.kaleidoscope == current.kaleidoscope)
+    }
+
+    @Test func applyingPixelSortPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(sparkle: ImageSparkle(amount: 0.3))
+        let result = preset("sort-melt").applying(to: current)
+        #expect(result.pixelSort.trailLength == 0.72)
+        #expect(result.sparkle == current.sparkle)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

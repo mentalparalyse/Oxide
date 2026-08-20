@@ -81,6 +81,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.zoomBlur.isEnabled
                 && !draft.effects.kaleidoscope.isEnabled
                 && !draft.effects.sparkle.isEnabled
+                && !draft.effects.pixelSort.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -105,6 +106,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.kaleidoscope.isEnabled else { return false }
         case .sparkle:
             guard draft.effects.sparkle.isEnabled else { return false }
+        case .pixelSort:
+            guard draft.effects.pixelSort.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -169,6 +172,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.sparkle.threshold - preset.previewEffects.sparkle.threshold)
                 + abs(draft.effects.sparkle.rayLength - preset.previewEffects.sparkle.rayLength)
                 + abs(draft.effects.sparkle.rotation - preset.previewEffects.sparkle.rotation)
+        case .pixelSort:
+            return abs(draft.effects.pixelSort.amount - preset.previewEffects.pixelSort.amount)
+                + abs(draft.effects.pixelSort.threshold - preset.previewEffects.pixelSort.threshold)
+                + abs(draft.effects.pixelSort.trailLength - preset.previewEffects.pixelSort.trailLength)
+                + abs(draft.effects.pixelSort.direction - preset.previewEffects.pixelSort.direction)
         }
     }
 }

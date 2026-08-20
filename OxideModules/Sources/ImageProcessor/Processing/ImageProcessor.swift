@@ -302,6 +302,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     rayLength: effects.sparkle.rayLength,
                     rotation: effects.sparkle.rotation,
                     spatialMask: effects.sparkle.spatialMask.effectMask
+                ),
+                pixelSort: PixelSortSettings(
+                    amount: effects.pixelSort.amount,
+                    threshold: effects.pixelSort.threshold,
+                    trailLength: effects.pixelSort.trailLength,
+                    direction: effects.pixelSort.direction,
+                    spatialMask: effects.pixelSort.spatialMask.effectMask
                 )
             ),
             to: image
