@@ -279,6 +279,11 @@ public final class ImageProcessor: @unchecked Sendable {
                     amount: effects.lensWarp.amount,
                     scale: effects.lensWarp.scale,
                     spatialMask: effects.lensWarp.spatialMask.effectMask
+                ),
+                motionBlur: MotionBlurSettings(
+                    amount: effects.motionBlur.amount,
+                    distance: effects.motionBlur.distance,
+                    angle: effects.motionBlur.angle
                 )
             ),
             to: image

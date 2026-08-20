@@ -4,6 +4,12 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func motionBlurSettingsClampInvalidValues() {
+        let settings = ImageMotionBlur(amount: 2, distance: -1, angle: 3)
+        #expect(settings.amount == 1)
+        #expect(settings.distance == 0)
+        #expect(settings.angle == 1)
+    }
     @Test func lensWarpSettingsClampInvalidValues() {
         let settings = ImageLensWarp(amount: 2, scale: -3)
         #expect(settings.amount == 1)

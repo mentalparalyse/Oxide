@@ -48,6 +48,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     public var bloom: ImageBloom
     public var vhs: ImageVHS
     public var lensWarp: ImageLensWarp
+    public var motionBlur: ImageMotionBlur
 
     public init(
         filmGrain: ImageFilmGrain = .disabled,
@@ -57,7 +58,8 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         dustAndScratches: ImageDustAndScratches = .disabled,
         bloom: ImageBloom = .disabled,
         vhs: ImageVHS = .disabled,
-        lensWarp: ImageLensWarp = .disabled
+        lensWarp: ImageLensWarp = .disabled,
+        motionBlur: ImageMotionBlur = .disabled
     ) {
         self.filmGrain = filmGrain
         self.lightLeak = lightLeak
@@ -67,6 +69,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         self.bloom = bloom
         self.vhs = vhs
         self.lensWarp = lensWarp
+        self.motionBlur = motionBlur
     }
 
     public static let neutral = ImageEffects()
@@ -80,6 +83,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         case bloom
         case vhs
         case lensWarp
+        case motionBlur
     }
 
     public init(from decoder: Decoder) throws {
@@ -116,6 +120,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
             ImageLensWarp.self,
             forKey: .lensWarp
         ) ?? .disabled
+        motionBlur = try container.decodeIfPresent(ImageMotionBlur.self, forKey: .motionBlur) ?? .disabled
     }
 }
 
