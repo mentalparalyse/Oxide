@@ -8,6 +8,7 @@ struct GallerySpatialEffectTests {
         #expect(GalleryEffectKind.lightLeak.supportsSpatialMask)
         #expect(GalleryEffectKind.chromaticAberration.supportsSpatialMask)
         #expect(GalleryEffectKind.halation.supportsSpatialMask)
+        #expect(GalleryEffectKind.bloom.supportsSpatialMask)
         #expect(!GalleryEffectKind.filmGrain.supportsSpatialMask)
         #expect(!GalleryEffectKind.dustAndScratches.supportsSpatialMask)
     }

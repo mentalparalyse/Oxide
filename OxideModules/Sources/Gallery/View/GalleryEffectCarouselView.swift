@@ -74,6 +74,7 @@ struct GalleryEffectCarouselView: View {
                 && draft.effects.chromaticAberration.amount == 0
                 && !draft.effects.halation.isEnabled
                 && !draft.effects.dustAndScratches.isEnabled
+                && !draft.effects.bloom.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -84,6 +85,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.halation.isEnabled else { return false }
         case .dustAndScratches:
             guard draft.effects.dustAndScratches.isEnabled else { return false }
+        case .bloom:
+            guard draft.effects.bloom.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -119,6 +122,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.dustAndScratches.dustAmount - preset.previewEffects.dustAndScratches.dustAmount)
                 + abs(draft.effects.dustAndScratches.scratchAmount - preset.previewEffects.dustAndScratches.scratchAmount)
                 + abs(draft.effects.dustAndScratches.particleSize - preset.previewEffects.dustAndScratches.particleSize)
+        case .bloom:
+            return abs(draft.effects.bloom.amount - preset.previewEffects.bloom.amount)
+                + abs(draft.effects.bloom.radius - preset.previewEffects.bloom.radius)
+                + abs(draft.effects.bloom.threshold - preset.previewEffects.bloom.threshold)
+                + abs(draft.effects.bloom.warmth - preset.previewEffects.bloom.warmth)
         }
     }
 }

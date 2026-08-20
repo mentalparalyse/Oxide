@@ -7,6 +7,7 @@ enum GalleryEffectKind: String, Sendable {
     case chromaticAberration
     case halation
     case dustAndScratches
+    case bloom
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -33,11 +34,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.halation = previewEffects.halation
         case .dustAndScratches:
             result.dustAndScratches = previewEffects.dustAndScratches
+        case .bloom:
+            result.bloom = previewEffects.bloom
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.bloom.isEnabled { return "bloom-soft" }
         if effects.dustAndScratches.isEnabled { return "dust-clean" }
         if effects.halation.isEnabled { return "halation-soft" }
         if effects.chromaticAberration.amount > 0 { return "chromatic-soft" }
@@ -119,6 +123,24 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             name: "Damaged",
             kind: .dustAndScratches,
             previewEffects: ImageEffects(dustAndScratches: ImageDustAndScratches(amount: 0.78, dustAmount: 0.85, scratchAmount: 0.75, particleSize: 0.62, seed: 73))
+        ),
+        GalleryEffectPreset(
+            id: "bloom-soft",
+            name: "Bloom",
+            kind: .bloom,
+            previewEffects: ImageEffects(bloom: ImageBloom(amount: 0.38, radius: 0.42, threshold: 0.52, warmth: 0.5))
+        ),
+        GalleryEffectPreset(
+            id: "bloom-dream",
+            name: "Dream",
+            kind: .bloom,
+            previewEffects: ImageEffects(bloom: ImageBloom(amount: 0.62, radius: 0.7, threshold: 0.3, warmth: 0.72))
+        ),
+        GalleryEffectPreset(
+            id: "bloom-neon",
+            name: "Neon",
+            kind: .bloom,
+            previewEffects: ImageEffects(bloom: ImageBloom(amount: 0.7, radius: 0.32, threshold: 0.64, warmth: 0.18))
         )
     ]
 }
