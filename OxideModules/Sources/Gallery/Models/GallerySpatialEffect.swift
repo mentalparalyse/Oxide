@@ -3,7 +3,7 @@ import ImageProcessor
 extension GalleryEffectKind {
     var supportsSpatialMask: Bool {
         switch self {
-        case .lightLeak, .chromaticAberration, .halation, .bloom, .lensWarp:
+        case .lightLeak, .chromaticAberration, .halation, .bloom, .lensWarp, .zoomBlur:
             true
         case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur:
             false
@@ -19,6 +19,7 @@ extension ImageEffects {
         case .halation: halation.spatialMask
         case .bloom: bloom.spatialMask
         case .lensWarp: lensWarp.spatialMask
+        case .zoomBlur: zoomBlur.spatialMask
         case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur: nil
         }
     }
@@ -33,6 +34,7 @@ extension ImageEffects {
         case .halation: halation.spatialMask = mask
         case .bloom: bloom.spatialMask = mask
         case .lensWarp: lensWarp.spatialMask = mask
+        case .zoomBlur: zoomBlur.spatialMask = mask
         case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur: break
         }
     }

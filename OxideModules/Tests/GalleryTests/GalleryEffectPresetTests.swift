@@ -12,7 +12,8 @@ struct GalleryEffectPresetTests {
             dustAndScratches: ImageDustAndScratches(amount: 0.5),
             bloom: ImageBloom(amount: 0.5),
             vhs: ImageVHS(amount: 0.5),
-            lensWarp: ImageLensWarp(amount: 0.5)
+            lensWarp: ImageLensWarp(amount: 0.5),
+            zoomBlur: ImageZoomBlur(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -81,6 +82,13 @@ struct GalleryEffectPresetTests {
         let result = preset("motion-speed").applying(to: current)
         #expect(result.motionBlur.amount == 0.68)
         #expect(result.lensWarp == current.lensWarp)
+    }
+
+    @Test func applyingZoomBlurPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(motionBlur: ImageMotionBlur(amount: 0.3))
+        let result = preset("zoom-impact").applying(to: current)
+        #expect(result.zoomBlur.amount == 0.62)
+        #expect(result.motionBlur == current.motionBlur)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {
