@@ -289,6 +289,12 @@ public final class ImageProcessor: @unchecked Sendable {
                     amount: effects.zoomBlur.amount,
                     strength: effects.zoomBlur.strength,
                     spatialMask: effects.zoomBlur.spatialMask.effectMask
+                ),
+                kaleidoscope: KaleidoscopeSettings(
+                    amount: effects.kaleidoscope.amount,
+                    segments: effects.kaleidoscope.segments,
+                    rotation: effects.kaleidoscope.rotation,
+                    spatialMask: effects.kaleidoscope.spatialMask.effectMask
                 )
             ),
             to: image

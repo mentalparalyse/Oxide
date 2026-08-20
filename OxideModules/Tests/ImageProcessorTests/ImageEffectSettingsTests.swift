@@ -4,6 +4,17 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func kaleidoscopeSettingsClampInvalidValues() {
+        let settings = ImageKaleidoscope(amount: 2, segments: 99, rotation: -1)
+        #expect(settings.amount == 1)
+        #expect(settings.segments == 12)
+        #expect(settings.rotation == 0)
+    }
+
+    @Test func legacyKaleidoscopeDecodesStableDefaults() throws {
+        let settings = try JSONDecoder().decode(ImageKaleidoscope.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(settings == ImageKaleidoscope(amount: 0.4))
+    }
     @Test func zoomBlurSettingsClampInvalidValues() {
         let settings = ImageZoomBlur(amount: 2, strength: -1)
         #expect(settings.amount == 1)
