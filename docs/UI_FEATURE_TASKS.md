@@ -14,7 +14,7 @@ All UI feature branches are created from `UI/main` and merged back only after th
 
 ### UI-01 — Violet semantic accent
 
-- [ ] Add semantic violet accent tokens and accessible variants.
+- [~] Add semantic violet accent tokens and accessible variants.
 - [ ] Replace editor-specific orange selection and primary-action styling.
 - [ ] Verify light, dark, monochrome, increased-contrast, and reduced-transparency states.
 - [ ] Branch: `UI/violet-accent`
@@ -80,4 +80,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | Date | Task | Status | Notes |
 | --- | --- | --- | --- |
 | 2026-08-20 | UI workflow setup | Complete | Created the `UI/main` integration branch and this tracker. |
-
+| 2026-08-20 | UI-01 Violet semantic accent | In progress | Started semantic color tokens on `UI/violet-accent`. |
