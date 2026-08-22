@@ -90,6 +90,15 @@ All UI feature branches are created from `UI/main` and merged back only after th
 - [x] Let the filter card equal the sum of only its visible rows.
 - [x] Branch: `UI/filter-panel-intrinsic-height`
 
+### UI-10 — Filter concept alignment and contrast
+
+- [x] Use dark charcoal floating materials so labels remain readable over bright photos.
+- [x] Separate filter previews and filter categories into distinct floating panels.
+- [x] Replace category thumbnails with the approved compact text strip.
+- [x] Preserve violet parent-category and selected-filter indicators.
+- [x] Reveal the applied section, or Cinematic by default, when entering Filters.
+- [x] Branch: `UI/filter-concept-alignment`
+
 ## Progress log
 
 | Date | Task | Status | Notes |
@@ -104,3 +113,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-07 Integration QA | Partial | Implementation is ready to merge; manual editor profiling/screenshots and test-scheme repair remain recorded. |
 | 2026-08-22 | UI-08 Adaptive panels | Complete | Compact tools use intrinsic sizing; Effects retains its bounded height; app build passed. |
 | 2026-08-22 | UI-09 Filter height | Complete | Category and expanded rails have independent compact heights; app build passed. |
+| 2026-08-22 | UI-10 Concept alignment | Complete | Dark panels, preview/category hierarchy, and high-contrast labels now match the approved concept; build passed. |

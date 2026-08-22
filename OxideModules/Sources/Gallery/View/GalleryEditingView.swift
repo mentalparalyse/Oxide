@@ -31,13 +31,19 @@ struct GalleryEditingView: View {
                 Spacer(minLength: 0)
 
                 VStack(spacing: 10) {
-                    GalleryFloatingControls {
-                        GalleryEditorToolPanel(
+                    if activeTool == .filters {
+                        GalleryEditorFilterPanels(
                             presenter: presenter,
-                            activeTool: activeTool,
-                            selectedSpatialEffectKind: $selectedSpatialEffectKind,
-                            expandedFilterSectionID: $expandedFilterSectionID
+                            expandedSectionID: $expandedFilterSectionID
                         )
+                    } else {
+                        GalleryFloatingControls {
+                            GalleryEditorToolPanel(
+                                presenter: presenter,
+                                activeTool: activeTool,
+                                selectedSpatialEffectKind: $selectedSpatialEffectKind
+                            )
+                        }
                     }
 
                     GalleryFloatingControls {
