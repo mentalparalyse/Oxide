@@ -14,6 +14,7 @@ struct GalleryEditorToolPanel: View {
         switch activeTool {
         case .filters:
             filterControls
+                .padding(.vertical, 8)
         case .adjustments:
             if let adjustments = presenter.draft?.adjustments {
                 GalleryAdjustmentControlsView(
@@ -22,6 +23,7 @@ struct GalleryEditorToolPanel: View {
                     onChangeEnded: { Task { await presenter.commitAdjustment() } },
                     onToggleMonochrome: { Task { await presenter.toggleMonochrome() } }
                 )
+                .padding(.vertical, 14)
             }
         case .effects:
             if let draft = presenter.draft {
@@ -31,14 +33,18 @@ struct GalleryEditorToolPanel: View {
                     onChangeEnded: { Task { await presenter.commitEffects() } },
                     onSelectedKindChange: { selectedSpatialEffectKind = $0 }
                 )
+                .frame(height: 176)
             }
         case .crop:
             GalleryCropControlsView(
                 selectedAspectRatio: presenter.draft?.cropAspectRatio,
                 onSelect: { ratio in Task { await presenter.setCropAspectRatio(ratio) } }
             )
+            .padding(.horizontal, 8)
+            .padding(.vertical, 14)
         case .rotate:
             rotateControls
+                .padding(14)
         }
     }
 
