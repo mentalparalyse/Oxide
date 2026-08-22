@@ -19,7 +19,10 @@ struct GalleryFloatingControls<Content: View>: View {
                 if reduceTransparency {
                     AppColours.appSurfaceColor
                 } else {
-                    Rectangle().fill(.ultraThinMaterial)
+                    ZStack {
+                        Rectangle().fill(.ultraThinMaterial)
+                        AppColours.appColor.opacity(0.76)
+                    }
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))

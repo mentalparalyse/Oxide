@@ -7,14 +7,12 @@ struct GalleryEditorToolPanel: View {
     @ObservedObject var presenter: GalleryPresenter
     let activeTool: GalleryEditingTool
     @Binding var selectedSpatialEffectKind: GalleryEffectKind?
-    @Binding var expandedFilterSectionID: String?
 
     @ViewBuilder
     var body: some View {
         switch activeTool {
         case .filters:
-            filterControls
-                .padding(.vertical, 8)
+            EmptyView()
         case .adjustments:
             if let adjustments = presenter.draft?.adjustments {
                 GalleryAdjustmentControlsView(
@@ -48,37 +46,6 @@ struct GalleryEditorToolPanel: View {
         }
     }
 
-    private var filterControls: some View {
-        VStack(spacing: 8) {
-            if let expandedFilterSection {
-                GalleryExpandedFilterRail(
-                    section: expandedFilterSection,
-                    selectedFilterID: presenter.draft?.selectedFilterID,
-                    imageURL: presenter.draft?.photo.imageURI,
-                    onSelectFilter: { filter in Task { await presenter.selectFilter(filter.id) } }
-                )
-            }
-
-            if presenter.draft?.selectedFilterID != GalleryFilter.original.id {
-                FilterIntensitySlider(
-                    value: presenter.draft?.filterIntensity ?? 1,
-                    onChange: presenter.setFilterIntensity,
-                    onChangeEnded: { Task { await presenter.commitFilterIntensity() } }
-                )
-                .padding(.horizontal, 16)
-            }
-
-            GalleryFilterSectionBar(
-                catalog: presenter.filterCatalog,
-                selectedFilterID: presenter.draft?.selectedFilterID,
-                expandedSectionID: expandedFilterSectionID,
-                imageURL: presenter.draft?.photo.imageURI,
-                onSelectOriginal: selectOriginal,
-                onToggleSection: toggleFilterSection
-            )
-        }
-    }
-
     private var rotateControls: some View {
         HStack(spacing: 32) {
             rotationButton(systemName: "rotate.left", degrees: -90, label: "Rotate left 90 degrees")
@@ -103,18 +70,4 @@ struct GalleryEditorToolPanel: View {
         .accessibilityLabel(label)
     }
 
-    private var expandedFilterSection: GalleryFilterSection? {
-        presenter.filterCatalog.sections.first { $0.id == expandedFilterSectionID }
-    }
-
-    private func selectOriginal() {
-        expandedFilterSectionID = nil
-        Task { await presenter.selectFilter(GalleryFilter.original.id) }
-    }
-
-    private func toggleFilterSection(_ section: GalleryFilterSection) {
-        withAnimation(.easeInOut(duration: 0.18)) {
-            expandedFilterSectionID = expandedFilterSectionID == section.id ? nil : section.id
-        }
-    }
 }
