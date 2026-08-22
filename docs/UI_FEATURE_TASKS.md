@@ -83,6 +83,13 @@ All UI feature branches are created from `UI/main` and merged back only after th
 - [x] Preserve the Effects panel height required by its carousel and advanced scrolling.
 - [x] Branch: `UI/adaptive-tool-panels`
 
+### UI-09 — Filter panel intrinsic height
+
+- [x] Bound the horizontal category rail to its compact content height.
+- [x] Bound the expanded filter rail independently from the parent panel.
+- [x] Let the filter card equal the sum of only its visible rows.
+- [x] Branch: `UI/filter-panel-intrinsic-height`
+
 ## Progress log
 
 | Date | Task | Status | Notes |
@@ -96,3 +103,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-06 Press-to-compare | Complete | Added 0.2-second comparison, conflict gating, accessibility action, and tests; build passed. |
 | 2026-08-22 | UI-07 Integration QA | Partial | Implementation is ready to merge; manual editor profiling/screenshots and test-scheme repair remain recorded. |
 | 2026-08-22 | UI-08 Adaptive panels | Complete | Compact tools use intrinsic sizing; Effects retains its bounded height; app build passed. |
+| 2026-08-22 | UI-09 Filter height | Complete | Category and expanded rails have independent compact heights; app build passed. |

@@ -23,6 +23,7 @@ struct GalleryExpandedFilterRail: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 4)
         }
+        .frame(height: 96)
         .accessibilityLabel("\(section.title) filters")
     }
 }
