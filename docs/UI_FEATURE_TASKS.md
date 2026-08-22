@@ -49,11 +49,11 @@ All UI feature branches are created from `UI/main` and merged back only after th
 
 ### UI-05 — Floating tool controls
 
-- [ ] Convert the tool picker and active tool content to compact floating materials.
-- [ ] Keep a stable panel height while filters change.
-- [ ] Provide Reduce Transparency and Increased Contrast fallbacks.
-- [ ] Maintain 44-point minimum touch targets and VoiceOver labels.
-- [ ] Branch: `UI/floating-controls`
+- [x] Convert the tool picker and active tool content to compact floating materials.
+- [x] Keep a stable panel height while filters change.
+- [x] Provide Reduce Transparency and Increased Contrast fallbacks.
+- [x] Maintain 44-point minimum touch targets and VoiceOver labels.
+- [x] Branch: `UI/floating-controls`
 
 ### UI-06 — Press-to-compare
 
@@ -84,3 +84,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-02 Filter pack model | Complete | Added thematic catalog and edge-case tests; Gallery iOS Simulator build passed. |
 | 2026-08-22 | UI-03 Sectioned navigation | Complete | Added lazy category/filter rails with persistent selection indicators; app build passed. |
 | 2026-08-22 | UI-04 Full-canvas foundation | Complete | Preview extends behind safe-area-aware editor chrome; app build passed. |
+| 2026-08-22 | UI-05 Floating controls | Complete | Added stable floating panels with transparency/contrast fallbacks; app build passed. |
