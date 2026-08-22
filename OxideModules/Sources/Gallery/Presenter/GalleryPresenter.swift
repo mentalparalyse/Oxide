@@ -17,7 +17,8 @@ public final class GalleryPresenter: ObservableObject {
     @Published public private(set) var previewSaveState: GalleryPreviewSaveState = .idle
     @Published public private(set) var isPreparingShare = false
 
-    public let filters = GalleryFilter.all
+    public let filters: [GalleryFilter]
+    public let filterCatalog: GalleryFilterCatalog
     private let interactor: GalleryInteractorProtocol
     private let router: GalleryRouterProtocol
     private let imageExporter: GalleryImageExporting
@@ -27,6 +28,9 @@ public final class GalleryPresenter: ObservableObject {
         router: GalleryRouterProtocol,
         imageExporter: GalleryImageExporting = GalleryImageExporter()
     ) {
+        let filters = GalleryFilter.all
+        self.filters = filters
+        self.filterCatalog = GalleryFilterCatalog(filters: filters)
         self.interactor = interactor
         self.router = router
         self.imageExporter = imageExporter
