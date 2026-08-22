@@ -30,13 +30,13 @@ All UI feature branches are created from `UI/main` and merged back only after th
 
 ### UI-03 — Sectioned filter navigation
 
-- [ ] Add the compact horizontal section rail.
-- [ ] Expand only one section into a horizontal filter rail.
-- [ ] Collapse the active section when tapped again.
-- [ ] Preserve the expanded section while switching editing tools.
-- [ ] Show selected filter and parent-section indicators independently.
-- [ ] Show intensity only for non-Original filters.
-- [ ] Branch: `UI/filter-navigation`
+- [x] Add the compact horizontal section rail.
+- [x] Expand only one section into a horizontal filter rail.
+- [x] Collapse the active section when tapped again.
+- [x] Preserve the expanded section while switching editing tools.
+- [x] Show selected filter and parent-section indicators independently.
+- [x] Show intensity only for non-Original filters.
+- [x] Branch: `UI/filter-navigation`
 
 ### UI-04 — Full-canvas editor foundation
 
@@ -82,3 +82,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-20 | UI workflow setup | Complete | Created the `UI/main` integration branch and this tracker. |
 | 2026-08-20 | UI-01 Violet semantic accent | Complete | Added semantic violet tokens and passed the Oxide iOS Simulator build. |
 | 2026-08-22 | UI-02 Filter pack model | Complete | Added thematic catalog and edge-case tests; Gallery iOS Simulator build passed. |
+| 2026-08-22 | UI-03 Sectioned navigation | Complete | Added lazy category/filter rails with persistent selection indicators; app build passed. |

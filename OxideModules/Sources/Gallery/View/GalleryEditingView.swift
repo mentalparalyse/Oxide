@@ -8,6 +8,7 @@ struct GalleryEditingView: View {
     @ObservedObject var presenter: GalleryPresenter
     @State private var activeTool: GalleryEditingTool = .filters
     @State private var selectedSpatialEffectKind: GalleryEffectKind?
+    @State private var expandedFilterSectionID: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -66,20 +67,16 @@ struct GalleryEditingView: View {
     private var toolContent: some View {
         switch activeTool {
         case .filters:
-            VStack(spacing: 12) {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 16) {
-                        ForEach(presenter.filters) { filter in
-                            FilterChipView(
-                                filter: filter,
-                                isSelected: presenter.draft?.selectedFilterID == filter.id,
-                                imageURL: presenter.draft?.photo.imageURI,
-                                action: { Task { await presenter.selectFilter(filter.id) } }
-                            )
+            VStack(spacing: 8) {
+                if let expandedFilterSection {
+                    GalleryExpandedFilterRail(
+                        section: expandedFilterSection,
+                        selectedFilterID: presenter.draft?.selectedFilterID,
+                        imageURL: presenter.draft?.photo.imageURI,
+                        onSelectFilter: { filter in
+                            Task { await presenter.selectFilter(filter.id) }
                         }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    )
                 }
 
                 if presenter.draft?.selectedFilterID != GalleryFilter.original.id {
@@ -90,6 +87,18 @@ struct GalleryEditingView: View {
                     )
                     .padding(.horizontal, 16)
                 }
+
+                GalleryFilterSectionBar(
+                    catalog: presenter.filterCatalog,
+                    selectedFilterID: presenter.draft?.selectedFilterID,
+                    expandedSectionID: expandedFilterSectionID,
+                    imageURL: presenter.draft?.photo.imageURI,
+                    onSelectOriginal: {
+                        expandedFilterSectionID = nil
+                        Task { await presenter.selectFilter(GalleryFilter.original.id) }
+                    },
+                    onToggleSection: toggleFilterSection
+                )
             }
         case .adjustments:
             if let adjustments = presenter.draft?.adjustments {
@@ -139,6 +148,16 @@ struct GalleryEditingView: View {
                 .foregroundStyle(AppColours.appForegroundColor)
                 .accessibilityLabel("Rotate right 90 degrees")
             }
+        }
+    }
+
+    private var expandedFilterSection: GalleryFilterSection? {
+        presenter.filterCatalog.sections.first { $0.id == expandedFilterSectionID }
+    }
+
+    private func toggleFilterSection(_ section: GalleryFilterSection) {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            expandedFilterSectionID = expandedFilterSectionID == section.id ? nil : section.id
         }
     }
 
