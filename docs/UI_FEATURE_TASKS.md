@@ -67,13 +67,13 @@ All UI feature branches are created from `UI/main` and merged back only after th
 
 ### UI-07 — Integration, performance, and visual QA
 
-- [ ] Profile thumbnail rendering, cancellation, allocations, and scrolling.
-- [ ] Confirm only the expanded section renders filter thumbnails.
-- [ ] Run the complete Swift test suite and iOS build.
-- [ ] Verify representative portrait, landscape, bright, dark, and monochrome photos.
-- [ ] Complete architecture, performance, memory, concurrency, Metal, StoreKit, and testing self-review.
-- [ ] Update editor screenshots and merge final fixes into `UI/main`.
-- [ ] Branch: `UI/editor-integration`
+- [~] Profile thumbnail rendering, cancellation, allocations, and scrolling. Static review and cancellation are complete; Instruments needs a manual photo session.
+- [x] Confirm only the expanded section renders filter thumbnails.
+- [~] Run the complete Swift test suite and iOS build. Build/analyze pass; checked-in test configuration exposes no runnable bundle.
+- [~] Verify representative portrait, landscape, bright, dark, and monochrome photos. Concept review is complete; runtime editor review needs manual navigation.
+- [x] Complete architecture, performance, memory, concurrency, Metal, StoreKit, and testing self-review.
+- [~] Update editor screenshots and merge final fixes into `UI/main`. Installed-app smoke test passed; editor screenshot awaits manual editor access.
+- [x] Branch: `UI/editor-integration`
 
 ## Progress log
 
@@ -86,3 +86,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-04 Full-canvas foundation | Complete | Preview extends behind safe-area-aware editor chrome; app build passed. |
 | 2026-08-22 | UI-05 Floating controls | Complete | Added stable floating panels with transparency/contrast fallbacks; app build passed. |
 | 2026-08-22 | UI-06 Press-to-compare | Complete | Added 0.2-second comparison, conflict gating, accessibility action, and tests; build passed. |
+| 2026-08-22 | UI-07 Integration QA | Partial | Implementation is ready to merge; manual editor profiling/screenshots and test-scheme repair remain recorded. |

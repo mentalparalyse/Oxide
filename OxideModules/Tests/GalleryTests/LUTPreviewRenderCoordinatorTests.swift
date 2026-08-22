@@ -26,6 +26,30 @@ struct LUTPreviewRenderCoordinatorTests {
         await renderer.completeNext()
     }
 
+    @Test func cancellationPreventsStaleRenderFromReplacingNewGeneration() async {
+        let renderer = PreviewRendererSpy()
+        let coordinator = LUTPreviewRenderCoordinator { request in
+            await renderer.render(request)
+        }
+        let stale = request(intensity: 0.2)
+        let current = request(intensity: 0.8)
+
+        coordinator.submit(stale)
+        await renderer.waitForRequestCount(1)
+        coordinator.cancel()
+        coordinator.submit(current)
+        await renderer.waitForRequestCount(2)
+
+        await renderer.completeNext()
+        await Task.yield()
+        #expect(coordinator.image == nil)
+
+        await renderer.completeNext()
+        await Task.yield()
+        #expect(coordinator.image != nil)
+        #expect(await renderer.requests() == [stale, current])
+    }
+
     private func request(intensity: Double) -> LUTPreviewRenderRequest {
         LUTPreviewRenderRequest(
             imageURL: URL(fileURLWithPath: "/tmp/preview.jpg"),
