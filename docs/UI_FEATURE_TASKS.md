@@ -40,12 +40,12 @@ All UI feature branches are created from `UI/main` and merged back only after th
 
 ### UI-04 — Full-canvas editor foundation
 
-- [ ] Extend the preview beneath floating editor controls.
-- [ ] Keep navigation actions readable over bright and dark photographs.
-- [ ] Preserve zoom, pan, crop, and spatial-effect coordinate behavior.
-- [ ] Respect safe areas and all supported image aspect ratios.
-- [ ] Add geometry and state-transition tests where applicable.
-- [ ] Branch: `UI/editor-foundation`
+- [x] Extend the preview beneath floating editor controls.
+- [x] Keep navigation actions readable over bright and dark photographs.
+- [x] Preserve zoom, pan, crop, and spatial-effect coordinate behavior.
+- [x] Respect safe areas and all supported image aspect ratios.
+- [x] Retain the existing viewport, crop geometry, and spatial-effect tests.
+- [x] Branch: `UI/editor-foundation`
 
 ### UI-05 — Floating tool controls
 
@@ -83,3 +83,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-20 | UI-01 Violet semantic accent | Complete | Added semantic violet tokens and passed the Oxide iOS Simulator build. |
 | 2026-08-22 | UI-02 Filter pack model | Complete | Added thematic catalog and edge-case tests; Gallery iOS Simulator build passed. |
 | 2026-08-22 | UI-03 Sectioned navigation | Complete | Added lazy category/filter rails with persistent selection indicators; app build passed. |
+| 2026-08-22 | UI-04 Full-canvas foundation | Complete | Preview extends behind safe-area-aware editor chrome; app build passed. |

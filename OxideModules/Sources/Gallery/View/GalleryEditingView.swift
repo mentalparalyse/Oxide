@@ -11,37 +11,31 @@ struct GalleryEditingView: View {
     @State private var expandedFilterSectionID: String?
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                CircleIconButton(systemName: "xmark", label: "Cancel", action: presenter.cancelEditing)
-                CircleIconButton(
-                    systemName: "arrow.uturn.backward",
-                    label: "Undo last edit",
-                    action: { Task { await presenter.undoLastEdit() } }
-                )
-                .opacity(presenter.canUndoEdit ? 1 : 0.35)
-                .disabled(!presenter.canUndoEdit)
-                Spacer()
-                Button("Save", action: presenter.saveDraft)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppColours.appForegroundColor)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
-                    .background(AppColours.buttonBacground, in: Capsule())
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
-
+        ZStack {
             editorPreview
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal, 16)
 
-            toolContent
-                .frame(height: 176)
+            VStack(spacing: 0) {
+                GalleryEditorNavigationBar(
+                    canUndo: presenter.canUndoEdit,
+                    onCancel: presenter.cancelEditing,
+                    onUndo: { Task { await presenter.undoLastEdit() } },
+                    onSave: presenter.saveDraft
+                )
 
-            GalleryEditingToolTabBar(selection: $activeTool)
+                Spacer(minLength: 0)
+
+                VStack(spacing: 0) {
+                    toolContent
+                        .frame(height: 176)
+
+                    GalleryEditingToolTabBar(selection: $activeTool)
+                }
+                .background(AppColours.appColor)
+            }
         }
+        .background(AppColours.appColor)
+        .ignoresSafeArea(edges: .bottom)
     }
 
     private var editorPreview: some View {
