@@ -23,6 +23,7 @@ struct GalleryFilterSectionBar: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 4)
         }
+        .frame(height: 88)
         .accessibilityLabel("Filter categories")
     }
 
