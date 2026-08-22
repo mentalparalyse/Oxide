@@ -53,7 +53,7 @@ struct GalleryEditingToolTabBar: View {
                     }
                     .foregroundStyle(
                         selection == tool
-                            ? AppColours.buttonBacground
+                            ? AppColours.accent
                             : AppColours.appMutedForegroundColor
                     )
                     .frame(maxWidth: .infinity)
@@ -67,11 +67,5 @@ struct GalleryEditingToolTabBar: View {
         .padding(.horizontal, 8)
         .padding(.top, 10)
         .padding(.bottom, 8)
-        .background(AppColours.appColor)
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(AppColours.appBorderColor.opacity(0.65))
-                .frame(height: 1)
-        }
     }
 }

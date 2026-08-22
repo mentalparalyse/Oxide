@@ -25,17 +25,21 @@ struct GalleryEditingView: View {
 
                 Spacer(minLength: 0)
 
-                VStack(spacing: 0) {
-                    toolContent
-                        .frame(height: 176)
+                VStack(spacing: 10) {
+                    GalleryFloatingControls {
+                        toolContent
+                            .frame(height: toolPanelHeight)
+                    }
 
-                    GalleryEditingToolTabBar(selection: $activeTool)
+                    GalleryFloatingControls {
+                        GalleryEditingToolTabBar(selection: $activeTool)
+                    }
                 }
-                .background(AppColours.appColor)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
             }
         }
         .background(AppColours.appColor)
-        .ignoresSafeArea(edges: .bottom)
     }
 
     private var editorPreview: some View {
@@ -147,6 +151,10 @@ struct GalleryEditingView: View {
 
     private var expandedFilterSection: GalleryFilterSection? {
         presenter.filterCatalog.sections.first { $0.id == expandedFilterSectionID }
+    }
+
+    private var toolPanelHeight: CGFloat {
+        activeTool == .filters ? 232 : 176
     }
 
     private func toggleFilterSection(_ section: GalleryFilterSection) {
