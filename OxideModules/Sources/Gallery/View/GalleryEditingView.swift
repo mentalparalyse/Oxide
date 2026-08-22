@@ -9,11 +9,16 @@ struct GalleryEditingView: View {
     @State private var activeTool: GalleryEditingTool = .filters
     @State private var selectedSpatialEffectKind: GalleryEffectKind?
     @State private var expandedFilterSectionID: String?
+    @State private var comparisonVisibility = GalleryComparisonVisibilityState()
 
     var body: some View {
         ZStack {
             editorPreview
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .galleryPressComparison(
+                    isEnabled: isComparisonEligible,
+                    onPressVisibilityChange: updatePressComparisonVisibility
+                )
 
             VStack(spacing: 0) {
                 GalleryEditorNavigationBar(
@@ -38,8 +43,17 @@ struct GalleryEditingView: View {
                 .padding(.horizontal, 12)
                 .padding(.bottom, 8)
             }
+            .opacity(comparisonVisibility.areControlsHidden ? 0 : 1)
+            .allowsHitTesting(!comparisonVisibility.areControlsHidden)
+            .accessibilityHidden(comparisonVisibility.areControlsHidden)
         }
         .background(AppColours.appColor)
+        .animation(.easeOut(duration: 0.16), value: comparisonVisibility.areControlsHidden)
+        .accessibilityAction(
+            named: comparisonVisibility.areControlsHidden ? "Show editing controls" : "Hide editing controls"
+        ) {
+            comparisonVisibility.toggleAccessibilityVisibility()
+        }
     }
 
     private var editorPreview: some View {
@@ -155,6 +169,30 @@ struct GalleryEditingView: View {
 
     private var toolPanelHeight: CGFloat {
         activeTool == .filters ? 232 : 176
+    }
+
+    private var isComparisonEligible: Bool {
+        GalleryComparisonInteraction.isEligible(
+            activeTool: activeTool,
+            isPositioningSpatialEffect: activeSpatialMask != nil
+        )
+    }
+
+    private var activeSpatialMask: ImageSpatialEffectMask? {
+        guard activeTool == .effects,
+              let selectedSpatialEffectKind,
+              let mask = presenter.draft?.effects.spatialMask(for: selectedSpatialEffectKind),
+              mask.mode == .spot
+        else { return nil }
+        return mask
+    }
+
+    private func updatePressComparisonVisibility(_ isVisible: Bool) {
+        if isVisible {
+            comparisonVisibility.beginPress()
+        } else {
+            comparisonVisibility.endPress()
+        }
     }
 
     private func toggleFilterSection(_ section: GalleryFilterSection) {

@@ -57,13 +57,13 @@ All UI feature branches are created from `UI/main` and merged back only after th
 
 ### UI-06 — Press-to-compare
 
-- [ ] Hide floating controls after approximately 0.2 seconds of continuous press.
-- [ ] Restore controls on release with a short fade.
-- [ ] Disable comparison while crop or spatial-effect positioning owns the gesture.
-- [ ] Preserve pinch, pan, and double-tap zoom behavior.
-- [ ] Add an accessible explicit show/hide-controls action.
-- [ ] Cover gesture eligibility and visibility transitions with unit tests.
-- [ ] Branch: `UI/press-to-compare`
+- [x] Hide floating controls after approximately 0.2 seconds of continuous press.
+- [x] Restore controls on release with a short fade.
+- [x] Disable comparison while crop or spatial-effect positioning owns the gesture.
+- [x] Preserve pinch, pan, and double-tap zoom behavior.
+- [x] Add an accessible explicit show/hide-controls action.
+- [x] Cover gesture eligibility and visibility transitions with unit tests.
+- [x] Branch: `UI/press-to-compare`
 
 ### UI-07 — Integration, performance, and visual QA
 
@@ -85,3 +85,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-03 Sectioned navigation | Complete | Added lazy category/filter rails with persistent selection indicators; app build passed. |
 | 2026-08-22 | UI-04 Full-canvas foundation | Complete | Preview extends behind safe-area-aware editor chrome; app build passed. |
 | 2026-08-22 | UI-05 Floating controls | Complete | Added stable floating panels with transparency/contrast fallbacks; app build passed. |
+| 2026-08-22 | UI-06 Press-to-compare | Complete | Added 0.2-second comparison, conflict gating, accessibility action, and tests; build passed. |
