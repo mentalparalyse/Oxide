@@ -76,6 +76,7 @@ struct LUTPreviewImage: View {
         }
         .clipped()
         .onAppear { renderCoordinator.submit(renderRequest) }
+        .onDisappear { renderCoordinator.cancel() }
         .onChange(of: renderRequest) { renderCoordinator.submit($0) }
     }
 
