@@ -17,16 +17,16 @@ All UI feature branches are created from `UI/main` and merged back only after th
 - [x] Add semantic violet accent tokens and accessible variants.
 - [x] Replace the existing shared orange action and selection token.
 - [x] Verify the palette compiles for the iOS Simulator target; broader photo-state visual QA remains in UI-07.
-- [ ] Branch: `UI/violet-accent`
+- [x] Branch: `UI/violet-accent`
 
 ### UI-02 — Filter pack domain model
 
-- [ ] Introduce non-overlapping thematic filter sections.
-- [ ] Keep Original as a standalone option.
-- [ ] Derive a section thumbnail from its selected filter or first filter fallback.
-- [ ] Derive section selection and collapsed-state checkmark behavior.
-- [ ] Cover empty packs, unknown filter IDs, Original, and selection changes with unit tests.
-- [ ] Branch: `UI/filter-sections`
+- [x] Introduce non-overlapping thematic filter sections.
+- [x] Keep Original as a standalone option.
+- [x] Derive a section thumbnail from its selected filter or first filter fallback.
+- [x] Derive section selection and collapsed-state checkmark behavior.
+- [x] Cover empty packs, unknown filter IDs, Original, and selection changes with unit tests.
+- [x] Branch: `UI/filter-sections`
 
 ### UI-03 — Sectioned filter navigation
 
@@ -81,3 +81,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | --- | --- | --- | --- |
 | 2026-08-20 | UI workflow setup | Complete | Created the `UI/main` integration branch and this tracker. |
 | 2026-08-20 | UI-01 Violet semantic accent | Complete | Added semantic violet tokens and passed the Oxide iOS Simulator build. |
+| 2026-08-22 | UI-02 Filter pack model | Complete | Added thematic catalog and edge-case tests; Gallery iOS Simulator build passed. |
