@@ -99,6 +99,14 @@ All UI feature branches are created from `UI/main` and merged back only after th
 - [x] Reveal the applied section, or Cinematic by default, when entering Filters.
 - [x] Branch: `UI/filter-concept-alignment`
 
+### UI-11 — Liquid Glass controls
+
+- [x] Apply native interactive Liquid Glass to floating editor surfaces on iOS 26.
+- [x] Tint glass dark enough to preserve the approved text contrast.
+- [x] Retain dark material on iOS 16–25 and an opaque Reduce Transparency fallback.
+- [x] Preserve Increased Contrast borders and existing touch targets.
+- [x] Branch: `UI/liquid-glass-controls`
+
 ## Progress log
 
 | Date | Task | Status | Notes |
@@ -114,3 +122,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-08 Adaptive panels | Complete | Compact tools use intrinsic sizing; Effects retains its bounded height; app build passed. |
 | 2026-08-22 | UI-09 Filter height | Complete | Category and expanded rails have independent compact heights; app build passed. |
 | 2026-08-22 | UI-10 Concept alignment | Complete | Dark panels, preview/category hierarchy, and high-contrast labels now match the approved concept; build passed. |
+| 2026-08-22 | UI-11 Liquid Glass | Complete | Native interactive glass, compatibility fallback, and accessibility surfaces added; build passed. |

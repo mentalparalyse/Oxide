@@ -14,25 +14,48 @@ struct GalleryFloatingControls<Content: View>: View {
     }
 
     var body: some View {
-        content
-            .background {
-                if reduceTransparency {
-                    AppColours.appSurfaceColor
-                } else {
-                    ZStack {
-                        Rectangle().fill(.ultraThinMaterial)
-                        AppColours.appColor.opacity(0.76)
-                    }
-                }
+        Group {
+            if reduceTransparency {
+                opaqueSurface
+            } else if #available(iOS 26.0, *) {
+                content.glassEffect(
+                    .regular
+                        .tint(AppColours.appColor.opacity(0.64))
+                        .interactive(),
+                    in: panelShape
+                )
+            } else {
+                materialSurface
             }
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        }
             .overlay {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                panelShape
                     .stroke(
                         AppColours.appForegroundColor.opacity(colorSchemeContrast == .increased ? 0.42 : 0.14),
                         lineWidth: colorSchemeContrast == .increased ? 1.5 : 1
                     )
             }
             .shadow(color: .black.opacity(0.28), radius: 14, y: 6)
+    }
+
+    private var panelShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: 22, style: .continuous)
+    }
+
+    private var opaqueSurface: some View {
+        content
+            .background(AppColours.appSurfaceColor)
+            .clipShape(panelShape)
+    }
+
+    private var materialSurface: some View {
+        content
+            .background {
+                ZStack {
+                    Rectangle().fill(.ultraThinMaterial)
+                    AppColours.appColor.opacity(0.76)
+                }
+            }
+            .clipShape(panelShape)
     }
 }
