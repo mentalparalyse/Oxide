@@ -38,7 +38,6 @@ struct GalleryEditingView: View {
                             selectedSpatialEffectKind: $selectedSpatialEffectKind,
                             expandedFilterSectionID: $expandedFilterSectionID
                         )
-                            .frame(height: toolPanelHeight)
                     }
 
                     GalleryFloatingControls {
@@ -78,10 +77,6 @@ struct GalleryEditingView: View {
                 AppColours.appColor
             }
         }
-    }
-
-    private var toolPanelHeight: CGFloat {
-        activeTool == .filters ? 232 : 176
     }
 
     private var isComparisonEligible: Bool {

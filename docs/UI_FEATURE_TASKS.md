@@ -75,6 +75,14 @@ All UI feature branches are created from `UI/main` and merged back only after th
 - [~] Update editor screenshots and merge final fixes into `UI/main`. Installed-app smoke test passed; editor screenshot awaits manual editor access.
 - [x] Branch: `UI/editor-integration`
 
+### UI-08 — Adaptive tool-panel sizing
+
+- [x] Remove the global fixed panel height that leaves empty space around compact tools.
+- [x] Size Filters to its collapsed, selected, and expanded content states.
+- [x] Let Adjust, Crop, and Rotate wrap their intrinsic content with compact padding.
+- [x] Preserve the Effects panel height required by its carousel and advanced scrolling.
+- [x] Branch: `UI/adaptive-tool-panels`
+
 ## Progress log
 
 | Date | Task | Status | Notes |
@@ -87,3 +95,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-05 Floating controls | Complete | Added stable floating panels with transparency/contrast fallbacks; app build passed. |
 | 2026-08-22 | UI-06 Press-to-compare | Complete | Added 0.2-second comparison, conflict gating, accessibility action, and tests; build passed. |
 | 2026-08-22 | UI-07 Integration QA | Partial | Implementation is ready to merge; manual editor profiling/screenshots and test-scheme repair remain recorded. |
+| 2026-08-22 | UI-08 Adaptive panels | Complete | Compact tools use intrinsic sizing; Effects retains its bounded height; app build passed. |
