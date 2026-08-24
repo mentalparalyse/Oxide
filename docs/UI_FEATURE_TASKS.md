@@ -107,6 +107,13 @@ All UI feature branches are created from `UI/main` and merged back only after th
 - [x] Preserve Increased Contrast borders and existing touch targets.
 - [x] Branch: `UI/liquid-glass-controls`
 
+### UI-12 — Liquid Glass surface consistency
+
+- [x] Give photo-backed panels the same dark base as panels floating over the editor background.
+- [x] Preserve native Liquid Glass response without allowing bright photos to wash out the surface.
+- [x] Verify existing material and accessibility fallbacks remain unchanged.
+- [x] Branch: `UI/liquid-glass-surface-consistency`
+
 ## Progress log
 
 | Date | Task | Status | Notes |
@@ -123,3 +130,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-09 Filter height | Complete | Category and expanded rails have independent compact heights; app build passed. |
 | 2026-08-22 | UI-10 Concept alignment | Complete | Dark panels, preview/category hierarchy, and high-contrast labels now match the approved concept; build passed. |
 | 2026-08-22 | UI-11 Liquid Glass | Complete | Native interactive glass, compatibility fallback, and accessibility surfaces added; build passed. |
+| 2026-08-24 | UI-12 Glass consistency | Complete | Added a shared dark glass base so photo-backed and background-backed panels match; build passed. |
