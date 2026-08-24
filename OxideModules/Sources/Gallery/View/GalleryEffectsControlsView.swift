@@ -3,12 +3,15 @@ import SwiftUI
 import UIComponents
 
 struct GalleryEffectsControlsView: View {
+    private static let catalog = GalleryEffectCatalog(presets: GalleryEffectPreset.all)
+
     let draft: GalleryDraft
     let onEffectsChange: (ImageEffects) -> Void
     let onChangeEnded: () -> Void
     let onSelectedKindChange: (GalleryEffectKind?) -> Void
 
     @State private var selectionID: GalleryEffectPreset.ID
+    @State private var expandedSectionID: GalleryEffectSection.ID?
     @State private var showsAdvancedControls = false
 
     init(
@@ -21,11 +24,19 @@ struct GalleryEffectsControlsView: View {
         self.onEffectsChange = onEffectsChange
         self.onChangeEnded = onChangeEnded
         self.onSelectedKindChange = onSelectedKindChange
-        _selectionID = State(initialValue: GalleryEffectPreset.initialSelectionID(for: draft.effects))
+        let selectionID = GalleryEffectPreset.initialSelectionID(for: draft.effects)
+        _selectionID = State(initialValue: selectionID)
+        _expandedSectionID = State(
+            initialValue: Self.catalog.section(containing: selectionID)?.id ?? Self.catalog.sections.first?.id
+        )
     }
 
     private var selectedPreset: GalleryEffectPreset {
         GalleryEffectPreset.all.first { $0.id == selectionID } ?? GalleryEffectPreset.all[0]
+    }
+
+    private var visiblePresets: [GalleryEffectPreset] {
+        Self.catalog.sections.first { $0.id == expandedSectionID }?.presets ?? []
     }
 
     var body: some View {
@@ -35,14 +46,23 @@ struct GalleryEffectsControlsView: View {
                     advancedControls
                 }
             } else {
+                primaryControls
+                    .padding(.horizontal, 16)
+
                 GalleryEffectCarouselView(
                     draft: draft,
-                    presets: GalleryEffectPreset.all,
+                    presets: visiblePresets,
                     selectionID: selectionID,
                     onSelect: select
                 )
-                primaryControls
-                    .padding(.horizontal, 16)
+
+                GalleryEffectSectionBar(
+                    catalog: Self.catalog,
+                    selectionID: selectionID,
+                    expandedSectionID: expandedSectionID,
+                    onSelectNone: selectNone,
+                    onSelectSection: toggleSection
+                )
             }
         }
         .padding(.vertical, 8)
@@ -54,30 +74,46 @@ struct GalleryEffectsControlsView: View {
     }
 
     private var primaryControls: some View {
-        HStack(spacing: 10) {
-            Text(selectedPreset.isNone ? "Choose an effect" : "Intensity")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(AppColours.appMutedForegroundColor)
-                .frame(width: 86, alignment: .leading)
-
-            if !selectedPreset.isNone {
-                EffectValueSlider(
-                    externalValue: amount,
-                    range: 0...1,
-                    onChange: updateAmount,
-                    onEnd: onChangeEnded
-                )
-                Button { showsAdvancedControls = true } label: {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(width: 32, height: 32)
-                        .background(AppColours.appSurfaceColor, in: Circle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Advanced effect controls")
+        Group {
+            if selectedPreset.isNone {
+                Text("Choose an effect")
+                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Spacer()
+                HStack(spacing: 10) {
+                    Text("Intensity")
+                        .frame(width: 86, alignment: .leading)
+
+                    EffectValueSlider(
+                        externalValue: amount,
+                        range: 0...1,
+                        onChange: updateAmount,
+                        onEnd: onChangeEnded
+                    )
+                    Button { showsAdvancedControls = true } label: {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 14, weight: .semibold))
+                            .frame(width: 32, height: 32)
+                            .background(AppColours.appSurfaceColor, in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Advanced effect controls")
+                }
             }
+        }
+        .font(.system(size: 12, weight: .medium))
+        .foregroundStyle(AppColours.appMutedForegroundColor)
+    }
+
+    private func selectNone() {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            expandedSectionID = nil
+        }
+        select(Self.catalog.none)
+    }
+
+    private func toggleSection(_ section: GalleryEffectSection) {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            expandedSectionID = expandedSectionID == section.id ? nil : section.id
         }
     }
 
