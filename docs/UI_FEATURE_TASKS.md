@@ -114,6 +114,13 @@ All UI feature branches are created from `UI/main` and merged back only after th
 - [x] Verify existing material and accessibility fallbacks remain unchanged.
 - [x] Branch: `UI/liquid-glass-surface-consistency`
 
+### UI-13 — Liquid Glass SDK compatibility
+
+- [x] Compile native Liquid Glass only when the active Swift SDK exposes the API.
+- [x] Route older Xcode runners to the existing dark material surface.
+- [x] Verify the app build and package tests.
+- [x] Branch: `UI/liquid-glass-sdk-compatibility`
+
 ## Progress log
 
 | Date | Task | Status | Notes |
@@ -131,3 +138,4 @@ All UI feature branches are created from `UI/main` and merged back only after th
 | 2026-08-22 | UI-10 Concept alignment | Complete | Dark panels, preview/category hierarchy, and high-contrast labels now match the approved concept; build passed. |
 | 2026-08-22 | UI-11 Liquid Glass | Complete | Native interactive glass, compatibility fallback, and accessibility surfaces added; build passed. |
 | 2026-08-24 | UI-12 Glass consistency | Complete | Added a shared dark glass base so photo-backed and background-backed panels match; build passed. |
+| 2026-08-24 | UI-13 Glass SDK compatibility | Complete | Older compilers use the material fallback; app build and complete package test suite passed. |
