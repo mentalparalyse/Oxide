@@ -3,12 +3,15 @@ import SwiftUI
 import UIComponents
 
 struct GalleryEffectsControlsView: View {
+    private static let catalog = GalleryEffectCatalog(presets: GalleryEffectPreset.all)
+
     let draft: GalleryDraft
     let onEffectsChange: (ImageEffects) -> Void
     let onChangeEnded: () -> Void
     let onSelectedKindChange: (GalleryEffectKind?) -> Void
 
     @State private var selectionID: GalleryEffectPreset.ID
+    @State private var expandedSectionID: GalleryEffectSection.ID?
     @State private var showsAdvancedControls = false
 
     init(
@@ -21,11 +24,19 @@ struct GalleryEffectsControlsView: View {
         self.onEffectsChange = onEffectsChange
         self.onChangeEnded = onChangeEnded
         self.onSelectedKindChange = onSelectedKindChange
-        _selectionID = State(initialValue: GalleryEffectPreset.initialSelectionID(for: draft.effects))
+        let selectionID = GalleryEffectPreset.initialSelectionID(for: draft.effects)
+        _selectionID = State(initialValue: selectionID)
+        _expandedSectionID = State(
+            initialValue: Self.catalog.section(containing: selectionID)?.id ?? Self.catalog.sections.first?.id
+        )
     }
 
     private var selectedPreset: GalleryEffectPreset {
         GalleryEffectPreset.all.first { $0.id == selectionID } ?? GalleryEffectPreset.all[0]
+    }
+
+    private var visiblePresets: [GalleryEffectPreset] {
+        Self.catalog.sections.first { $0.id == expandedSectionID }?.presets ?? []
     }
 
     var body: some View {
@@ -35,9 +46,16 @@ struct GalleryEffectsControlsView: View {
                     advancedControls
                 }
             } else {
+                GalleryEffectSectionBar(
+                    catalog: Self.catalog,
+                    selectionID: selectionID,
+                    expandedSectionID: expandedSectionID,
+                    onSelectNone: { select(Self.catalog.none) },
+                    onSelectSection: { expandedSectionID = $0.id }
+                )
                 GalleryEffectCarouselView(
                     draft: draft,
-                    presets: GalleryEffectPreset.all,
+                    presets: visiblePresets,
                     selectionID: selectionID,
                     onSelect: select
                 )
