@@ -17,10 +17,8 @@ struct GalleryFloatingControls<Content: View>: View {
         Group {
             if reduceTransparency {
                 opaqueSurface
-            } else if #available(iOS 26.0, *) {
-                liquidGlassSurface
             } else {
-                materialSurface
+                transparentSurface
             }
         }
             .overlay {
@@ -43,6 +41,20 @@ struct GalleryFloatingControls<Content: View>: View {
             .clipShape(panelShape)
     }
 
+    @ViewBuilder
+    private var transparentSurface: some View {
+#if compiler(>=6.2)
+        if #available(iOS 26.0, *) {
+            liquidGlassSurface
+        } else {
+            materialSurface
+        }
+#else
+        materialSurface
+#endif
+    }
+
+#if compiler(>=6.2)
     @available(iOS 26.0, *)
     private var liquidGlassSurface: some View {
         content
@@ -54,6 +66,7 @@ struct GalleryFloatingControls<Content: View>: View {
                 in: panelShape
             )
     }
+#endif
 
     private var materialSurface: some View {
         content
