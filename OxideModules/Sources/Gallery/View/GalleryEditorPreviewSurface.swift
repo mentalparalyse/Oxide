@@ -64,6 +64,8 @@ struct GalleryEditorPreviewSurface: View {
                         GallerySpatialEffectOverlay(
                             mask: mask,
                             rotationDegrees: draft.rotationDegrees,
+                            style: spatialOverlayStyle,
+                            effectRotation: draft.effects.tiltShift.rotation,
                             onCenterChange: onSpatialCenterChange,
                             onCenterChangeEnded: onSpatialCenterChangeEnded
                         )
@@ -151,6 +153,13 @@ struct GalleryEditorPreviewSurface: View {
               mask.mode == .spot
         else { return nil }
         return mask
+    }
+
+    private var spatialOverlayStyle: GallerySpatialEffectOverlay.Style {
+        guard spatialEffectKind == .tiltShift,
+              draft.effects.tiltShift.style == .linear
+        else { return .radial }
+        return .linear
     }
 
     private func updateZoom(by delta: CGFloat, imageSize: CGSize, containerSize: CGSize) {

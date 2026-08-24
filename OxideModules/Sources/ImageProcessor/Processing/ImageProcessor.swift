@@ -309,6 +309,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     trailLength: effects.pixelSort.trailLength,
                     direction: effects.pixelSort.direction,
                     spatialMask: effects.pixelSort.spatialMask.effectMask
+                ),
+                tiltShift: TiltShiftSettings(
+                    amount: effects.tiltShift.amount,
+                    blur: effects.tiltShift.blur,
+                    style: effects.tiltShift.style == .linear ? .linear : .radial,
+                    rotation: effects.tiltShift.rotation,
+                    spatialMask: effects.tiltShift.spatialMask.effectMask
                 )
             ),
             to: image

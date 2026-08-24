@@ -16,7 +16,8 @@ struct GalleryEffectPresetTests {
             zoomBlur: ImageZoomBlur(amount: 0.5),
             kaleidoscope: ImageKaleidoscope(amount: 0.5),
             sparkle: ImageSparkle(amount: 0.5),
-            pixelSort: ImagePixelSort(amount: 0.5)
+            pixelSort: ImagePixelSort(amount: 0.5),
+            tiltShift: ImageTiltShift(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -113,6 +114,13 @@ struct GalleryEffectPresetTests {
         let result = preset("sort-melt").applying(to: current)
         #expect(result.pixelSort.trailLength == 0.72)
         #expect(result.sparkle == current.sparkle)
+    }
+
+    @Test func applyingTiltShiftPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(pixelSort: ImagePixelSort(amount: 0.3))
+        let result = preset("tilt-radial").applying(to: current)
+        #expect(result.tiltShift.style == .radial)
+        #expect(result.pixelSort == current.pixelSort)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

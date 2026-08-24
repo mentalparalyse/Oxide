@@ -103,7 +103,8 @@ struct GalleryEffectsControlsView: View {
                 onChange: updateAmount,
                 onEnd: onChangeEnded
             )
-            if let spatialMask = draft.effects.spatialMask(for: selectedPreset.kind) {
+            if selectedPreset.kind != .tiltShift,
+               let spatialMask = draft.effects.spatialMask(for: selectedPreset.kind) {
                 GallerySpatialEffectControls(
                     mask: spatialMask,
                     onChange: updateSpatialMask,
@@ -161,6 +162,13 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Threshold", value: draft.effects.pixelSort.threshold, range: 0...1, onChange: updateSortThreshold, onEnd: onChangeEnded)
             EffectControlRow(title: "Trail length", value: draft.effects.pixelSort.trailLength, range: 0...1, onChange: updateSortTrailLength, onEnd: onChangeEnded)
             EffectControlRow(title: "Direction", value: draft.effects.pixelSort.direction, range: 0...1, onChange: updateSortDirection, onEnd: onChangeEnded)
+        case .tiltShift:
+            EffectControlRow(title: "Blur", value: draft.effects.tiltShift.blur, range: 0...1, onChange: updateTiltBlur, onEnd: onChangeEnded)
+            EffectControlRow(title: "Focus width", value: draft.effects.tiltShift.spatialMask.radius, range: 0.05...1, onChange: updateTiltFocusWidth, onEnd: onChangeEnded)
+            EffectControlRow(title: "Feather", value: draft.effects.tiltShift.spatialMask.feather, range: 0...1, onChange: updateTiltFeather, onEnd: onChangeEnded)
+            if draft.effects.tiltShift.style == .linear {
+                EffectControlRow(title: "Rotation", value: draft.effects.tiltShift.rotation, range: 0...1, onChange: updateTiltRotation, onEnd: onChangeEnded)
+            }
         }
     }
 
@@ -180,6 +188,7 @@ struct GalleryEffectsControlsView: View {
         case .kaleidoscope: draft.effects.kaleidoscope.amount
         case .sparkle: draft.effects.sparkle.amount
         case .pixelSort: draft.effects.pixelSort.amount
+        case .tiltShift: draft.effects.tiltShift.amount
         }
     }
 
@@ -207,6 +216,7 @@ struct GalleryEffectsControlsView: View {
             case .kaleidoscope: $0.kaleidoscope.amount = value
             case .sparkle: $0.sparkle.amount = value
             case .pixelSort: $0.pixelSort.amount = value
+            case .tiltShift: $0.tiltShift.amount = value
             }
         }
     }
@@ -239,6 +249,10 @@ struct GalleryEffectsControlsView: View {
     private func updateSortThreshold(_ value: Double) { mutateEffects { $0.pixelSort.threshold = value } }
     private func updateSortTrailLength(_ value: Double) { mutateEffects { $0.pixelSort.trailLength = value } }
     private func updateSortDirection(_ value: Double) { mutateEffects { $0.pixelSort.direction = value } }
+    private func updateTiltBlur(_ value: Double) { mutateEffects { $0.tiltShift.blur = value } }
+    private func updateTiltFocusWidth(_ value: Double) { mutateEffects { $0.tiltShift.spatialMask.radius = value } }
+    private func updateTiltFeather(_ value: Double) { mutateEffects { $0.tiltShift.spatialMask.feather = value } }
+    private func updateTiltRotation(_ value: Double) { mutateEffects { $0.tiltShift.rotation = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
