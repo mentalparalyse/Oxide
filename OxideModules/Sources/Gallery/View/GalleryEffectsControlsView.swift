@@ -46,21 +46,23 @@ struct GalleryEffectsControlsView: View {
                     advancedControls
                 }
             } else {
-                GalleryEffectSectionBar(
-                    catalog: Self.catalog,
-                    selectionID: selectionID,
-                    expandedSectionID: expandedSectionID,
-                    onSelectNone: { select(Self.catalog.none) },
-                    onSelectSection: { expandedSectionID = $0.id }
-                )
+                primaryControls
+                    .padding(.horizontal, 16)
+
                 GalleryEffectCarouselView(
                     draft: draft,
                     presets: visiblePresets,
                     selectionID: selectionID,
                     onSelect: select
                 )
-                primaryControls
-                    .padding(.horizontal, 16)
+
+                GalleryEffectSectionBar(
+                    catalog: Self.catalog,
+                    selectionID: selectionID,
+                    expandedSectionID: expandedSectionID,
+                    onSelectNone: selectNone,
+                    onSelectSection: toggleSection
+                )
             }
         }
         .padding(.vertical, 8)
@@ -72,30 +74,46 @@ struct GalleryEffectsControlsView: View {
     }
 
     private var primaryControls: some View {
-        HStack(spacing: 10) {
-            Text(selectedPreset.isNone ? "Choose an effect" : "Intensity")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(AppColours.appMutedForegroundColor)
-                .frame(width: 86, alignment: .leading)
-
-            if !selectedPreset.isNone {
-                EffectValueSlider(
-                    externalValue: amount,
-                    range: 0...1,
-                    onChange: updateAmount,
-                    onEnd: onChangeEnded
-                )
-                Button { showsAdvancedControls = true } label: {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(width: 32, height: 32)
-                        .background(AppColours.appSurfaceColor, in: Circle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Advanced effect controls")
+        Group {
+            if selectedPreset.isNone {
+                Text("Choose an effect")
+                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Spacer()
+                HStack(spacing: 10) {
+                    Text("Intensity")
+                        .frame(width: 86, alignment: .leading)
+
+                    EffectValueSlider(
+                        externalValue: amount,
+                        range: 0...1,
+                        onChange: updateAmount,
+                        onEnd: onChangeEnded
+                    )
+                    Button { showsAdvancedControls = true } label: {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 14, weight: .semibold))
+                            .frame(width: 32, height: 32)
+                            .background(AppColours.appSurfaceColor, in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Advanced effect controls")
+                }
             }
+        }
+        .font(.system(size: 12, weight: .medium))
+        .foregroundStyle(AppColours.appMutedForegroundColor)
+    }
+
+    private func selectNone() {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            expandedSectionID = nil
+        }
+        select(Self.catalog.none)
+    }
+
+    private func toggleSection(_ section: GalleryEffectSection) {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            expandedSectionID = expandedSectionID == section.id ? nil : section.id
         }
     }
 
