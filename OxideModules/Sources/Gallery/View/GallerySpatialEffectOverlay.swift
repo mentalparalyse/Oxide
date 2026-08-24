@@ -69,7 +69,14 @@ struct GallerySpatialEffectOverlay: View {
             Rectangle()
                 .strokeBorder(.white.opacity(0.82), style: guideStroke)
                 .frame(width: proxy.size.width * 1.5, height: diameter * 0.55)
-                .rotationEffect(.degrees(effectRotation * 360 + Double(rotationDegrees)))
+                .rotationEffect(
+                    .degrees(
+                        GallerySpatialEffectGeometry.linearGuideRotationDegrees(
+                            effectRotation: effectRotation,
+                            imageRotationDegrees: rotationDegrees
+                        )
+                    )
+                )
                 .position(x: center.x * proxy.size.width, y: center.y * proxy.size.height)
         }
     }
@@ -80,6 +87,13 @@ struct GallerySpatialEffectOverlay: View {
 }
 
 enum GallerySpatialEffectGeometry {
+    static func linearGuideRotationDegrees(
+        effectRotation: Double,
+        imageRotationDegrees: Int
+    ) -> Double {
+        effectRotation * 180 + Double(ImageEditRotation.normalized(imageRotationDegrees))
+    }
+
     static func imagePoint(
         displayPoint point: CGPoint,
         rotationDegrees: Int
