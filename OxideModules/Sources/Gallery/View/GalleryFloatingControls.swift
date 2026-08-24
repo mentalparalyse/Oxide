@@ -18,12 +18,7 @@ struct GalleryFloatingControls<Content: View>: View {
             if reduceTransparency {
                 opaqueSurface
             } else if #available(iOS 26.0, *) {
-                content.glassEffect(
-                    .regular
-                        .tint(AppColours.appColor.opacity(0.64))
-                        .interactive(),
-                    in: panelShape
-                )
+                liquidGlassSurface
             } else {
                 materialSurface
             }
@@ -46,6 +41,18 @@ struct GalleryFloatingControls<Content: View>: View {
         content
             .background(AppColours.appSurfaceColor)
             .clipShape(panelShape)
+    }
+
+    @available(iOS 26.0, *)
+    private var liquidGlassSurface: some View {
+        content
+            .background(AppColours.appColor.opacity(0.72), in: panelShape)
+            .glassEffect(
+                .regular
+                    .tint(AppColours.appColor.opacity(0.72))
+                    .interactive(),
+                in: panelShape
+            )
     }
 
     private var materialSurface: some View {
