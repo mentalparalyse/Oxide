@@ -22,15 +22,25 @@ struct FilterChipView: View {
                     maxPixelSize: 128
                 )
                 .frame(width: 64, height: 64)
-                .clipShape(Circle())
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay {
-                    Circle()
-                        .stroke(isSelected ? AppColours.buttonBacground : Color.clear, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(isSelected ? AppColours.accent : Color.clear, lineWidth: 2)
+                }
+                .overlay(alignment: .topTrailing) {
+                    if isSelected {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 18, height: 18)
+                            .background(AppColours.accent, in: Circle())
+                            .offset(x: 4, y: -4)
+                    }
                 }
                 
                 Text(filter.name)
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(isSelected ? AppColours.buttonBacground : AppColours.appMutedForegroundColor)
+                    .foregroundStyle(isSelected ? AppColours.accent : AppColours.appMutedForegroundColor)
             }
         }
         .buttonStyle(.plain)
@@ -66,6 +76,7 @@ struct LUTPreviewImage: View {
         }
         .clipped()
         .onAppear { renderCoordinator.submit(renderRequest) }
+        .onDisappear { renderCoordinator.cancel() }
         .onChange(of: renderRequest) { renderCoordinator.submit($0) }
     }
 

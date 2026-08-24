@@ -25,6 +25,7 @@ final class LUTPreviewRenderCoordinator: ObservableObject {
     private var pendingRequest: LUTPreviewRenderRequest?
     private var activeRequest: LUTPreviewRenderRequest?
     private var renderTask: Task<Void, Never>?
+    private var generation = 0
 
     init(renderer: @escaping Renderer = LUTPreviewRenderCoordinator.render) {
         self.renderer = renderer
@@ -36,13 +37,22 @@ final class LUTPreviewRenderCoordinator: ObservableObject {
 
         pendingRequest = request
         guard renderTask == nil else { return }
+        let generation = generation
         renderTask = Task { [weak self] in
-            await self?.renderPendingRequests()
+            await self?.renderPendingRequests(generation: generation)
         }
     }
 
-    private func renderPendingRequests() async {
-        while !Task.isCancelled, let request = pendingRequest {
+    func cancel() {
+        generation += 1
+        pendingRequest = nil
+        activeRequest = nil
+        renderTask?.cancel()
+        renderTask = nil
+    }
+
+    private func renderPendingRequests(generation: Int) async {
+        while !Task.isCancelled, generation == self.generation, let request = pendingRequest {
             pendingRequest = nil
             activeRequest = request
 
@@ -53,11 +63,12 @@ final class LUTPreviewRenderCoordinator: ObservableObject {
 
             let renderedImage = await renderer(request)
 
-            if let renderedImage {
+            if generation == self.generation, let renderedImage {
                 image = renderedImage
             }
         }
 
+        guard generation == self.generation else { return }
         activeRequest = nil
         renderTask = nil
     }

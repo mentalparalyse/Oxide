@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func pixelSortSettingsClampAndDecodeDefaults() throws {
+        let settings = ImagePixelSort(amount: 2, threshold: -1, trailLength: 3, direction: -2)
+        #expect(settings == ImagePixelSort(amount: 1, threshold: 0, trailLength: 1, direction: 0))
+        let decoded = try JSONDecoder().decode(ImagePixelSort.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImagePixelSort(amount: 0.4))
+    }
+
     @Test func sparkleSettingsClampAndDecodeLegacyDefaults() throws {
         let settings = ImageSparkle(amount: 2, threshold: -1, rayLength: 3, rotation: -2)
         #expect(settings == ImageSparkle(amount: 1, threshold: 0, rayLength: 1, rotation: 0))

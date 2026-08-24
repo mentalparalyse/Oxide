@@ -37,7 +37,7 @@ struct OnboardingCarouselView: View {
     private func buildPage(_ model: OnboardingItem) -> some View {
         ZStack {
             Circle()
-                .fill(Color(hex: 0xFF6B35))
+                .fill(AppColours.accent)
                 .opacity(0.25)
             Image(model.imageName)
                 .resizable()

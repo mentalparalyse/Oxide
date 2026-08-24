@@ -14,6 +14,7 @@ enum GalleryEffectKind: String, Sendable {
     case zoomBlur
     case kaleidoscope
     case sparkle
+    case pixelSort
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -54,11 +55,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.kaleidoscope = previewEffects.kaleidoscope
         case .sparkle:
             result.sparkle = previewEffects.sparkle
+        case .pixelSort:
+            result.pixelSort = previewEffects.pixelSort
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.pixelSort.isEnabled { return "sort-clean" }
         if effects.sparkle.isEnabled { return "sparkle-soft" }
         if effects.kaleidoscope.isEnabled { return "kaleido-mirror" }
         if effects.zoomBlur.isEnabled { return "zoom-rush" }
@@ -215,6 +219,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "sparkle-soft", name: "Soft Sparkle", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.4, threshold: 0.78, rayLength: 0.28))),
         GalleryEffectPreset(id: "sparkle-starburst", name: "Starburst", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.72, threshold: 0.62, rayLength: 0.72))),
         GalleryEffectPreset(id: "sparkle-dream", name: "Dream Glitter", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.58, threshold: 0.48, rayLength: 0.42, rotation: 0.125))),
-        GalleryEffectPreset(id: "sparkle-neon", name: "Neon Glints", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.86, threshold: 0.7, rayLength: 0.88, rotation: 0.25)))
+        GalleryEffectPreset(id: "sparkle-neon", name: "Neon Glints", kind: .sparkle, previewEffects: ImageEffects(sparkle: ImageSparkle(amount: 0.86, threshold: 0.7, rayLength: 0.88, rotation: 0.25))),
+        GalleryEffectPreset(id: "sort-clean", name: "Clean Sort", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.38, threshold: 0.72, trailLength: 0.3, direction: 0.25))),
+        GalleryEffectPreset(id: "sort-melt", name: "Melt", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.68, threshold: 0.5, trailLength: 0.72, direction: 0.25))),
+        GalleryEffectPreset(id: "sort-neon", name: "Neon Drag", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.76, threshold: 0.68, trailLength: 0.82, direction: 0))),
+        GalleryEffectPreset(id: "sort-rupture", name: "Digital Rupture", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.92, threshold: 0.34, trailLength: 0.94, direction: 0.625)))
     ]
 }

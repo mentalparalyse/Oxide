@@ -8,38 +8,61 @@ struct GalleryEditingView: View {
     @ObservedObject var presenter: GalleryPresenter
     @State private var activeTool: GalleryEditingTool = .filters
     @State private var selectedSpatialEffectKind: GalleryEffectKind?
+    @State private var expandedFilterSectionID: String?
+    @State private var comparisonVisibility = GalleryComparisonVisibilityState()
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                CircleIconButton(systemName: "xmark", label: "Cancel", action: presenter.cancelEditing)
-                CircleIconButton(
-                    systemName: "arrow.uturn.backward",
-                    label: "Undo last edit",
-                    action: { Task { await presenter.undoLastEdit() } }
-                )
-                .opacity(presenter.canUndoEdit ? 1 : 0.35)
-                .disabled(!presenter.canUndoEdit)
-                Spacer()
-                Button("Save", action: presenter.saveDraft)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppColours.appForegroundColor)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
-                    .background(AppColours.buttonBacground, in: Capsule())
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
-
+        ZStack {
             editorPreview
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal, 16)
+                .galleryPressComparison(
+                    isEnabled: isComparisonEligible,
+                    onPressVisibilityChange: updatePressComparisonVisibility
+                )
 
-            toolContent
-                .frame(height: 176)
+            VStack(spacing: 0) {
+                GalleryEditorNavigationBar(
+                    canUndo: presenter.canUndoEdit,
+                    onCancel: presenter.cancelEditing,
+                    onUndo: { Task { await presenter.undoLastEdit() } },
+                    onSave: presenter.saveDraft
+                )
 
-            GalleryEditingToolTabBar(selection: $activeTool)
+                Spacer(minLength: 0)
+
+                VStack(spacing: 10) {
+                    if activeTool == .filters {
+                        GalleryEditorFilterPanels(
+                            presenter: presenter,
+                            expandedSectionID: $expandedFilterSectionID
+                        )
+                    } else {
+                        GalleryFloatingControls {
+                            GalleryEditorToolPanel(
+                                presenter: presenter,
+                                activeTool: activeTool,
+                                selectedSpatialEffectKind: $selectedSpatialEffectKind
+                            )
+                        }
+                    }
+
+                    GalleryFloatingControls {
+                        GalleryEditingToolTabBar(selection: $activeTool)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
+            }
+            .opacity(comparisonVisibility.areControlsHidden ? 0 : 1)
+            .allowsHitTesting(!comparisonVisibility.areControlsHidden)
+            .accessibilityHidden(comparisonVisibility.areControlsHidden)
+        }
+        .background(AppColours.appColor)
+        .animation(.easeOut(duration: 0.16), value: comparisonVisibility.areControlsHidden)
+        .accessibilityAction(
+            named: comparisonVisibility.areControlsHidden ? "Show editing controls" : "Hide editing controls"
+        ) {
+            comparisonVisibility.toggleAccessibilityVisibility()
         }
     }
 
@@ -62,83 +85,27 @@ struct GalleryEditingView: View {
         }
     }
 
-    @ViewBuilder
-    private var toolContent: some View {
-        switch activeTool {
-        case .filters:
-            VStack(spacing: 12) {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 16) {
-                        ForEach(presenter.filters) { filter in
-                            FilterChipView(
-                                filter: filter,
-                                isSelected: presenter.draft?.selectedFilterID == filter.id,
-                                imageURL: presenter.draft?.photo.imageURI,
-                                action: { Task { await presenter.selectFilter(filter.id) } }
-                            )
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                }
+    private var isComparisonEligible: Bool {
+        GalleryComparisonInteraction.isEligible(
+            activeTool: activeTool,
+            isPositioningSpatialEffect: activeSpatialMask != nil
+        )
+    }
 
-                if presenter.draft?.selectedFilterID != GalleryFilter.original.id {
-                    FilterIntensitySlider(
-                        value: presenter.draft?.filterIntensity ?? 1,
-                        onChange: presenter.setFilterIntensity,
-                        onChangeEnded: { Task { await presenter.commitFilterIntensity() } }
-                    )
-                    .padding(.horizontal, 16)
-                }
-            }
-        case .adjustments:
-            if let adjustments = presenter.draft?.adjustments {
-                GalleryAdjustmentControlsView(
-                    adjustments: adjustments,
-                    onChange: presenter.setAdjustment,
-                    onChangeEnded: { Task { await presenter.commitAdjustment() } },
-                    onToggleMonochrome: { Task { await presenter.toggleMonochrome() } }
-                )
-            }
-        case .effects:
-            if let draft = presenter.draft {
-                GalleryEffectsControlsView(
-                    draft: draft,
-                    onEffectsChange: presenter.setEffects,
-                    onChangeEnded: { Task { await presenter.commitEffects() } },
-                    onSelectedKindChange: { selectedSpatialEffectKind = $0 }
-                )
-            }
-        case .crop:
-            GalleryCropControlsView(
-                selectedAspectRatio: presenter.draft?.cropAspectRatio,
-                onSelect: { ratio in Task { await presenter.setCropAspectRatio(ratio) } }
-            )
-        case .rotate:
-            HStack(spacing: 32) {
-                Button { Task { await presenter.rotateDraft(by: -90) } } label: {
-                    Image(systemName: "rotate.left")
-                        .frame(width: 56, height: 56)
-                        .background(AppColours.appSurfaceColor, in: Circle())
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(AppColours.appForegroundColor)
-                .accessibilityLabel("Rotate left 90 degrees")
+    private var activeSpatialMask: ImageSpatialEffectMask? {
+        guard activeTool == .effects,
+              let selectedSpatialEffectKind,
+              let mask = presenter.draft?.effects.spatialMask(for: selectedSpatialEffectKind),
+              mask.mode == .spot
+        else { return nil }
+        return mask
+    }
 
-                Text("\(presenter.draft?.rotationDegrees ?? 0)°")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(AppColours.appForegroundColor)
-                    .frame(width: 72)
-
-                Button { Task { await presenter.rotateDraft(by: 90) } } label: {
-                    Image(systemName: "rotate.right")
-                        .frame(width: 56, height: 56)
-                        .background(AppColours.appSurfaceColor, in: Circle())
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(AppColours.appForegroundColor)
-                .accessibilityLabel("Rotate right 90 degrees")
-            }
+    private func updatePressComparisonVisibility(_ isVisible: Bool) {
+        if isVisible {
+            comparisonVisibility.beginPress()
+        } else {
+            comparisonVisibility.endPress()
         }
     }
 
