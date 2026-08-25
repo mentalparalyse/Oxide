@@ -213,9 +213,9 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Feather", value: draft.effects.edgeBlur.spatialMask.feather, range: 0...1, onChange: updateEdgeFeather, onEnd: onChangeEnded)
         case .vignette:
             EffectControlRow(title: "Size", value: draft.effects.vignette.size, range: 0...1, onChange: updateVignetteSize, onEnd: onChangeEnded)
-            EffectControlRow(title: "Feather", value: draft.effects.vignette.feather, range: 0...1, onChange: updateVignetteFeather, onEnd: onChangeEnded)
-            EffectControlRow(title: "Roundness", value: draft.effects.vignette.roundness, range: 0...1, onChange: updateVignetteRoundness, onEnd: onChangeEnded)
-            EffectControlRow(title: "Irregularity", value: draft.effects.vignette.irregularity, range: 0...1, onChange: updateVignetteIrregularity, onEnd: onChangeEnded)
+            EffectControlRow(title: "Softness", value: draft.effects.vignette.feather, range: 0...1, onChange: updateVignetteFeather, onEnd: onChangeEnded)
+            EffectControlRow(title: "Shape", value: draft.effects.vignette.roundness, range: 0...1, onChange: updateVignetteRoundness, onEnd: onChangeEnded)
+            EffectControlRow(title: "Texture", value: draft.effects.vignette.irregularity, range: 0...1, onChange: updateVignetteIrregularity, onEnd: onChangeEnded)
         }
     }
 
@@ -237,7 +237,7 @@ struct GalleryEffectsControlsView: View {
         case .pixelSort: draft.effects.pixelSort.amount
         case .tiltShift: draft.effects.tiltShift.amount
         case .edgeBlur: draft.effects.edgeBlur.amount
-        case .vignette: draft.effects.vignette.amount
+        case .vignette: vignetteIntensityScale.sliderValue(for: draft.effects.vignette.amount)
         }
     }
 
@@ -267,9 +267,13 @@ struct GalleryEffectsControlsView: View {
             case .pixelSort: $0.pixelSort.amount = value
             case .tiltShift: $0.tiltShift.amount = value
             case .edgeBlur: $0.edgeBlur.amount = value
-            case .vignette: $0.vignette.amount = value
+            case .vignette: $0.vignette.amount = vignetteIntensityScale.amount(for: value)
             }
         }
+    }
+
+    private var vignetteIntensityScale: VignetteIntensityScale {
+        VignetteIntensityScale(baseAmount: selectedPreset.previewEffects.vignette.amount)
     }
 
     private func updateGrainSize(_ value: Double) { mutateEffects { $0.filmGrain.size = value } }
