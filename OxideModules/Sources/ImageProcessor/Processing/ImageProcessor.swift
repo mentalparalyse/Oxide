@@ -322,6 +322,19 @@ public final class ImageProcessor: @unchecked Sendable {
                     blur: effects.edgeBlur.blur,
                     shape: effects.edgeBlur.shape == .oval ? .oval : .frame,
                     spatialMask: effects.edgeBlur.spatialMask.effectMask
+                ),
+                vignette: VignetteSettings(
+                    amount: effects.vignette.amount,
+                    size: effects.vignette.size,
+                    feather: effects.vignette.feather,
+                    roundness: effects.vignette.roundness,
+                    irregularity: effects.vignette.irregularity,
+                    color: .init(
+                        red: effects.vignette.color.red,
+                        green: effects.vignette.color.green,
+                        blue: effects.vignette.color.blue
+                    ),
+                    spatialMask: effects.vignette.spatialMask.effectMask
                 )
             ),
             to: image

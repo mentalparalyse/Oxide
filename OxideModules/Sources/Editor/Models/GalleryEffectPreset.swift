@@ -17,6 +17,7 @@ enum GalleryEffectKind: String, Sendable {
     case pixelSort
     case tiltShift
     case edgeBlur
+    case vignette
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -63,11 +64,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.tiltShift = previewEffects.tiltShift
         case .edgeBlur:
             result.edgeBlur = previewEffects.edgeBlur
+        case .vignette:
+            result.vignette = previewEffects.vignette
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.vignette.isEnabled { return "vignette-dark" }
         if effects.edgeBlur.isEnabled { return "edge-soft" }
         if effects.tiltShift.isEnabled { return "tilt-miniature" }
         if effects.pixelSort.isEnabled { return "sort-clean" }
@@ -239,6 +243,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "edge-soft", name: "Soft Edge", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.48, blur: 0.52, shape: .oval, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.48, feather: 0.62)))),
         GalleryEffectPreset(id: "edge-portrait", name: "Portrait", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.68, blur: 0.66, shape: .oval, spatialMask: ImageSpatialEffectMask(mode: .spot, centerY: 0.44, radius: 0.34, feather: 0.72)))),
         GalleryEffectPreset(id: "edge-frame", name: "Soft Frame", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.62, blur: 0.58, shape: .frame, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.58, feather: 0.5)))),
-        GalleryEffectPreset(id: "edge-dream", name: "Dream Edge", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.86, blur: 0.84, shape: .oval, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.28, feather: 0.86))))
+        GalleryEffectPreset(id: "edge-dream", name: "Dream Edge", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.86, blur: 0.84, shape: .oval, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.28, feather: 0.86)))),
+        GalleryEffectPreset(id: "vignette-dark", name: "Dark", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.58, size: 0.56, feather: 0.7, roundness: 0.55, spatialMask: ImageSpatialEffectMask(mode: .spot)))),
+        GalleryEffectPreset(id: "vignette-bright", name: "Bright", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.34, size: 0.62, feather: 0.82, roundness: 0.48, color: .white, spatialMask: ImageSpatialEffectMask(mode: .spot)))),
+        GalleryEffectPreset(id: "vignette-color", name: "Color", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.46, size: 0.52, feather: 0.68, roundness: 0.62, color: .init(red: 0.34, green: 0.08, blue: 0.42), spatialMask: ImageSpatialEffectMask(mode: .spot)))),
+        GalleryEffectPreset(id: "vignette-aged", name: "Aged", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.68, size: 0.48, feather: 0.56, roundness: 0.28, irregularity: 0.72, color: .init(red: 0.16, green: 0.08, blue: 0.03), spatialMask: ImageSpatialEffectMask(mode: .spot))))
     ]
 }

@@ -18,7 +18,8 @@ struct GalleryEffectPresetTests {
             sparkle: ImageSparkle(amount: 0.5),
             pixelSort: ImagePixelSort(amount: 0.5),
             tiltShift: ImageTiltShift(amount: 0.5),
-            edgeBlur: ImageEdgeBlur(amount: 0.5)
+            edgeBlur: ImageEdgeBlur(amount: 0.5),
+            vignette: ImageVignette(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -129,6 +130,13 @@ struct GalleryEffectPresetTests {
         let result = preset("edge-frame").applying(to: current)
         #expect(result.edgeBlur.shape == .frame)
         #expect(result.tiltShift == current.tiltShift)
+    }
+
+    @Test func applyingVignettePresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.3))
+        let result = preset("vignette-aged").applying(to: current)
+        #expect(result.vignette.irregularity == 0.72)
+        #expect(result.edgeBlur == current.edgeBlur)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

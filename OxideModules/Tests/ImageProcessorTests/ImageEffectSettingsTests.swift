@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func vignetteSettingsClampAndDecodeDefaults() throws {
+        let settings = ImageVignette(amount: 2, size: -1, feather: 3, roundness: -2, irregularity: 4)
+        #expect(settings == ImageVignette(amount: 1, size: 0, feather: 1, roundness: 0, irregularity: 1))
+        let decoded = try JSONDecoder().decode(ImageVignette.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageVignette(amount: 0.4))
+    }
+
     @Test func edgeBlurSettingsClampAndDecodeDefaults() throws {
         let settings = ImageEdgeBlur(amount: 2, blur: -1)
         #expect(settings == ImageEdgeBlur(amount: 1, blur: 0))
