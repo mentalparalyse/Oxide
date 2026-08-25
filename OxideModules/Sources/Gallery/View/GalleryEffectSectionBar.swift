@@ -21,6 +21,7 @@ struct GalleryEffectSectionBar: View {
             .padding(.vertical, 4)
         }
         .frame(height: 48)
+        .padding(.horizontal, 8)
         .accessibilityLabel("Effect categories")
     }
 

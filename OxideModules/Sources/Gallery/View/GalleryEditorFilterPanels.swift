@@ -39,6 +39,7 @@ struct GalleryEditorFilterPanels: View {
                     onSelectOriginal: selectOriginal,
                     onToggleSection: toggleSection
                 )
+//                .padding(.horizontal, 8)
             }
         }
         .onAppear(perform: revealSelectedSection)
