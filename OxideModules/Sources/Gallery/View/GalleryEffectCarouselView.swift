@@ -82,6 +82,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.kaleidoscope.isEnabled
                 && !draft.effects.sparkle.isEnabled
                 && !draft.effects.pixelSort.isEnabled
+                && !draft.effects.tiltShift.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -108,6 +109,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.sparkle.isEnabled else { return false }
         case .pixelSort:
             guard draft.effects.pixelSort.isEnabled else { return false }
+        case .tiltShift:
+            guard draft.effects.tiltShift.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -177,6 +180,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.pixelSort.threshold - preset.previewEffects.pixelSort.threshold)
                 + abs(draft.effects.pixelSort.trailLength - preset.previewEffects.pixelSort.trailLength)
                 + abs(draft.effects.pixelSort.direction - preset.previewEffects.pixelSort.direction)
+        case .tiltShift:
+            return abs(draft.effects.tiltShift.amount - preset.previewEffects.tiltShift.amount)
+                + abs(draft.effects.tiltShift.blur - preset.previewEffects.tiltShift.blur)
+                + abs(draft.effects.tiltShift.rotation - preset.previewEffects.tiltShift.rotation)
+                + abs(draft.effects.tiltShift.spatialMask.radius - preset.previewEffects.tiltShift.spatialMask.radius)
         }
     }
 }

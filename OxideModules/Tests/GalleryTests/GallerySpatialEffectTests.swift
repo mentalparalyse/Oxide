@@ -11,6 +11,7 @@ struct GallerySpatialEffectTests {
         #expect(GalleryEffectKind.bloom.supportsSpatialMask)
         #expect(GalleryEffectKind.sparkle.supportsSpatialMask)
         #expect(GalleryEffectKind.pixelSort.supportsSpatialMask)
+        #expect(GalleryEffectKind.tiltShift.supportsSpatialMask)
         #expect(!GalleryEffectKind.filmGrain.supportsSpatialMask)
         #expect(!GalleryEffectKind.dustAndScratches.supportsSpatialMask)
     }
@@ -51,5 +52,20 @@ struct GallerySpatialEffectTests {
         )
 
         #expect(point == CGPoint(x: 0, y: 1))
+    }
+
+    @Test func linearGuideUsesSameHalfTurnConventionAsTiltShiftRenderer() {
+        #expect(
+            GallerySpatialEffectGeometry.linearGuideRotationDegrees(
+                effectRotation: 0.5,
+                imageRotationDegrees: 0
+            ) == 90
+        )
+        #expect(
+            GallerySpatialEffectGeometry.linearGuideRotationDegrees(
+                effectRotation: 0.25,
+                imageRotationDegrees: 90
+            ) == 135
+        )
     }
 }

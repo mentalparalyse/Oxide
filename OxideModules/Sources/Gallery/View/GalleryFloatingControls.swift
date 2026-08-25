@@ -6,13 +6,13 @@ import UIComponents
 struct GalleryFloatingControls<Content: View>: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
-
+    
     private let content: Content
-
+    
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
-
+    
     var body: some View {
         Group {
             if reduceTransparency {
@@ -21,26 +21,26 @@ struct GalleryFloatingControls<Content: View>: View {
                 transparentSurface
             }
         }
-            .overlay {
-                panelShape
-                    .stroke(
-                        AppColours.appForegroundColor.opacity(colorSchemeContrast == .increased ? 0.42 : 0.14),
-                        lineWidth: colorSchemeContrast == .increased ? 1.5 : 1
-                    )
-            }
-            .shadow(color: .black.opacity(0.28), radius: 14, y: 6)
+        .overlay {
+            panelShape
+                .stroke(
+                    AppColours.appForegroundColor.opacity(colorSchemeContrast == .increased ? 0.42 : 0.14),
+                    lineWidth: colorSchemeContrast == .increased ? 1.5 : 1
+                )
+        }
+        .shadow(color: .black.opacity(0.28), radius: 14, y: 6)
     }
-
+    
     private var panelShape: RoundedRectangle {
         RoundedRectangle(cornerRadius: 22, style: .continuous)
     }
-
+    
     private var opaqueSurface: some View {
         content
             .background(AppColours.appSurfaceColor)
             .clipShape(panelShape)
     }
-
+    
     @ViewBuilder
     private var transparentSurface: some View {
 #if compiler(>=6.2)
@@ -53,7 +53,7 @@ struct GalleryFloatingControls<Content: View>: View {
         materialSurface
 #endif
     }
-
+    
 #if compiler(>=6.2)
     @available(iOS 26.0, *)
     private var liquidGlassSurface: some View {
@@ -67,7 +67,7 @@ struct GalleryFloatingControls<Content: View>: View {
             )
     }
 #endif
-
+    
     private var materialSurface: some View {
         content
             .background {

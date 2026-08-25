@@ -15,6 +15,7 @@ enum GalleryEffectKind: String, Sendable {
     case kaleidoscope
     case sparkle
     case pixelSort
+    case tiltShift
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -57,11 +58,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.sparkle = previewEffects.sparkle
         case .pixelSort:
             result.pixelSort = previewEffects.pixelSort
+        case .tiltShift:
+            result.tiltShift = previewEffects.tiltShift
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.tiltShift.isEnabled { return "tilt-miniature" }
         if effects.pixelSort.isEnabled { return "sort-clean" }
         if effects.sparkle.isEnabled { return "sparkle-soft" }
         if effects.kaleidoscope.isEnabled { return "kaleido-mirror" }
@@ -223,6 +227,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "sort-clean", name: "Clean Sort", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.38, threshold: 0.72, trailLength: 0.3, direction: 0.25))),
         GalleryEffectPreset(id: "sort-melt", name: "Melt", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.68, threshold: 0.5, trailLength: 0.72, direction: 0.25))),
         GalleryEffectPreset(id: "sort-neon", name: "Neon Drag", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.76, threshold: 0.68, trailLength: 0.82, direction: 0))),
-        GalleryEffectPreset(id: "sort-rupture", name: "Digital Rupture", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.92, threshold: 0.34, trailLength: 0.94, direction: 0.625)))
+        GalleryEffectPreset(id: "sort-rupture", name: "Digital Rupture", kind: .pixelSort, previewEffects: ImageEffects(pixelSort: ImagePixelSort(amount: 0.92, threshold: 0.34, trailLength: 0.94, direction: 0.625))),
+        GalleryEffectPreset(id: "tilt-miniature", name: "Miniature", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.7, blur: 0.72, style: .linear, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.22, feather: 0.55)))),
+        GalleryEffectPreset(id: "tilt-portrait", name: "Portrait Band", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.52, blur: 0.48, style: .linear, rotation: 0.5, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.34, feather: 0.7)))),
+        GalleryEffectPreset(id: "tilt-radial", name: "Radial Focus", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.68, blur: 0.62, style: .radial, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.3, feather: 0.52)))),
+        GalleryEffectPreset(id: "tilt-dream", name: "Dream Slice", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.82, blur: 0.84, style: .linear, rotation: 0.08, spatialMask: ImageSpatialEffectMask(mode: .spot, centerY: 0.44, radius: 0.18, feather: 0.8))))
     ]
 }

@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func tiltShiftSettingsClampAndDecodeDefaults() throws {
+        let settings = ImageTiltShift(amount: 2, blur: -1, rotation: 3)
+        #expect(settings == ImageTiltShift(amount: 1, blur: 0, rotation: 1))
+        let decoded = try JSONDecoder().decode(ImageTiltShift.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageTiltShift(amount: 0.4))
+    }
+
     @Test func pixelSortSettingsClampAndDecodeDefaults() throws {
         let settings = ImagePixelSort(amount: 2, threshold: -1, trailLength: 3, direction: -2)
         #expect(settings == ImagePixelSort(amount: 1, threshold: 0, trailLength: 1, direction: 0))

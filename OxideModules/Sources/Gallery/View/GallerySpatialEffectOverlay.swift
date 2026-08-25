@@ -2,8 +2,12 @@ import ImageProcessor
 import SwiftUI
 
 struct GallerySpatialEffectOverlay: View {
+    enum Style { case radial, linear }
+
     let mask: ImageSpatialEffectMask
     let rotationDegrees: Int
+    var style: Style = .radial
+    var effectRotation: Double = 0
     let onCenterChange: (Double, Double) -> Void
     let onCenterChangeEnded: () -> Void
 
@@ -17,13 +21,7 @@ struct GallerySpatialEffectOverlay: View {
             let diameter = max(proxy.size.width, proxy.size.height) * mask.radius * 2
 
             ZStack {
-                Circle()
-                    .strokeBorder(.white.opacity(0.82), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
-                    .frame(width: diameter, height: diameter)
-                    .position(
-                        x: displayCenter.x * proxy.size.width,
-                        y: displayCenter.y * proxy.size.height
-                    )
+                focusGuide(diameter: diameter, proxy: proxy, center: displayCenter)
 
                 ZStack {
                     Circle().fill(.black.opacity(0.55)).frame(width: 28, height: 28)
@@ -54,9 +52,48 @@ struct GallerySpatialEffectOverlay: View {
             .accessibilityHint("Drag to position the effect on the photo")
         }
     }
+
+    @ViewBuilder
+    private func focusGuide(
+        diameter: CGFloat,
+        proxy: GeometryProxy,
+        center: CGPoint
+    ) -> some View {
+        switch style {
+        case .radial:
+            Circle()
+                .strokeBorder(.white.opacity(0.82), style: guideStroke)
+                .frame(width: diameter, height: diameter)
+                .position(x: center.x * proxy.size.width, y: center.y * proxy.size.height)
+        case .linear:
+            Rectangle()
+                .strokeBorder(.white.opacity(0.82), style: guideStroke)
+                .frame(width: proxy.size.width * 1.5, height: diameter * 0.55)
+                .rotationEffect(
+                    .degrees(
+                        GallerySpatialEffectGeometry.linearGuideRotationDegrees(
+                            effectRotation: effectRotation,
+                            imageRotationDegrees: rotationDegrees
+                        )
+                    )
+                )
+                .position(x: center.x * proxy.size.width, y: center.y * proxy.size.height)
+        }
+    }
+
+    private var guideStroke: StrokeStyle {
+        StrokeStyle(lineWidth: 1.5, dash: [6, 5])
+    }
 }
 
 enum GallerySpatialEffectGeometry {
+    static func linearGuideRotationDegrees(
+        effectRotation: Double,
+        imageRotationDegrees: Int
+    ) -> Double {
+        effectRotation * 180 + Double(ImageEditRotation.normalized(imageRotationDegrees))
+    }
+
     static func imagePoint(
         displayPoint point: CGPoint,
         rotationDegrees: Int
