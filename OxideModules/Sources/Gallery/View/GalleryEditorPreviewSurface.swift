@@ -156,6 +156,10 @@ struct GalleryEditorPreviewSurface: View {
     }
 
     private var spatialOverlayStyle: GallerySpatialEffectOverlay.Style {
+        if spatialEffectKind == .edgeBlur,
+           draft.effects.edgeBlur.shape == .frame {
+            return .frame
+        }
         guard spatialEffectKind == .tiltShift,
               draft.effects.tiltShift.style == .linear
         else { return .radial }

@@ -2,7 +2,7 @@ import ImageProcessor
 import SwiftUI
 
 struct GallerySpatialEffectOverlay: View {
-    enum Style { case radial, linear }
+    enum Style { case radial, linear, frame }
 
     let mask: ImageSpatialEffectMask
     let rotationDegrees: Int
@@ -76,6 +76,14 @@ struct GallerySpatialEffectOverlay: View {
                             imageRotationDegrees: rotationDegrees
                         )
                     )
+                )
+                .position(x: center.x * proxy.size.width, y: center.y * proxy.size.height)
+        case .frame:
+            RoundedRectangle(cornerRadius: min(proxy.size.width, proxy.size.height) * mask.radius * 0.09)
+                .strokeBorder(.white.opacity(0.82), style: guideStroke)
+                .frame(
+                    width: proxy.size.width * mask.radius * 1.55,
+                    height: proxy.size.height * mask.radius * 1.55
                 )
                 .position(x: center.x * proxy.size.width, y: center.y * proxy.size.height)
         }

@@ -54,6 +54,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     public var sparkle: ImageSparkle
     public var pixelSort: ImagePixelSort
     public var tiltShift: ImageTiltShift
+    public var edgeBlur: ImageEdgeBlur
 
     public init(
         filmGrain: ImageFilmGrain = .disabled,
@@ -69,7 +70,8 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         kaleidoscope: ImageKaleidoscope = .disabled,
         sparkle: ImageSparkle = .disabled,
         pixelSort: ImagePixelSort = .disabled,
-        tiltShift: ImageTiltShift = .disabled
+        tiltShift: ImageTiltShift = .disabled,
+        edgeBlur: ImageEdgeBlur = .disabled
     ) {
         self.filmGrain = filmGrain
         self.lightLeak = lightLeak
@@ -85,6 +87,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         self.sparkle = sparkle
         self.pixelSort = pixelSort
         self.tiltShift = tiltShift
+        self.edgeBlur = edgeBlur
     }
 
     public static let neutral = ImageEffects()
@@ -104,6 +107,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         case sparkle
         case pixelSort
         case tiltShift
+        case edgeBlur
     }
 
     public init(from decoder: Decoder) throws {
@@ -146,6 +150,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         sparkle = try container.decodeIfPresent(ImageSparkle.self, forKey: .sparkle) ?? .disabled
         pixelSort = try container.decodeIfPresent(ImagePixelSort.self, forKey: .pixelSort) ?? .disabled
         tiltShift = try container.decodeIfPresent(ImageTiltShift.self, forKey: .tiltShift) ?? .disabled
+        edgeBlur = try container.decodeIfPresent(ImageEdgeBlur.self, forKey: .edgeBlur) ?? .disabled
     }
 }
 

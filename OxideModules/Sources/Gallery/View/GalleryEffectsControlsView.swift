@@ -140,6 +140,7 @@ struct GalleryEffectsControlsView: View {
                 onEnd: onChangeEnded
             )
             if selectedPreset.kind != .tiltShift,
+               selectedPreset.kind != .edgeBlur,
                let spatialMask = draft.effects.spatialMask(for: selectedPreset.kind) {
                 GallerySpatialEffectControls(
                     mask: spatialMask,
@@ -205,6 +206,10 @@ struct GalleryEffectsControlsView: View {
             if draft.effects.tiltShift.style == .linear {
                 EffectControlRow(title: "Rotation", value: draft.effects.tiltShift.rotation, range: 0...1, onChange: updateTiltRotation, onEnd: onChangeEnded)
             }
+        case .edgeBlur:
+            EffectControlRow(title: "Blur", value: draft.effects.edgeBlur.blur, range: 0...1, onChange: updateEdgeBlur, onEnd: onChangeEnded)
+            EffectControlRow(title: "Focus size", value: draft.effects.edgeBlur.spatialMask.radius, range: 0.05...1, onChange: updateEdgeFocusSize, onEnd: onChangeEnded)
+            EffectControlRow(title: "Feather", value: draft.effects.edgeBlur.spatialMask.feather, range: 0...1, onChange: updateEdgeFeather, onEnd: onChangeEnded)
         }
     }
 
@@ -225,6 +230,7 @@ struct GalleryEffectsControlsView: View {
         case .sparkle: draft.effects.sparkle.amount
         case .pixelSort: draft.effects.pixelSort.amount
         case .tiltShift: draft.effects.tiltShift.amount
+        case .edgeBlur: draft.effects.edgeBlur.amount
         }
     }
 
@@ -253,6 +259,7 @@ struct GalleryEffectsControlsView: View {
             case .sparkle: $0.sparkle.amount = value
             case .pixelSort: $0.pixelSort.amount = value
             case .tiltShift: $0.tiltShift.amount = value
+            case .edgeBlur: $0.edgeBlur.amount = value
             }
         }
     }
@@ -289,6 +296,9 @@ struct GalleryEffectsControlsView: View {
     private func updateTiltFocusWidth(_ value: Double) { mutateEffects { $0.tiltShift.spatialMask.radius = value } }
     private func updateTiltFeather(_ value: Double) { mutateEffects { $0.tiltShift.spatialMask.feather = value } }
     private func updateTiltRotation(_ value: Double) { mutateEffects { $0.tiltShift.rotation = value } }
+    private func updateEdgeBlur(_ value: Double) { mutateEffects { $0.edgeBlur.blur = value } }
+    private func updateEdgeFocusSize(_ value: Double) { mutateEffects { $0.edgeBlur.spatialMask.radius = value } }
+    private func updateEdgeFeather(_ value: Double) { mutateEffects { $0.edgeBlur.spatialMask.feather = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

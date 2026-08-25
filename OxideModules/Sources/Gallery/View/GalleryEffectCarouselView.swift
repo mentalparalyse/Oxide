@@ -83,6 +83,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.sparkle.isEnabled
                 && !draft.effects.pixelSort.isEnabled
                 && !draft.effects.tiltShift.isEnabled
+                && !draft.effects.edgeBlur.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -111,6 +112,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.pixelSort.isEnabled else { return false }
         case .tiltShift:
             guard draft.effects.tiltShift.isEnabled else { return false }
+        case .edgeBlur:
+            guard draft.effects.edgeBlur.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -185,6 +188,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.tiltShift.blur - preset.previewEffects.tiltShift.blur)
                 + abs(draft.effects.tiltShift.rotation - preset.previewEffects.tiltShift.rotation)
                 + abs(draft.effects.tiltShift.spatialMask.radius - preset.previewEffects.tiltShift.spatialMask.radius)
+        case .edgeBlur:
+            return abs(draft.effects.edgeBlur.amount - preset.previewEffects.edgeBlur.amount)
+                + abs(draft.effects.edgeBlur.blur - preset.previewEffects.edgeBlur.blur)
+                + abs(draft.effects.edgeBlur.spatialMask.radius - preset.previewEffects.edgeBlur.spatialMask.radius)
+                + abs(draft.effects.edgeBlur.spatialMask.feather - preset.previewEffects.edgeBlur.spatialMask.feather)
         }
     }
 }

@@ -16,6 +16,7 @@ enum GalleryEffectKind: String, Sendable {
     case sparkle
     case pixelSort
     case tiltShift
+    case edgeBlur
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -60,11 +61,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.pixelSort = previewEffects.pixelSort
         case .tiltShift:
             result.tiltShift = previewEffects.tiltShift
+        case .edgeBlur:
+            result.edgeBlur = previewEffects.edgeBlur
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.edgeBlur.isEnabled { return "edge-soft" }
         if effects.tiltShift.isEnabled { return "tilt-miniature" }
         if effects.pixelSort.isEnabled { return "sort-clean" }
         if effects.sparkle.isEnabled { return "sparkle-soft" }
@@ -231,6 +235,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "tilt-miniature", name: "Miniature", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.7, blur: 0.72, style: .linear, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.22, feather: 0.55)))),
         GalleryEffectPreset(id: "tilt-portrait", name: "Portrait Band", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.52, blur: 0.48, style: .linear, rotation: 0.5, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.34, feather: 0.7)))),
         GalleryEffectPreset(id: "tilt-radial", name: "Radial Focus", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.68, blur: 0.62, style: .radial, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.3, feather: 0.52)))),
-        GalleryEffectPreset(id: "tilt-dream", name: "Dream Slice", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.82, blur: 0.84, style: .linear, rotation: 0.08, spatialMask: ImageSpatialEffectMask(mode: .spot, centerY: 0.44, radius: 0.18, feather: 0.8))))
+        GalleryEffectPreset(id: "tilt-dream", name: "Dream Slice", kind: .tiltShift, previewEffects: ImageEffects(tiltShift: ImageTiltShift(amount: 0.82, blur: 0.84, style: .linear, rotation: 0.08, spatialMask: ImageSpatialEffectMask(mode: .spot, centerY: 0.44, radius: 0.18, feather: 0.8)))),
+        GalleryEffectPreset(id: "edge-soft", name: "Soft Edge", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.48, blur: 0.52, shape: .oval, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.48, feather: 0.62)))),
+        GalleryEffectPreset(id: "edge-portrait", name: "Portrait", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.68, blur: 0.66, shape: .oval, spatialMask: ImageSpatialEffectMask(mode: .spot, centerY: 0.44, radius: 0.34, feather: 0.72)))),
+        GalleryEffectPreset(id: "edge-frame", name: "Soft Frame", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.62, blur: 0.58, shape: .frame, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.58, feather: 0.5)))),
+        GalleryEffectPreset(id: "edge-dream", name: "Dream Edge", kind: .edgeBlur, previewEffects: ImageEffects(edgeBlur: ImageEdgeBlur(amount: 0.86, blur: 0.84, shape: .oval, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.28, feather: 0.86))))
     ]
 }
