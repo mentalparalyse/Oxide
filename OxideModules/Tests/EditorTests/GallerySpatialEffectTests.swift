@@ -13,8 +13,22 @@ struct GallerySpatialEffectTests {
         #expect(GalleryEffectKind.pixelSort.supportsSpatialMask)
         #expect(GalleryEffectKind.tiltShift.supportsSpatialMask)
         #expect(GalleryEffectKind.edgeBlur.supportsSpatialMask)
+        #expect(GalleryEffectKind.vignette.supportsSpatialMask)
         #expect(!GalleryEffectKind.filmGrain.supportsSpatialMask)
         #expect(!GalleryEffectKind.dustAndScratches.supportsSpatialMask)
+    }
+
+    @Test func settingVignetteCenterChangesOnlyVignette() {
+        var effects = ImageEffects(
+            edgeBlur: ImageEdgeBlur(amount: 0.5),
+            vignette: ImageVignette(amount: 0.5)
+        )
+        let spot = ImageSpatialEffectMask(mode: .spot, centerX: 0.8, centerY: 0.3)
+
+        effects.setSpatialMask(spot, for: .vignette)
+
+        #expect(effects.vignette.spatialMask == spot)
+        #expect(effects.edgeBlur.spatialMask == .fullFrame)
     }
 
     @Test func settingMaskChangesOnlySelectedEffect() throws {

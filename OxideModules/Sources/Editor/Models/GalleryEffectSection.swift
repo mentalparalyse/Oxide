@@ -56,7 +56,7 @@ private enum GalleryEffectSectionDefinition: String, CaseIterable {
         case .light:
             [.lightLeak, .bloom, .sparkle]
         case .lens:
-            [.chromaticAberration, .lensWarp, .motionBlur, .zoomBlur, .tiltShift, .edgeBlur]
+            [.chromaticAberration, .lensWarp, .motionBlur, .zoomBlur, .tiltShift, .edgeBlur, .vignette]
         case .creative:
             [.kaleidoscope, .pixelSort]
         }

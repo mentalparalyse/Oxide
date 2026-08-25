@@ -84,6 +84,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.pixelSort.isEnabled
                 && !draft.effects.tiltShift.isEnabled
                 && !draft.effects.edgeBlur.isEnabled
+                && !draft.effects.vignette.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -114,6 +115,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.tiltShift.isEnabled else { return false }
         case .edgeBlur:
             guard draft.effects.edgeBlur.isEnabled else { return false }
+        case .vignette:
+            guard draft.effects.vignette.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -193,6 +196,12 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.edgeBlur.blur - preset.previewEffects.edgeBlur.blur)
                 + abs(draft.effects.edgeBlur.spatialMask.radius - preset.previewEffects.edgeBlur.spatialMask.radius)
                 + abs(draft.effects.edgeBlur.spatialMask.feather - preset.previewEffects.edgeBlur.spatialMask.feather)
+        case .vignette:
+            return abs(draft.effects.vignette.amount - preset.previewEffects.vignette.amount)
+                + abs(draft.effects.vignette.size - preset.previewEffects.vignette.size)
+                + abs(draft.effects.vignette.feather - preset.previewEffects.vignette.feather)
+                + abs(draft.effects.vignette.roundness - preset.previewEffects.vignette.roundness)
+                + abs(draft.effects.vignette.irregularity - preset.previewEffects.vignette.irregularity)
         }
     }
 }
