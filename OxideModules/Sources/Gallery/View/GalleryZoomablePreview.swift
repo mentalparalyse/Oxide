@@ -1,3 +1,4 @@
+import Editor
 import SwiftUI
 
 struct GalleryZoomablePreview<Content: View>: View {

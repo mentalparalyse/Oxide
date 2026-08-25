@@ -1,7 +1,7 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
 import Testing
-@testable import Gallery
+@testable import Editor
 
 struct GalleryEditingToolTests {
     @Test func editingToolsHaveStableDisplayMetadata() {

@@ -1,6 +1,7 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
 import CoreGraphics
+import Editor
 import Foundation
 
 public struct GalleryPhotoInfo: Equatable, Sendable {

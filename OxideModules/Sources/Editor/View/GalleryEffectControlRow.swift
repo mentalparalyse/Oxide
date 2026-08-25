@@ -34,7 +34,7 @@ struct EffectValueSlider: View {
         Slider(
             value: Binding(
                 get: { externalValue },
-                set: onChange
+                set: { newValue in onChange(newValue) }
             ),
             in: range,
             onEditingChanged: { isEditing in

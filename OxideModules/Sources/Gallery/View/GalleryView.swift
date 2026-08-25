@@ -1,5 +1,6 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
+import Editor
 import SwiftUI
 import UIComponents
 
@@ -50,8 +51,8 @@ public struct GalleryView: View {
         case .capture:
             GalleryCaptureView(presenter: presenter)
         case .editing:
-            if presenter.draft != nil {
-                GalleryEditingView(presenter: presenter)
+            if let editorPresenter = presenter.editorPresenter {
+                EditorView(presenter: editorPresenter)
             } else {
                 GalleryGridView(presenter: presenter)
             }

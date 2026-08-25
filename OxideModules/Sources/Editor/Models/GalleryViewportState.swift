@@ -1,34 +1,36 @@
 import CoreGraphics
 
-struct GalleryViewportState: Equatable {
-    static let minimumScale: CGFloat = 1
-    static let maximumScale: CGFloat = 5
-    static let zoomStep: CGFloat = 0.5
-    static let doubleTapScale: CGFloat = 2
+public struct GalleryViewportState: Equatable {
+    public static let minimumScale: CGFloat = 1
+    public static let maximumScale: CGFloat = 5
+    public static let zoomStep: CGFloat = 0.5
+    public static let doubleTapScale: CGFloat = 2
 
-    private(set) var scale: CGFloat = minimumScale
-    private(set) var offset: CGSize = .zero
+    public private(set) var scale: CGFloat = minimumScale
+    public private(set) var offset: CGSize = .zero
 
-    mutating func applyScale(_ proposedScale: CGFloat) {
+    public init() {}
+
+    public mutating func applyScale(_ proposedScale: CGFloat) {
         scale = Self.clampedScale(proposedScale)
         if scale == Self.minimumScale {
             offset = .zero
         }
     }
 
-    mutating func zoomIn() {
+    public mutating func zoomIn() {
         applyScale(scale + Self.zoomStep)
     }
 
-    mutating func zoomOut() {
+    public mutating func zoomOut() {
         applyScale(scale - Self.zoomStep)
     }
 
-    mutating func toggleDoubleTapZoom() {
+    public mutating func toggleDoubleTapZoom() {
         applyScale(scale > Self.minimumScale ? Self.minimumScale : Self.doubleTapScale)
     }
 
-    mutating func applyOffset(
+    public mutating func applyOffset(
         _ proposedOffset: CGSize,
         imageSize: CGSize,
         containerSize: CGSize
@@ -41,16 +43,16 @@ struct GalleryViewportState: Equatable {
         )
     }
 
-    mutating func reset() {
+    public mutating func reset() {
         scale = Self.minimumScale
         offset = .zero
     }
 
-    static func clampedScale(_ scale: CGFloat) -> CGFloat {
+    public static func clampedScale(_ scale: CGFloat) -> CGFloat {
         min(max(scale, minimumScale), maximumScale)
     }
 
-    static func clampedOffset(
+    public static func clampedOffset(
         _ offset: CGSize,
         scale: CGFloat,
         imageSize: CGSize,

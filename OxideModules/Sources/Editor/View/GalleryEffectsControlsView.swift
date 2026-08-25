@@ -5,7 +5,7 @@ import UIComponents
 struct GalleryEffectsControlsView: View {
     private static let catalog = GalleryEffectCatalog(presets: GalleryEffectPreset.all)
 
-    let draft: GalleryDraft
+    let draft: EditorDraft
     let onEffectsChange: (ImageEffects) -> Void
     let onChangeEnded: () -> Void
     let onSelectedKindChange: (GalleryEffectKind?) -> Void
@@ -15,7 +15,7 @@ struct GalleryEffectsControlsView: View {
     @State private var showsAdvancedControls = false
 
     init(
-        draft: GalleryDraft,
+        draft: EditorDraft,
         onEffectsChange: @escaping (ImageEffects) -> Void,
         onChangeEnded: @escaping () -> Void,
         onSelectedKindChange: @escaping (GalleryEffectKind?) -> Void

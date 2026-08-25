@@ -55,6 +55,10 @@ let package = Package(
             targets: ["Gallery"]
         ),
         .library(
+            name: "Editor",
+            targets: ["Editor"]
+        ),
+        .library(
             name: "Settings",
             targets: ["Settings"]
         ),
@@ -111,8 +115,24 @@ let package = Package(
             dependencies: ["Home"]
         ),
         .target(
+            name: "Editor",
+            dependencies: [
+                "AppCore",
+                "ImageProcessor",
+                "UIComponents"
+            ]
+        ),
+        .testTarget(
+            name: "EditorTests",
+            dependencies: [
+                "Editor",
+                "ImageProcessor"
+            ]
+        ),
+        .target(
             name: "Gallery",
             dependencies: [
+                "Editor",
                 "AppCore",
                 "ImageProcessor",
                 "UIComponents"
@@ -122,6 +142,7 @@ let package = Package(
             name: "GalleryTests",
             dependencies: [
                 "Gallery",
+                "Editor",
                 "ImageProcessor"
             ]
         ),
