@@ -87,6 +87,10 @@ let package = Package(
             name: "UIComponents",
             dependencies: [],
         ),
+        .testTarget(
+            name: "UIComponentsTests",
+            dependencies: ["UIComponents"]
+        ),
         .target(
             name: "Root",
             dependencies: [

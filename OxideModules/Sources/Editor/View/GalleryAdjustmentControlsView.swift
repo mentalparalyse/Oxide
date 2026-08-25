@@ -65,19 +65,12 @@ struct GalleryAdjustmentControlsView: View {
 
     private var adjustmentSlider: some View {
         VStack(spacing: 6) {
-            Slider(
-                value: Binding(
-                    get: { value(for: selectedKind) },
-                    set: { onChange(selectedKind, $0) }
-                ),
-                in: range(for: selectedKind),
-                onEditingChanged: { isEditing in
-                    if !isEditing {
-                        onChangeEnded()
-                    }
-                }
+            ValueSlider(
+                value: value(for: selectedKind),
+                range: range(for: selectedKind),
+                onChange: { onChange(selectedKind, $0) },
+                onChangeEnded: onChangeEnded
             )
-            .tint(AppColours.buttonBacground)
 
             Text(formattedValue(for: selectedKind))
                 .font(.system(size: 12, weight: .medium))
