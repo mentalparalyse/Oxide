@@ -83,11 +83,11 @@ struct GalleryEffectsControlsView: View {
                     Text("Intensity")
                         .frame(width: 86, alignment: .leading)
 
-                    EffectValueSlider(
-                        externalValue: amount,
+                    ValueSlider(
+                        value: amount,
                         range: 0...1,
                         onChange: updateAmount,
-                        onEnd: onChangeEnded
+                        onChangeEnded: onChangeEnded
                     )
                     Button { showsAdvancedControls = true } label: {
                         Image(systemName: "slider.horizontal.3")

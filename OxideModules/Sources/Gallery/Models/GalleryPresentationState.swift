@@ -11,7 +11,7 @@ public enum GalleryToast: Equatable {
     case success(String)
     case error(String)
 
-    var message: String {
+    public var message: String {
         switch self {
         case .success(let message), .error(let message):
             return message

@@ -14,19 +14,19 @@ struct GalleryEditorPreviewSurface: View {
     let onSpatialCenterChange: (Double, Double) -> Void
     let onSpatialCenterChangeEnded: () -> Void
 
-    @State private var viewport = GalleryViewportState()
+    @State private var viewport = ZoomViewportState()
     @GestureState private var gestureScale: CGFloat = 1
     @GestureState private var gestureOffset: CGSize = .zero
 
     var body: some View {
         GeometryReader { proxy in
             let imageSize = fittedImageSize(in: proxy.size)
-            let effectiveScale = GalleryViewportState.clampedScale(viewport.scale * gestureScale)
+            let effectiveScale = ZoomViewportState.clampedScale(viewport.scale * gestureScale)
             let proposedOffset = CGSize(
                 width: panOffset.width + gestureOffset.width,
                 height: panOffset.height + gestureOffset.height
             )
-            let effectiveOffset = GalleryViewportState.clampedOffset(
+            let effectiveOffset = ZoomViewportState.clampedOffset(
                 proposedOffset,
                 scale: effectiveScale,
                 imageSize: imageSize,
@@ -76,11 +76,11 @@ struct GalleryEditorPreviewSurface: View {
                 .scaleEffect(effectiveScale)
                 .offset(effectiveOffset)
 
-                GalleryZoomControlsView(
+                ZoomControlsView(
                     scale: effectiveScale,
-                    zoomOut: { updateZoom(by: -GalleryViewportState.zoomStep, imageSize: imageSize, containerSize: proxy.size) },
+                    zoomOut: { updateZoom(by: -ZoomViewportState.zoomStep, imageSize: imageSize, containerSize: proxy.size) },
                     reset: resetViewport,
-                    zoomIn: { updateZoom(by: GalleryViewportState.zoomStep, imageSize: imageSize, containerSize: proxy.size) }
+                    zoomIn: { updateZoom(by: ZoomViewportState.zoomStep, imageSize: imageSize, containerSize: proxy.size) }
                 )
                 .padding(12)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)

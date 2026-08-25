@@ -1,6 +1,7 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
 import SwiftUI
+import UIComponents
 
 struct GalleryEditorFilterPanels: View {
     @ObservedObject var presenter: EditorPresenter
@@ -9,11 +10,14 @@ struct GalleryEditorFilterPanels: View {
     var body: some View {
         VStack(spacing: 10) {
             if let expandedSection {
-                GalleryFloatingControls {
+                FloatingControlPanel {
                     VStack(spacing: 8) {
                         if expandedSection.contains(filterID: presenter.draft.selectedFilterID) {
-                            FilterIntensitySlider(
+                            LabeledValueSlider(
+                                title: "Intensity",
                                 value: presenter.draft.filterIntensity,
+                                range: 0...1,
+                                valueText: "\(Int(presenter.draft.filterIntensity * 100))",
                                 onChange: presenter.setFilterIntensity,
                                 onChangeEnded: { Task { await presenter.commitFilterIntensity() } }
                             )
@@ -31,7 +35,7 @@ struct GalleryEditorFilterPanels: View {
                 }
             }
 
-            GalleryFloatingControls {
+            FloatingControlPanel {
                 GalleryFilterSectionBar(
                     catalog: presenter.filterCatalog,
                     selectedFilterID: presenter.draft.selectedFilterID,

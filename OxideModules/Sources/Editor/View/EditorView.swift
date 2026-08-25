@@ -41,7 +41,7 @@ public struct EditorView: View {
                             expandedSectionID: $expandedFilterSectionID
                         )
                     } else {
-                        GalleryFloatingControls {
+                        FloatingControlPanel {
                             GalleryEditorToolPanel(
                                 presenter: presenter,
                                 activeTool: activeTool,
@@ -50,7 +50,7 @@ public struct EditorView: View {
                         }
                     }
 
-                    GalleryFloatingControls {
+                    FloatingControlPanel {
                         GalleryEditingToolTabBar(selection: $activeTool)
                     }
                 }
