@@ -1,5 +1,6 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
+import Editor
 import SwiftUI
 import UIComponents
 
@@ -11,7 +12,7 @@ struct GalleryPreviewView: View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            GalleryZoomablePreview {
+            ZoomableContainer {
                 LUTPreviewImage(
                     imageURL: photo.imageURI,
                     presetID: photo.filterID,
@@ -28,9 +29,9 @@ struct GalleryPreviewView: View {
 
             VStack {
                 HStack {
-                    CircleIconButton(systemName: "xmark", label: "Close", action: presenter.dismissPreview)
+                    CircularIconButton(systemName: "xmark", accessibilityLabel: "Close", size: 40, action: presenter.dismissPreview)
                     Spacer()
-                    CircleIconButton(systemName: "ellipsis", label: "More options", action: presenter.showSelectedPhotoInfo)
+                    CircularIconButton(systemName: "ellipsis", accessibilityLabel: "More options", size: 40, action: presenter.showSelectedPhotoInfo)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
@@ -38,21 +39,21 @@ struct GalleryPreviewView: View {
                 Spacer()
 
                 HStack {
-                    PreviewActionButton(systemName: "pencil", title: "Edit") {
+                    IconActionButton(systemName: "pencil", title: "Edit") {
                         Task { await presenter.startEditingSelectedPhoto() }
                     }
-                    PreviewActionButton(systemName: "square.and.arrow.up", title: "Share") {
+                    IconActionButton(systemName: "square.and.arrow.up", title: "Share") {
                         Task { await presenter.shareSelectedPhoto() }
                     }
                     .disabled(presenter.isPreparingShare)
-                    PreviewActionButton(
+                    IconActionButton(
                         systemName: presenter.previewSaveState == .saved ? "checkmark" : "square.and.arrow.down",
                         title: presenter.previewSaveState == .saved ? "Saved" : "Save"
                     ) {
                         Task { await presenter.saveSelectedPhotoToLibrary() }
                     }
                     .disabled(presenter.previewSaveState != .idle)
-                    PreviewActionButton(
+                    IconActionButton(
                         systemName: "trash",
                         title: "Delete",
                         foreground: AppColours.appDestructiveColor,

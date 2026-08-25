@@ -1,5 +1,6 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
+import Editor
 import SwiftUI
 import UIComponents
 
@@ -18,12 +19,19 @@ public struct GalleryView: View {
             screenContent
             
             if presenter.isDeleteConfirmationPresented {
-                DeleteConfirmationView(presenter: presenter)
+                ConfirmationSheet(
+                    title: "Delete this photo?",
+                    message: "This can't be undone.",
+                    confirmTitle: "Delete",
+                    isDestructive: true,
+                    onConfirm: presenter.confirmDeleteSelectedPhoto,
+                    onCancel: presenter.cancelDelete
+                )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
             
             if let toast = presenter.toast {
-                GalleryToastView(toast: toast)
+                ToastView(message: toast.message, style: toast.toastStyle)
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .task(id: toast.message) {
                         try? await Task.sleep(nanoseconds: 3_000_000_000)
@@ -50,11 +58,20 @@ public struct GalleryView: View {
         case .capture:
             GalleryCaptureView(presenter: presenter)
         case .editing:
-            if presenter.draft != nil {
-                GalleryEditingView(presenter: presenter)
+            if let editorPresenter = presenter.editorPresenter {
+                EditorView(presenter: editorPresenter)
             } else {
                 GalleryGridView(presenter: presenter)
             }
+        }
+    }
+}
+
+private extension GalleryToast {
+    var toastStyle: ToastStyle {
+        switch self {
+        case .success: .success
+        case .error: .error
         }
     }
 }

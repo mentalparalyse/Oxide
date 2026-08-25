@@ -68,3 +68,5 @@ fastlane/test_output
 /Oxide-Effects/
 OxideModules/Sources/ImageProcessor/LUTs/*
 !OxideModules/Sources/ImageProcessor/LUTs/README.md
+docs/UI_FEATURE_TASKS.md
+docs/UI_EDITOR_SELF_REVIEW.md

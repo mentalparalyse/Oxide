@@ -25,11 +25,12 @@ struct GalleryCaptureView: View {
 
                 VStack {
                     HStack {
-                        CircleIconButton(systemName: "xmark", label: "Close camera", action: presenter.closeCapture)
+                        CircularIconButton(systemName: "xmark", accessibilityLabel: "Close camera", size: 40, action: presenter.closeCapture)
                         Spacer()
-                        CircleIconButton(
+                        CircularIconButton(
                             systemName: isTorchEnabled ? "bolt.fill" : "bolt.slash",
-                            label: isTorchEnabled ? "Turn torch off" : "Turn torch on",
+                            accessibilityLabel: isTorchEnabled ? "Turn torch off" : "Turn torch on",
+                            size: 40,
                             action: toggleTorch
                         )
                         .disabled(
@@ -72,9 +73,10 @@ struct GalleryCaptureView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Take photo")
 
-                CircleIconButton(
+                CircularIconButton(
                     systemName: "arrow.triangle.2.circlepath.camera",
-                    label: "Switch camera",
+                    accessibilityLabel: "Switch camera",
+                    size: 40,
                     action: switchCamera
                 )
                     .frame(width: 56, height: 56)
