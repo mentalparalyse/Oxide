@@ -25,6 +25,7 @@ struct GalleryEffectSectionTests {
         #expect(catalog.section(containing: "grain-film")?.id == "film")
         #expect(catalog.section(containing: "sparkle-soft")?.id == "light")
         #expect(catalog.section(containing: "zoom-rush")?.id == "lens")
+        #expect(catalog.section(containing: "tilt-miniature")?.id == "lens")
         #expect(catalog.section(containing: "sort-melt")?.id == "creative")
         #expect(catalog.section(containing: "none") == nil)
         #expect(catalog.section(containing: "missing") == nil)
