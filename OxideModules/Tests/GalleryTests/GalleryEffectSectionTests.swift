@@ -27,6 +27,7 @@ struct GalleryEffectSectionTests {
         #expect(catalog.section(containing: "zoom-rush")?.id == "lens")
         #expect(catalog.section(containing: "tilt-miniature")?.id == "lens")
         #expect(catalog.section(containing: "edge-soft")?.id == "lens")
+        #expect(catalog.section(containing: "vignette-dark")?.id == "lens")
         #expect(catalog.section(containing: "sort-melt")?.id == "creative")
         #expect(catalog.section(containing: "none") == nil)
         #expect(catalog.section(containing: "missing") == nil)

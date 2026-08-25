@@ -141,6 +141,7 @@ struct GalleryEffectsControlsView: View {
             )
             if selectedPreset.kind != .tiltShift,
                selectedPreset.kind != .edgeBlur,
+               selectedPreset.kind != .vignette,
                let spatialMask = draft.effects.spatialMask(for: selectedPreset.kind) {
                 GallerySpatialEffectControls(
                     mask: spatialMask,
@@ -210,6 +211,11 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Blur", value: draft.effects.edgeBlur.blur, range: 0...1, onChange: updateEdgeBlur, onEnd: onChangeEnded)
             EffectControlRow(title: "Focus size", value: draft.effects.edgeBlur.spatialMask.radius, range: 0.05...1, onChange: updateEdgeFocusSize, onEnd: onChangeEnded)
             EffectControlRow(title: "Feather", value: draft.effects.edgeBlur.spatialMask.feather, range: 0...1, onChange: updateEdgeFeather, onEnd: onChangeEnded)
+        case .vignette:
+            EffectControlRow(title: "Size", value: draft.effects.vignette.size, range: 0...1, onChange: updateVignetteSize, onEnd: onChangeEnded)
+            EffectControlRow(title: "Feather", value: draft.effects.vignette.feather, range: 0...1, onChange: updateVignetteFeather, onEnd: onChangeEnded)
+            EffectControlRow(title: "Roundness", value: draft.effects.vignette.roundness, range: 0...1, onChange: updateVignetteRoundness, onEnd: onChangeEnded)
+            EffectControlRow(title: "Irregularity", value: draft.effects.vignette.irregularity, range: 0...1, onChange: updateVignetteIrregularity, onEnd: onChangeEnded)
         }
     }
 
@@ -231,6 +237,7 @@ struct GalleryEffectsControlsView: View {
         case .pixelSort: draft.effects.pixelSort.amount
         case .tiltShift: draft.effects.tiltShift.amount
         case .edgeBlur: draft.effects.edgeBlur.amount
+        case .vignette: draft.effects.vignette.amount
         }
     }
 
@@ -260,6 +267,7 @@ struct GalleryEffectsControlsView: View {
             case .pixelSort: $0.pixelSort.amount = value
             case .tiltShift: $0.tiltShift.amount = value
             case .edgeBlur: $0.edgeBlur.amount = value
+            case .vignette: $0.vignette.amount = value
             }
         }
     }
@@ -299,6 +307,10 @@ struct GalleryEffectsControlsView: View {
     private func updateEdgeBlur(_ value: Double) { mutateEffects { $0.edgeBlur.blur = value } }
     private func updateEdgeFocusSize(_ value: Double) { mutateEffects { $0.edgeBlur.spatialMask.radius = value } }
     private func updateEdgeFeather(_ value: Double) { mutateEffects { $0.edgeBlur.spatialMask.feather = value } }
+    private func updateVignetteSize(_ value: Double) { mutateEffects { $0.vignette.size = value } }
+    private func updateVignetteFeather(_ value: Double) { mutateEffects { $0.vignette.feather = value } }
+    private func updateVignetteRoundness(_ value: Double) { mutateEffects { $0.vignette.roundness = value } }
+    private func updateVignetteIrregularity(_ value: Double) { mutateEffects { $0.vignette.irregularity = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
