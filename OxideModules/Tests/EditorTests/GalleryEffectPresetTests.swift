@@ -1,6 +1,6 @@
 import ImageProcessor
 import Testing
-@testable import Gallery
+@testable import Editor
 
 struct GalleryEffectPresetTests {
     @Test func noneClearsEveryEffect() {

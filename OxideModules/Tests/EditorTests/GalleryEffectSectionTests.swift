@@ -1,5 +1,5 @@
 import Testing
-@testable import Gallery
+@testable import Editor
 
 struct GalleryEffectSectionTests {
     @Test func catalogKeepsNoneOutsideSectionsAndAssignsEveryPresetOnce() {

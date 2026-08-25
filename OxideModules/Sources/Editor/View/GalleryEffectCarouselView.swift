@@ -2,7 +2,7 @@ import SwiftUI
 import UIComponents
 
 struct GalleryEffectCarouselView: View {
-    let draft: GalleryDraft
+    let draft: EditorDraft
     let presets: [GalleryEffectPreset]
     let selectionID: GalleryEffectPreset.ID
     let onSelect: (GalleryEffectPreset) -> Void
@@ -34,7 +34,7 @@ struct GalleryEffectCarouselView: View {
 
     private func preview(for preset: GalleryEffectPreset) -> some View {
         LUTPreviewImage(
-            imageURL: draft.photo.imageURI,
+            imageURL: draft.asset.imageURI,
             presetID: draft.selectedFilterID,
             intensity: draft.filterIntensity,
             rotationDegrees: draft.rotationDegrees,

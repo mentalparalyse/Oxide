@@ -2,7 +2,7 @@ import Foundation
 import ImageProcessor
 import Testing
 import UIKit
-@testable import Gallery
+@testable import Editor
 
 @MainActor
 struct LUTPreviewRenderCoordinatorTests {

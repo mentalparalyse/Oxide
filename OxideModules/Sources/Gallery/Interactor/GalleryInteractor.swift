@@ -9,17 +9,12 @@ protocol GalleryInteractorProtocol {
     func save(_ photo: GalleryPhoto) -> [GalleryPhoto]
     func delete(photoID: GalleryPhoto.ID) -> [GalleryPhoto]
     func storeImportedImage(data: Data, id: String) async throws -> URL
-    func beginEditHistory(for photo: GalleryPhoto) async
-    func recordEditStep(_ draft: GalleryDraft) async -> GalleryEditHistoryState
-    func undoEditStep() async -> GalleryEditHistoryState
-    func preloadFilterPreviews(for imageURL: URL, filters: [GalleryFilter])
     func sourceImageSize(for imageURL: URL) -> CGSize?
 }
 
 @MainActor
 final class GalleryInteractor: GalleryInteractorProtocol {
     private var photos: [GalleryPhoto]
-    private let editHistory = GalleryEditHistoryStore()
     private let imageFileStore = ImageFileStore()
     private let imageProcessor = ImageProcessor()
     private let persistsChanges: Bool
@@ -62,50 +57,7 @@ final class GalleryInteractor: GalleryInteractorProtocol {
         try await imageFileStore.writeImageData(data, id: id)
     }
 
-    func beginEditHistory(for photo: GalleryPhoto) async {
-        await editHistory.reset(for: photo.id)
-        _ = await editHistory.record(GalleryDraft(photo: photo))
-    }
-
-    func recordEditStep(_ draft: GalleryDraft) async -> GalleryEditHistoryState {
-        await editHistory.record(draft)
-    }
-
-    func undoEditStep() async -> GalleryEditHistoryState {
-        await editHistory.undo()
-    }
-
-    func preloadFilterPreviews(for _: URL, filters: [GalleryFilter]) {
-        let previewFilters = GalleryFilterPreloadPolicy.presets(from: filters)
-        guard !previewFilters.isEmpty else { return }
-        Task.detached(priority: .utility) { [imageProcessor] in
-            await withTaskGroup(of: Void.self) { group in
-                var iterator = previewFilters.makeIterator()
-
-                for _ in 0..<2 {
-                    guard let filter = iterator.next() else { break }
-                    group.addTask {
-                        await imageProcessor.prepareLUT(presetID: filter.id)
-                    }
-                }
-
-                while await group.next() != nil {
-                    guard let filter = iterator.next() else { continue }
-                    group.addTask {
-                        await imageProcessor.prepareLUT(presetID: filter.id)
-                    }
-                }
-            }
-        }
-    }
-
     func sourceImageSize(for imageURL: URL) -> CGSize? {
         imageProcessor.sourceSize(for: imageURL)
-    }
-}
-
-enum GalleryFilterPreloadPolicy {
-    static func presets(from filters: [GalleryFilter]) -> [GalleryFilter] {
-        Array(filters.filter { $0.lutResourceName != nil }.prefix(5))
     }
 }

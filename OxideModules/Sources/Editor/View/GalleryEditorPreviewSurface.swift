@@ -5,7 +5,7 @@ import SwiftUI
 import UIComponents
 
 struct GalleryEditorPreviewSurface: View {
-    let draft: GalleryDraft
+    let draft: EditorDraft
     let sourceSize: CGSize?
     let isCropping: Bool
     let onResize: (ImageEditCropEdge, ImageEditCrop?, Double, Double) -> Void
@@ -38,7 +38,7 @@ struct GalleryEditorPreviewSurface: View {
 
                 ZStack {
                     LUTPreviewImage(
-                        imageURL: draft.photo.imageURI,
+                        imageURL: draft.asset.imageURI,
                         presetID: draft.selectedFilterID,
                         intensity: draft.filterIntensity,
                         rotationDegrees: draft.rotationDegrees,

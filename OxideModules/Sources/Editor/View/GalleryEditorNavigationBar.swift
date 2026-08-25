@@ -11,8 +11,8 @@ struct GalleryEditorNavigationBar: View {
 
     var body: some View {
         HStack {
-            CircleIconButton(systemName: "xmark", label: "Cancel", action: onCancel)
-            CircleIconButton(systemName: "arrow.uturn.backward", label: "Undo last edit", action: onUndo)
+            EditorCircleIconButton(systemName: "xmark", label: "Cancel", action: onCancel)
+            EditorCircleIconButton(systemName: "arrow.uturn.backward", label: "Undo last edit", action: onUndo)
                 .opacity(canUndo ? 1 : 0.35)
                 .disabled(!canUndo)
 
@@ -36,5 +36,22 @@ struct GalleryEditorNavigationBar: View {
             )
             .allowsHitTesting(false)
         }
+    }
+}
+
+private struct EditorCircleIconButton: View {
+    let systemName: String
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .frame(width: 44, height: 44)
+                .background(AppColours.appSurfaceColor, in: Circle())
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(AppColours.appForegroundColor)
+        .accessibilityLabel(label)
     }
 }

@@ -3,7 +3,7 @@
 import SwiftUI
 
 struct GalleryEditorFilterPanels: View {
-    @ObservedObject var presenter: GalleryPresenter
+    @ObservedObject var presenter: EditorPresenter
     @Binding var expandedSectionID: String?
 
     var body: some View {
@@ -11,9 +11,9 @@ struct GalleryEditorFilterPanels: View {
             if let expandedSection {
                 GalleryFloatingControls {
                     VStack(spacing: 8) {
-                        if expandedSection.contains(filterID: presenter.draft?.selectedFilterID) {
+                        if expandedSection.contains(filterID: presenter.draft.selectedFilterID) {
                             FilterIntensitySlider(
-                                value: presenter.draft?.filterIntensity ?? 1,
+                                value: presenter.draft.filterIntensity,
                                 onChange: presenter.setFilterIntensity,
                                 onChangeEnded: { Task { await presenter.commitFilterIntensity() } }
                             )
@@ -22,8 +22,8 @@ struct GalleryEditorFilterPanels: View {
 
                         GalleryExpandedFilterRail(
                             section: expandedSection,
-                            selectedFilterID: presenter.draft?.selectedFilterID,
-                            imageURL: presenter.draft?.photo.imageURI,
+                            selectedFilterID: presenter.draft.selectedFilterID,
+                            imageURL: presenter.draft.asset.imageURI,
                             onSelectFilter: { filter in Task { await presenter.selectFilter(filter.id) } }
                         )
                     }
@@ -34,7 +34,7 @@ struct GalleryEditorFilterPanels: View {
             GalleryFloatingControls {
                 GalleryFilterSectionBar(
                     catalog: presenter.filterCatalog,
-                    selectedFilterID: presenter.draft?.selectedFilterID,
+                    selectedFilterID: presenter.draft.selectedFilterID,
                     expandedSectionID: expandedSectionID,
                     onSelectOriginal: selectOriginal,
                     onToggleSection: toggleSection
@@ -52,7 +52,7 @@ struct GalleryEditorFilterPanels: View {
     private func revealSelectedSection() {
         guard expandedSectionID == nil else { return }
         expandedSectionID = presenter.filterCatalog
-            .section(containing: presenter.draft?.selectedFilterID)?.id
+            .section(containing: presenter.draft.selectedFilterID)?.id
             ?? presenter.filterCatalog.sections.first?.id
     }
 

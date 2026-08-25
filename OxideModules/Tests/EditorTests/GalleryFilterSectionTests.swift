@@ -2,7 +2,7 @@
 
 import ImageProcessor
 import Testing
-@testable import Gallery
+@testable import Editor
 
 struct GalleryFilterSectionTests {
     @Test func catalogKeepsOriginalOutsideSectionsAndDoesNotDuplicateFilters() {

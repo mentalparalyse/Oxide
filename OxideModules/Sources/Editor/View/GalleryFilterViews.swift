@@ -47,7 +47,7 @@ struct FilterChipView: View {
     }
 }
 
-struct LUTPreviewImage: View {
+public struct LUTPreviewImage: View {
     let imageURL: URL?
     let presetID: String?
     var intensity: Double = 0.5
@@ -60,7 +60,29 @@ struct LUTPreviewImage: View {
     
     @StateObject private var renderCoordinator = LUTPreviewRenderCoordinator()
     
-    var body: some View {
+    public init(
+        imageURL: URL?,
+        presetID: String?,
+        intensity: Double = 0.5,
+        rotationDegrees: Int,
+        crop: ImageEditCrop? = nil,
+        adjustments: ImageAdjustments = .neutral,
+        effects: ImageEffects = .neutral,
+        contentMode: ContentMode,
+        maxPixelSize: CGFloat? = nil
+    ) {
+        self.imageURL = imageURL
+        self.presetID = presetID
+        self.intensity = intensity
+        self.rotationDegrees = rotationDegrees
+        self.crop = crop
+        self.adjustments = adjustments
+        self.effects = effects
+        self.contentMode = contentMode
+        self.maxPixelSize = maxPixelSize
+    }
+
+    public var body: some View {
         Group {
             if let renderedImage = renderCoordinator.image {
                 Image(uiImage: renderedImage)

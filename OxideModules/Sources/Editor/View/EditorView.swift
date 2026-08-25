@@ -4,14 +4,18 @@ import ImageProcessor
 import SwiftUI
 import UIComponents
 
-struct GalleryEditingView: View {
-    @ObservedObject var presenter: GalleryPresenter
+public struct EditorView: View {
+    @ObservedObject var presenter: EditorPresenter
     @State private var activeTool: GalleryEditingTool = .filters
     @State private var selectedSpatialEffectKind: GalleryEffectKind?
     @State private var expandedFilterSectionID: String?
     @State private var comparisonVisibility = GalleryComparisonVisibilityState()
 
-    var body: some View {
+    public init(presenter: EditorPresenter) {
+        self.presenter = presenter
+    }
+
+    public var body: some View {
         ZStack {
             editorPreview
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -22,10 +26,10 @@ struct GalleryEditingView: View {
 
             VStack(spacing: 0) {
                 GalleryEditorNavigationBar(
-                    canUndo: presenter.canUndoEdit,
-                    onCancel: presenter.cancelEditing,
-                    onUndo: { Task { await presenter.undoLastEdit() } },
-                    onSave: presenter.saveDraft
+                    canUndo: presenter.canUndo,
+                    onCancel: presenter.cancel,
+                    onUndo: { Task { await presenter.undo() } },
+                    onSave: presenter.save
                 )
 
                 Spacer(minLength: 0)
@@ -68,10 +72,9 @@ struct GalleryEditingView: View {
 
     private var editorPreview: some View {
         Group {
-            if let draft = presenter.draft {
-                GalleryEditorPreviewSurface(
-                    draft: draft,
-                    sourceSize: presenter.editingSourceSize,
+            GalleryEditorPreviewSurface(
+                    draft: presenter.draft,
+                    sourceSize: presenter.sourceSize,
                     isCropping: activeTool == .crop,
                     onResize: presenter.resizeCrop,
                     onResizeEnded: { Task { await presenter.commitCropResize() } },
@@ -79,9 +82,6 @@ struct GalleryEditingView: View {
                     onSpatialCenterChange: updateSpatialCenter,
                     onSpatialCenterChangeEnded: { Task { await presenter.commitEffects() } }
                 )
-            } else {
-                AppColours.appColor
-            }
         }
     }
 
@@ -95,7 +95,7 @@ struct GalleryEditingView: View {
     private var activeSpatialMask: ImageSpatialEffectMask? {
         guard activeTool == .effects,
               let selectedSpatialEffectKind,
-              let mask = presenter.draft?.effects.spatialMask(for: selectedSpatialEffectKind),
+              let mask = presenter.draft.effects.spatialMask(for: selectedSpatialEffectKind),
               mask.mode == .spot
         else { return nil }
         return mask
@@ -111,9 +111,9 @@ struct GalleryEditingView: View {
 
     private func updateSpatialCenter(_ centerX: Double, _ centerY: Double) {
         guard let kind = selectedSpatialEffectKind,
-              var effects = presenter.draft?.effects,
-              let current = effects.spatialMask(for: kind)
+              let current = presenter.draft.effects.spatialMask(for: kind)
         else { return }
+        var effects = presenter.draft.effects
 
         effects.setSpatialMask(
             ImageSpatialEffectMask(
