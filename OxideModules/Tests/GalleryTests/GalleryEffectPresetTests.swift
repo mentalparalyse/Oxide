@@ -17,7 +17,8 @@ struct GalleryEffectPresetTests {
             kaleidoscope: ImageKaleidoscope(amount: 0.5),
             sparkle: ImageSparkle(amount: 0.5),
             pixelSort: ImagePixelSort(amount: 0.5),
-            tiltShift: ImageTiltShift(amount: 0.5)
+            tiltShift: ImageTiltShift(amount: 0.5),
+            edgeBlur: ImageEdgeBlur(amount: 0.5)
         )
 
         #expect(preset("none").applying(to: enabled) == .neutral)
@@ -121,6 +122,13 @@ struct GalleryEffectPresetTests {
         let result = preset("tilt-radial").applying(to: current)
         #expect(result.tiltShift.style == .radial)
         #expect(result.pixelSort == current.pixelSort)
+    }
+
+    @Test func applyingEdgeBlurPresetPreservesOtherEffectKinds() {
+        let current = ImageEffects(tiltShift: ImageTiltShift(amount: 0.3))
+        let result = preset("edge-frame").applying(to: current)
+        #expect(result.edgeBlur.shape == .frame)
+        #expect(result.tiltShift == current.tiltShift)
     }
 
     @Test func initialSelectionPrioritizesVisibleTopLayer() {

@@ -12,6 +12,7 @@ struct GallerySpatialEffectTests {
         #expect(GalleryEffectKind.sparkle.supportsSpatialMask)
         #expect(GalleryEffectKind.pixelSort.supportsSpatialMask)
         #expect(GalleryEffectKind.tiltShift.supportsSpatialMask)
+        #expect(GalleryEffectKind.edgeBlur.supportsSpatialMask)
         #expect(!GalleryEffectKind.filmGrain.supportsSpatialMask)
         #expect(!GalleryEffectKind.dustAndScratches.supportsSpatialMask)
     }

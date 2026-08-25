@@ -316,6 +316,12 @@ public final class ImageProcessor: @unchecked Sendable {
                     style: effects.tiltShift.style == .linear ? .linear : .radial,
                     rotation: effects.tiltShift.rotation,
                     spatialMask: effects.tiltShift.spatialMask.effectMask
+                ),
+                edgeBlur: EdgeBlurSettings(
+                    amount: effects.edgeBlur.amount,
+                    blur: effects.edgeBlur.blur,
+                    shape: effects.edgeBlur.shape == .oval ? .oval : .frame,
+                    spatialMask: effects.edgeBlur.spatialMask.effectMask
                 )
             ),
             to: image
