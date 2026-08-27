@@ -1,5 +1,6 @@
 // Copyright (c) 2025 and Confidential to SoftFusion All rights reserved.
 
+import AppCore
 import Editor
 import Foundation
 import ImageProcessor
@@ -19,12 +20,20 @@ public final class GalleryPresenter: ObservableObject {
     private let interactor: GalleryInteractorProtocol
     private let router: GalleryRouterProtocol
     private let imageExporter: GalleryImageExporting
+    private let analytics: any AppAnalyticsTracking
 
-    init(interactor: GalleryInteractorProtocol, router: GalleryRouterProtocol, imageExporter: GalleryImageExporting = GalleryImageExporter()) {
+    init(
+        interactor: GalleryInteractorProtocol,
+        router: GalleryRouterProtocol,
+        analytics: any AppAnalyticsTracking = NoOpAppAnalyticsTracker(),
+        imageExporter: GalleryImageExporting = GalleryImageExporter()
+    ) {
         self.interactor = interactor
         self.router = router
         self.imageExporter = imageExporter
+        self.analytics = analytics
         photos = interactor.loadPhotos()
+        analytics.track(.galleryViewed)
     }
 
     public var selectedPhoto: GalleryPhoto? {
@@ -68,9 +77,11 @@ public final class GalleryPresenter: ObservableObject {
             guard self.selectedPhoto?.id == selectedPhoto.id else { return }
             previewSaveState = .saved
             toast = .success("Saved to Photos")
+            analytics.track(.photoExported(destination: "photo_library"))
         } catch {
             previewSaveState = .idle
             toast = .error("Save failed")
+            analytics.track(.operationFailed(operation: "photo_export", reason: "save_failed"))
         }
     }
 
@@ -82,8 +93,10 @@ public final class GalleryPresenter: ObservableObject {
             let url = try await imageExporter.exportFile(for: selectedPhoto)
             guard self.selectedPhoto?.id == selectedPhoto.id else { return }
             router.presentShareSheet(for: url)
+            analytics.track(.photoExported(destination: "share_sheet"))
         } catch {
             toast = .error("Share failed")
+            analytics.track(.operationFailed(operation: "photo_export", reason: "share_failed"))
         }
     }
 
@@ -102,6 +115,7 @@ public final class GalleryPresenter: ObservableObject {
             beginEditing(photo: GalleryPhoto(id: id, imageURI: url, createdAt: now))
         } catch {
             toast = .error("Import failed")
+            analytics.track(.operationFailed(operation: "photo_import", reason: "storage_failed"))
         }
     }
 
@@ -123,6 +137,7 @@ public final class GalleryPresenter: ObservableObject {
         isDeleteConfirmationPresented = false
         screen = .gallery
         toast = .success("Photo deleted")
+        analytics.track(.photoDeleted)
     }
 
     public func clearToast() { toast = nil }
@@ -131,11 +146,13 @@ public final class GalleryPresenter: ObservableObject {
         let photoID = photo.id
         editorPresenter = EditorBuilder.makePresenter(
             asset: EditorAsset(photo),
+            analytics: analytics,
             onCancel: { [weak self] in self?.finishEditingWithoutSaving(photoID: photoID) },
             onSave: { [weak self] asset in self?.finishEditing(with: asset) },
             onError: { [weak self] message in self?.toast = .error(message) }
         )
         screen = .editing(photoID)
+        analytics.track(.editorStarted(source: photos.contains { $0.id == photoID } ? "gallery" : "capture_or_import"))
     }
 
     private func finishEditingWithoutSaving(photoID: GalleryPhoto.ID) {

@@ -118,6 +118,31 @@ can be installed without another network fetch:
 ./Scripts/install-effects.sh /path/to/Oxide-Effects
 ```
 
+### Private analytics
+
+Analytics collection and validation are maintained in the private
+`mentalparalyse/Oxide-Analytics` repository. The complete `AnalyticsCore`
+module—including its event contract—is absent from a public clone. Conditional
+integration points compile out when the private package is unavailable, so a
+public build neither records nor uploads analytics.
+
+Maintainers with repository access can install the private package with:
+
+```sh
+./Scripts/install-analytics.sh
+```
+
+The ignored checkout is placed at `Oxide-Analytics/`, matching the private
+effects integration. Swift Package Manager links it automatically on the next
+clean package resolution. An existing checkout can be installed without
+another network fetch:
+
+```sh
+./Scripts/install-analytics.sh /path/to/Oxide-Analytics
+```
+
+Set `OXIDE_DISABLE_PRIVATE_ANALYTICS=1` when validating the public fallback.
+
 ## Requirements
 
 - Xcode 17 or newer

@@ -11,12 +11,15 @@ public final class AppState: ObservableObject {
 
 public final class RootCoordinator: ObservableObject, RootCoordinatorProtocol {
     @ObservedObject private var state: AppState
+    private let analytics: any AppAnalyticsTracking
     
-    public init(_ state: AppState) {
+    public init(_ state: AppState, analytics: any AppAnalyticsTracking) {
         self.state = state
+        self.analytics = analytics
     }
     
     public func start() {
+        analytics.track(.appStarted)
         state.route = .splash
     }
     

@@ -35,6 +35,20 @@ let imageProcessorDependencies: [Target.Dependency] = privateEffectsPath.map { _
     [.product(name: "OxideEffects", package: "Oxide-Effects")]
 } ?? []
 
+let installedAnalyticsPath = packageDirectory.appendingPathComponent("../Oxide-Analytics").standardizedFileURL.path
+let privateAnalyticsPath: String? = {
+    guard ProcessInfo.processInfo.environment["OXIDE_DISABLE_PRIVATE_ANALYTICS"] != "1" else { return nil }
+    return FileManager.default.fileExists(atPath: "\(installedAnalyticsPath)/Package.swift")
+        ? installedAnalyticsPath
+        : nil
+}()
+let analyticsDependencies: [Package.Dependency] = privateAnalyticsPath.map {
+    [.package(path: $0)]
+} ?? []
+let analyticsCoreDependencies: [Target.Dependency] = privateAnalyticsPath.map { _ in
+    [.product(name: "AnalyticsCore", package: "Oxide-Analytics")]
+} ?? []
+
 let package = Package(
     name: "OxideModules",
     platforms: [
@@ -75,7 +89,7 @@ let package = Package(
             targets: ["ImageProcessor"]
         ),
     ],
-    dependencies: privateDependencies,
+    dependencies: privateDependencies + analyticsDependencies,
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -99,7 +113,7 @@ let package = Package(
                 "Splash",
                 "Onboarding",
                 "ImageProcessor"
-            ]
+            ] + analyticsCoreDependencies
         ),
         .testTarget(
             name: "RootTests",
