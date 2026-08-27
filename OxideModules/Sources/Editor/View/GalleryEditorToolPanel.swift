@@ -28,7 +28,6 @@ struct GalleryEditorToolPanel: View {
                     onChangeEnded: { Task { await presenter.commitEffects() } },
                     onSelectedKindChange: { selectedSpatialEffectKind = $0 }
                 )
-                .frame(height: 208)
         case .crop:
             GalleryCropControlsView(
                 selectedAspectRatio: presenter.draft.cropAspectRatio,

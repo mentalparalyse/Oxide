@@ -32,9 +32,21 @@ struct GalleryEffectPresetTests {
         )
         let result = preset("grain-film").applying(to: current)
 
-        #expect(result.filmGrain.amount == 0.55)
+        #expect(result.filmGrain.amount == 1)
         #expect(result.lightLeak == current.lightLeak)
         #expect(result.chromaticAberration == current.chromaticAberration)
+    }
+
+    @Test func removingPresetDisablesOnlyItsEffectFamily() {
+        let current = ImageEffects(
+            filmGrain: ImageFilmGrain(amount: 0.5),
+            lightLeak: ImageLightLeak(amount: 0.4)
+        )
+
+        let result = preset("grain-film").removing(from: current)
+
+        #expect(result.filmGrain == .disabled)
+        #expect(result.lightLeak == current.lightLeak)
     }
 
     @Test func presetsHaveUniqueIdentifiers() {
@@ -43,11 +55,18 @@ struct GalleryEffectPresetTests {
         #expect(Set(identifiers).count == identifiers.count)
     }
 
+    @Test func selectedPresetsApplyAtFullStrength() {
+        for preset in GalleryEffectPreset.all where !preset.isNone {
+            let effects = preset.applying(to: .neutral)
+            #expect(appliedAmount(for: preset.kind, in: effects) == 1)
+        }
+    }
+
     @Test func applyingHalationPresetPreservesOtherEffectKinds() {
         let current = ImageEffects(filmGrain: ImageFilmGrain(amount: 0.3))
         let result = preset("halation-dream").applying(to: current)
 
-        #expect(result.halation.amount == 0.68)
+        #expect(result.halation.amount == 1)
         #expect(result.filmGrain == current.filmGrain)
     }
 
@@ -55,7 +74,7 @@ struct GalleryEffectPresetTests {
         let current = ImageEffects(halation: ImageHalation(amount: 0.3))
         let result = preset("dust-archive").applying(to: current)
 
-        #expect(result.dustAndScratches.amount == 0.55)
+        #expect(result.dustAndScratches.amount == 1)
         #expect(result.halation == current.halation)
     }
 
@@ -63,7 +82,7 @@ struct GalleryEffectPresetTests {
         let current = ImageEffects(dustAndScratches: ImageDustAndScratches(amount: 0.3))
         let result = preset("bloom-dream").applying(to: current)
 
-        #expect(result.bloom.amount == 0.62)
+        #expect(result.bloom.amount == 1)
         #expect(result.dustAndScratches == current.dustAndScratches)
     }
 
@@ -71,7 +90,7 @@ struct GalleryEffectPresetTests {
         let current = ImageEffects(bloom: ImageBloom(amount: 0.3))
         let result = preset("vhs-tracking").applying(to: current)
 
-        #expect(result.vhs.amount == 0.68)
+        #expect(result.vhs.amount == 1)
         #expect(result.bloom == current.bloom)
     }
 
@@ -86,14 +105,14 @@ struct GalleryEffectPresetTests {
     @Test func applyingMotionBlurPresetPreservesOtherEffectKinds() {
         let current = ImageEffects(lensWarp: ImageLensWarp(amount: 0.3))
         let result = preset("motion-speed").applying(to: current)
-        #expect(result.motionBlur.amount == 0.68)
+        #expect(result.motionBlur.amount == 1)
         #expect(result.lensWarp == current.lensWarp)
     }
 
     @Test func applyingZoomBlurPresetPreservesOtherEffectKinds() {
         let current = ImageEffects(motionBlur: ImageMotionBlur(amount: 0.3))
         let result = preset("zoom-impact").applying(to: current)
-        #expect(result.zoomBlur.amount == 0.62)
+        #expect(result.zoomBlur.amount == 1)
         #expect(result.motionBlur == current.motionBlur)
     }
 
@@ -152,5 +171,27 @@ struct GalleryEffectPresetTests {
 
     private func preset(_ id: String) -> GalleryEffectPreset {
         GalleryEffectPreset.all.first { $0.id == id }!
+    }
+
+    private func appliedAmount(for kind: GalleryEffectKind, in effects: ImageEffects) -> Double {
+        switch kind {
+        case .none: 0
+        case .filmGrain: effects.filmGrain.amount
+        case .lightLeak: effects.lightLeak.amount
+        case .chromaticAberration: effects.chromaticAberration.amount
+        case .halation: effects.halation.amount
+        case .dustAndScratches: effects.dustAndScratches.amount
+        case .bloom: effects.bloom.amount
+        case .vhs: effects.vhs.amount
+        case .lensWarp: effects.lensWarp.amount
+        case .motionBlur: effects.motionBlur.amount
+        case .zoomBlur: effects.zoomBlur.amount
+        case .kaleidoscope: effects.kaleidoscope.amount
+        case .sparkle: effects.sparkle.amount
+        case .pixelSort: effects.pixelSort.amount
+        case .tiltShift: effects.tiltShift.amount
+        case .edgeBlur: effects.edgeBlur.amount
+        case .vignette: effects.vignette.amount
+        }
     }
 }

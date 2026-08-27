@@ -129,79 +129,81 @@ struct GalleryEffectCarouselView: View {
     }
 
     private func presetDistance(_ preset: GalleryEffectPreset) -> Double {
+        let targetEffects = preset.applying(to: .neutral)
+
         switch preset.kind {
         case .none:
             return 0
         case .filmGrain:
-            return abs(draft.effects.filmGrain.amount - preset.previewEffects.filmGrain.amount)
-                + abs(draft.effects.filmGrain.size - preset.previewEffects.filmGrain.size)
+            return abs(draft.effects.filmGrain.amount - targetEffects.filmGrain.amount)
+                + abs(draft.effects.filmGrain.size - targetEffects.filmGrain.size)
         case .lightLeak:
-            return abs(draft.effects.lightLeak.amount - preset.previewEffects.lightLeak.amount)
-                + abs(draft.effects.lightLeak.position - preset.previewEffects.lightLeak.position)
-                + abs(draft.effects.lightLeak.warmth - preset.previewEffects.lightLeak.warmth)
+            return abs(draft.effects.lightLeak.amount - targetEffects.lightLeak.amount)
+                + abs(draft.effects.lightLeak.position - targetEffects.lightLeak.position)
+                + abs(draft.effects.lightLeak.warmth - targetEffects.lightLeak.warmth)
         case .chromaticAberration:
-            return abs(draft.effects.chromaticAberration.amount - preset.previewEffects.chromaticAberration.amount)
-                + abs(draft.effects.chromaticAberration.direction - preset.previewEffects.chromaticAberration.direction)
-                + abs(draft.effects.chromaticAberration.falloff - preset.previewEffects.chromaticAberration.falloff)
+            return abs(draft.effects.chromaticAberration.amount - targetEffects.chromaticAberration.amount)
+                + abs(draft.effects.chromaticAberration.direction - targetEffects.chromaticAberration.direction)
+                + abs(draft.effects.chromaticAberration.falloff - targetEffects.chromaticAberration.falloff)
         case .halation:
-            return abs(draft.effects.halation.amount - preset.previewEffects.halation.amount)
-                + abs(draft.effects.halation.radius - preset.previewEffects.halation.radius)
-                + abs(draft.effects.halation.threshold - preset.previewEffects.halation.threshold)
+            return abs(draft.effects.halation.amount - targetEffects.halation.amount)
+                + abs(draft.effects.halation.radius - targetEffects.halation.radius)
+                + abs(draft.effects.halation.threshold - targetEffects.halation.threshold)
         case .dustAndScratches:
-            return abs(draft.effects.dustAndScratches.amount - preset.previewEffects.dustAndScratches.amount)
-                + abs(draft.effects.dustAndScratches.dustAmount - preset.previewEffects.dustAndScratches.dustAmount)
-                + abs(draft.effects.dustAndScratches.scratchAmount - preset.previewEffects.dustAndScratches.scratchAmount)
-                + abs(draft.effects.dustAndScratches.particleSize - preset.previewEffects.dustAndScratches.particleSize)
+            return abs(draft.effects.dustAndScratches.amount - targetEffects.dustAndScratches.amount)
+                + abs(draft.effects.dustAndScratches.dustAmount - targetEffects.dustAndScratches.dustAmount)
+                + abs(draft.effects.dustAndScratches.scratchAmount - targetEffects.dustAndScratches.scratchAmount)
+                + abs(draft.effects.dustAndScratches.particleSize - targetEffects.dustAndScratches.particleSize)
         case .bloom:
-            return abs(draft.effects.bloom.amount - preset.previewEffects.bloom.amount)
-                + abs(draft.effects.bloom.radius - preset.previewEffects.bloom.radius)
-                + abs(draft.effects.bloom.threshold - preset.previewEffects.bloom.threshold)
-                + abs(draft.effects.bloom.warmth - preset.previewEffects.bloom.warmth)
+            return abs(draft.effects.bloom.amount - targetEffects.bloom.amount)
+                + abs(draft.effects.bloom.radius - targetEffects.bloom.radius)
+                + abs(draft.effects.bloom.threshold - targetEffects.bloom.threshold)
+                + abs(draft.effects.bloom.warmth - targetEffects.bloom.warmth)
         case .vhs:
-            return abs(draft.effects.vhs.amount - preset.previewEffects.vhs.amount)
-                + abs(draft.effects.vhs.distortion - preset.previewEffects.vhs.distortion)
-                + abs(draft.effects.vhs.scanlines - preset.previewEffects.vhs.scanlines)
-                + abs(draft.effects.vhs.colorBleed - preset.previewEffects.vhs.colorBleed)
+            return abs(draft.effects.vhs.amount - targetEffects.vhs.amount)
+                + abs(draft.effects.vhs.distortion - targetEffects.vhs.distortion)
+                + abs(draft.effects.vhs.scanlines - targetEffects.vhs.scanlines)
+                + abs(draft.effects.vhs.colorBleed - targetEffects.vhs.colorBleed)
         case .lensWarp:
-            return abs(draft.effects.lensWarp.amount - preset.previewEffects.lensWarp.amount)
-                + abs(draft.effects.lensWarp.scale - preset.previewEffects.lensWarp.scale)
+            return abs(draft.effects.lensWarp.amount - targetEffects.lensWarp.amount)
+                + abs(draft.effects.lensWarp.scale - targetEffects.lensWarp.scale)
         case .motionBlur:
-            return abs(draft.effects.motionBlur.amount - preset.previewEffects.motionBlur.amount)
-                + abs(draft.effects.motionBlur.distance - preset.previewEffects.motionBlur.distance)
-                + abs(draft.effects.motionBlur.angle - preset.previewEffects.motionBlur.angle)
+            return abs(draft.effects.motionBlur.amount - targetEffects.motionBlur.amount)
+                + abs(draft.effects.motionBlur.distance - targetEffects.motionBlur.distance)
+                + abs(draft.effects.motionBlur.angle - targetEffects.motionBlur.angle)
         case .zoomBlur:
-            return abs(draft.effects.zoomBlur.amount - preset.previewEffects.zoomBlur.amount)
-                + abs(draft.effects.zoomBlur.strength - preset.previewEffects.zoomBlur.strength)
+            return abs(draft.effects.zoomBlur.amount - targetEffects.zoomBlur.amount)
+                + abs(draft.effects.zoomBlur.strength - targetEffects.zoomBlur.strength)
         case .kaleidoscope:
-            return abs(draft.effects.kaleidoscope.amount - preset.previewEffects.kaleidoscope.amount)
-                + abs(Double(draft.effects.kaleidoscope.segments - preset.previewEffects.kaleidoscope.segments))
-                + abs(draft.effects.kaleidoscope.rotation - preset.previewEffects.kaleidoscope.rotation)
+            return abs(draft.effects.kaleidoscope.amount - targetEffects.kaleidoscope.amount)
+                + abs(Double(draft.effects.kaleidoscope.segments - targetEffects.kaleidoscope.segments))
+                + abs(draft.effects.kaleidoscope.rotation - targetEffects.kaleidoscope.rotation)
         case .sparkle:
-            return abs(draft.effects.sparkle.amount - preset.previewEffects.sparkle.amount)
-                + abs(draft.effects.sparkle.threshold - preset.previewEffects.sparkle.threshold)
-                + abs(draft.effects.sparkle.rayLength - preset.previewEffects.sparkle.rayLength)
-                + abs(draft.effects.sparkle.rotation - preset.previewEffects.sparkle.rotation)
+            return abs(draft.effects.sparkle.amount - targetEffects.sparkle.amount)
+                + abs(draft.effects.sparkle.threshold - targetEffects.sparkle.threshold)
+                + abs(draft.effects.sparkle.rayLength - targetEffects.sparkle.rayLength)
+                + abs(draft.effects.sparkle.rotation - targetEffects.sparkle.rotation)
         case .pixelSort:
-            return abs(draft.effects.pixelSort.amount - preset.previewEffects.pixelSort.amount)
-                + abs(draft.effects.pixelSort.threshold - preset.previewEffects.pixelSort.threshold)
-                + abs(draft.effects.pixelSort.trailLength - preset.previewEffects.pixelSort.trailLength)
-                + abs(draft.effects.pixelSort.direction - preset.previewEffects.pixelSort.direction)
+            return abs(draft.effects.pixelSort.amount - targetEffects.pixelSort.amount)
+                + abs(draft.effects.pixelSort.threshold - targetEffects.pixelSort.threshold)
+                + abs(draft.effects.pixelSort.trailLength - targetEffects.pixelSort.trailLength)
+                + abs(draft.effects.pixelSort.direction - targetEffects.pixelSort.direction)
         case .tiltShift:
-            return abs(draft.effects.tiltShift.amount - preset.previewEffects.tiltShift.amount)
-                + abs(draft.effects.tiltShift.blur - preset.previewEffects.tiltShift.blur)
-                + abs(draft.effects.tiltShift.rotation - preset.previewEffects.tiltShift.rotation)
-                + abs(draft.effects.tiltShift.spatialMask.radius - preset.previewEffects.tiltShift.spatialMask.radius)
+            return abs(draft.effects.tiltShift.amount - targetEffects.tiltShift.amount)
+                + abs(draft.effects.tiltShift.blur - targetEffects.tiltShift.blur)
+                + abs(draft.effects.tiltShift.rotation - targetEffects.tiltShift.rotation)
+                + abs(draft.effects.tiltShift.spatialMask.radius - targetEffects.tiltShift.spatialMask.radius)
         case .edgeBlur:
-            return abs(draft.effects.edgeBlur.amount - preset.previewEffects.edgeBlur.amount)
-                + abs(draft.effects.edgeBlur.blur - preset.previewEffects.edgeBlur.blur)
-                + abs(draft.effects.edgeBlur.spatialMask.radius - preset.previewEffects.edgeBlur.spatialMask.radius)
-                + abs(draft.effects.edgeBlur.spatialMask.feather - preset.previewEffects.edgeBlur.spatialMask.feather)
+            return abs(draft.effects.edgeBlur.amount - targetEffects.edgeBlur.amount)
+                + abs(draft.effects.edgeBlur.blur - targetEffects.edgeBlur.blur)
+                + abs(draft.effects.edgeBlur.spatialMask.radius - targetEffects.edgeBlur.spatialMask.radius)
+                + abs(draft.effects.edgeBlur.spatialMask.feather - targetEffects.edgeBlur.spatialMask.feather)
         case .vignette:
-            return abs(draft.effects.vignette.amount - preset.previewEffects.vignette.amount)
-                + abs(draft.effects.vignette.size - preset.previewEffects.vignette.size)
-                + abs(draft.effects.vignette.feather - preset.previewEffects.vignette.feather)
-                + abs(draft.effects.vignette.roundness - preset.previewEffects.vignette.roundness)
-                + abs(draft.effects.vignette.irregularity - preset.previewEffects.vignette.irregularity)
+            return abs(draft.effects.vignette.amount - targetEffects.vignette.amount)
+                + abs(draft.effects.vignette.size - targetEffects.vignette.size)
+                + abs(draft.effects.vignette.feather - targetEffects.vignette.feather)
+                + abs(draft.effects.vignette.roundness - targetEffects.vignette.roundness)
+                + abs(draft.effects.vignette.irregularity - targetEffects.vignette.irregularity)
         }
     }
 }
