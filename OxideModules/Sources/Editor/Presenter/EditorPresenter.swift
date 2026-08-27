@@ -1,3 +1,4 @@
+import AppCore
 import CoreGraphics
 import Combine
 import ImageProcessor
@@ -12,6 +13,7 @@ public final class EditorPresenter: ObservableObject {
     public let filterCatalog: GalleryFilterCatalog
 
     private let interactor: EditorInteractorProtocol
+    private let analytics: any AppAnalyticsTracking
     private let historySetupTask: Task<Void, Never>
     private let onCancel: @MainActor () -> Void
     private let onSave: @MainActor (EditorAsset) -> Void
@@ -20,6 +22,7 @@ public final class EditorPresenter: ObservableObject {
     init(
         asset: EditorAsset,
         interactor: EditorInteractorProtocol,
+        analytics: any AppAnalyticsTracking = NoOpAppAnalyticsTracker(),
         onCancel: @escaping @MainActor () -> Void,
         onSave: @escaping @MainActor (EditorAsset) -> Void,
         onError: @escaping @MainActor (String) -> Void
@@ -29,6 +32,7 @@ public final class EditorPresenter: ObservableObject {
         self.filters = filters
         self.filterCatalog = GalleryFilterCatalog(filters: filters)
         self.interactor = interactor
+        self.analytics = analytics
         historySetupTask = Task { await interactor.beginHistory(for: asset) }
         self.onCancel = onCancel
         self.onSave = onSave
@@ -37,8 +41,14 @@ public final class EditorPresenter: ObservableObject {
         interactor.preloadFilterPreviews(filters: filters)
     }
 
-    public func cancel() { onCancel() }
-    public func save() { onSave(draft.committed()) }
+    public func cancel() {
+        analytics.track(.editCancelled)
+        onCancel()
+    }
+    public func save() {
+        analytics.track(.editSaved)
+        onSave(draft.committed())
+    }
 
     public func selectFilter(_ filterID: String) async {
         guard filters.contains(where: { $0.id == filterID }) else {
@@ -48,6 +58,7 @@ public final class EditorPresenter: ObservableObject {
         guard draft.selectedFilterID != filterID else { return }
         draft.selectedFilterID = filterID
         draft.filterIntensity = 0.5
+        analytics.track(.filterApplied(filterID: filterID))
         await recordCurrentStep()
     }
 

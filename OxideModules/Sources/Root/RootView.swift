@@ -10,10 +10,19 @@ import SwiftUI
 public struct RootView: View {
     @ObservedObject var appState: AppState
     let coordinator: any RootCoordinatorProtocol
+    private let homeView: AnyView
+    private let onboardingView: AnyView
     
-    public init(coordinator: any RootCoordinatorProtocol, appState: AppState) {
+    init(
+        coordinator: any RootCoordinatorProtocol,
+        appState: AppState,
+        homeView: AnyView,
+        onboardingView: AnyView
+    ) {
         self.coordinator = coordinator
         self.appState = appState
+        self.homeView = homeView
+        self.onboardingView = onboardingView
     }
     
     public var body: some View {
@@ -22,9 +31,9 @@ public struct RootView: View {
                 .ignoresSafeArea()
             switch appState.route {
             case .home:
-                HomeBuilder.build(coordinator: coordinator)
+                homeView
             case .onboarding:
-                OnboardingBuilder.build(coordinator: coordinator)
+                onboardingView
             case .splash:
                 SplashBuilder.build(coordinator: coordinator)
             }

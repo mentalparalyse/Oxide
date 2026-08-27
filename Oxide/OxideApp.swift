@@ -10,17 +10,21 @@ struct OxideApp: App {
     
     @StateObject private var appState: AppState
     @StateObject private var coordinator: RootCoordinator
+    private let dependencies: AnalyticsDependencies
     
     init() {
         let appState = AppState()
+        let dependencies = AnalyticsDependencies()
+        self.dependencies = dependencies
         _appState = StateObject(wrappedValue: appState)
-        _coordinator = StateObject(wrappedValue: RootCoordinator(appState))
+        _coordinator = StateObject(wrappedValue: RootCoordinator(appState, analytics: dependencies.tracker))
     }
     var body: some Scene {
         WindowGroup {
-            RootView(
+            RootBuilder.build(
                 coordinator: coordinator,
-                appState: appState
+                appState: appState,
+                analytics: dependencies.tracker
             )
             .onAppear { coordinator.start() }
         }
