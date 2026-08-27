@@ -56,6 +56,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     public var tiltShift: ImageTiltShift
     public var edgeBlur: ImageEdgeBlur
     public var vignette: ImageVignette
+    public var lensDirt: ImageLensDirt
 
     public init(
         filmGrain: ImageFilmGrain = .disabled,
@@ -73,7 +74,8 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         pixelSort: ImagePixelSort = .disabled,
         tiltShift: ImageTiltShift = .disabled,
         edgeBlur: ImageEdgeBlur = .disabled,
-        vignette: ImageVignette = .disabled
+        vignette: ImageVignette = .disabled,
+        lensDirt: ImageLensDirt = .disabled
     ) {
         self.filmGrain = filmGrain
         self.lightLeak = lightLeak
@@ -91,6 +93,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         self.tiltShift = tiltShift
         self.edgeBlur = edgeBlur
         self.vignette = vignette
+        self.lensDirt = lensDirt
     }
 
     public static let neutral = ImageEffects()
@@ -112,6 +115,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         case tiltShift
         case edgeBlur
         case vignette
+        case lensDirt
     }
 
     public init(from decoder: Decoder) throws {
@@ -156,6 +160,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         tiltShift = try container.decodeIfPresent(ImageTiltShift.self, forKey: .tiltShift) ?? .disabled
         edgeBlur = try container.decodeIfPresent(ImageEdgeBlur.self, forKey: .edgeBlur) ?? .disabled
         vignette = try container.decodeIfPresent(ImageVignette.self, forKey: .vignette) ?? .disabled
+        lensDirt = try container.decodeIfPresent(ImageLensDirt.self, forKey: .lensDirt) ?? .disabled
     }
 }
 
