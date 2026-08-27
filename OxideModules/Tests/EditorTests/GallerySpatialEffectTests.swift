@@ -69,17 +69,23 @@ struct GallerySpatialEffectTests {
         #expect(point == CGPoint(x: 0, y: 1))
     }
 
-    @Test func linearGuideUsesSameHalfTurnConventionAsTiltShiftRenderer() {
+    @Test func linearGuideMirrorsCoreImageAngleIntoSwiftUICoordinates() {
         #expect(
             GallerySpatialEffectGeometry.linearGuideRotationDegrees(
-                effectRotation: 0.5,
+                effectRotation: 0.25,
                 imageRotationDegrees: 0
-            ) == 90
+            ) == -45
         )
         #expect(
             GallerySpatialEffectGeometry.linearGuideRotationDegrees(
                 effectRotation: 0.25,
                 imageRotationDegrees: 90
+            ) == 45
+        )
+        #expect(
+            GallerySpatialEffectGeometry.linearGuideRotationDegrees(
+                effectRotation: 0.75,
+                imageRotationDegrees: 270
             ) == 135
         )
     }
