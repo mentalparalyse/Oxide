@@ -10,9 +10,7 @@ struct GalleryEffectsControlsView: View {
     let onChangeEnded: () -> Void
     let onSelectedKindChange: (GalleryEffectKind?) -> Void
 
-    @State private var selectionID: GalleryEffectPreset.ID
-    @State private var expandedSectionID: GalleryEffectSection.ID?
-    @State private var showsAdvancedControls = false
+    @State private var selectionState: GalleryEffectSelectionState
 
     init(
         draft: EditorDraft,
@@ -25,120 +23,78 @@ struct GalleryEffectsControlsView: View {
         self.onChangeEnded = onChangeEnded
         self.onSelectedKindChange = onSelectedKindChange
         let selectionID = GalleryEffectPreset.initialSelectionID(for: draft.effects)
-        _selectionID = State(initialValue: selectionID)
-        _expandedSectionID = State(
-            initialValue: Self.catalog.section(containing: selectionID)?.id ?? Self.catalog.sections.first?.id
+        _selectionState = State(
+            initialValue: GalleryEffectSelectionState(
+                selectionID: selectionID,
+                expandedSectionID: Self.catalog.section(containing: selectionID)?.id ?? Self.catalog.sections.first?.id
+            )
         )
     }
 
     private var selectedPreset: GalleryEffectPreset {
-        GalleryEffectPreset.all.first { $0.id == selectionID } ?? GalleryEffectPreset.all[0]
+        GalleryEffectPreset.all.first { $0.id == selectionState.selectionID } ?? GalleryEffectPreset.all[0]
     }
 
     private var visiblePresets: [GalleryEffectPreset] {
-        Self.catalog.sections.first { $0.id == expandedSectionID }?.presets ?? []
+        Self.catalog.sections.first { $0.id == selectionState.expandedSectionID }?.presets ?? []
+    }
+
+    private var panelHeight: CGFloat {
+        if selectionState.isEditing { return 208 }
+        return visiblePresets.isEmpty ? 64 : 160
     }
 
     var body: some View {
         VStack(spacing: 8) {
-            if showsAdvancedControls, !selectedPreset.isNone {
-                ScrollView(.vertical, showsIndicators: false) {
-                    advancedControls
-                }
+            if selectionState.isEditing, !selectedPreset.isNone {
+                advancedControls
             } else {
-                primaryControls
-                    .padding(.horizontal, 16)
-
                 GalleryEffectCarouselView(
                     draft: draft,
                     presets: visiblePresets,
-                    selectionID: selectionID,
+                    selectionID: selectionState.selectionID,
                     onSelect: select
                 )
 
                 GalleryEffectSectionBar(
                     catalog: Self.catalog,
-                    selectionID: selectionID,
-                    expandedSectionID: expandedSectionID,
+                    selectionID: selectionState.selectionID,
+                    expandedSectionID: selectionState.expandedSectionID,
                     onSelectNone: selectNone,
                     onSelectSection: toggleSection
                 )
             }
         }
         .padding(.vertical, 8)
+        .frame(height: panelHeight)
+        .animation(.easeInOut(duration: 0.2), value: panelHeight)
         .foregroundStyle(AppColours.appForegroundColor)
         .onAppear { notifySelectedKind() }
         .onDisappear { onSelectedKindChange(nil) }
-        .onChange(of: selectionID) { _ in notifySelectedKind() }
-        .onChange(of: showsAdvancedControls) { _ in notifySelectedKind() }
-    }
-
-    private var primaryControls: some View {
-        Group {
-            if selectedPreset.isNone {
-                Text("Choose an effect")
-                    .frame(maxWidth: .infinity, alignment: .center)
-            } else {
-                HStack(spacing: 10) {
-                    Text("Intensity")
-                        .frame(width: 86, alignment: .leading)
-
-                    ValueSlider(
-                        value: amount,
-                        range: 0...1,
-                        onChange: updateAmount,
-                        onChangeEnded: onChangeEnded
-                    )
-                    Button { showsAdvancedControls = true } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.system(size: 14, weight: .semibold))
-                            .frame(width: 32, height: 32)
-                            .background(AppColours.appSurfaceColor, in: Circle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Advanced effect controls")
-                }
-            }
-        }
-        .font(.system(size: 12, weight: .medium))
-        .foregroundStyle(AppColours.appMutedForegroundColor)
+        .onChange(of: selectionState.selectionID) { _ in notifySelectedKind() }
+        .onChange(of: selectionState.isEditing) { _ in notifySelectedKind() }
     }
 
     private func selectNone() {
         withAnimation(.easeInOut(duration: 0.18)) {
-            expandedSectionID = nil
+            selectionState.selectNone()
         }
-        select(Self.catalog.none)
+        onEffectsChange(.neutral)
+        onChangeEnded()
     }
 
     private func toggleSection(_ section: GalleryEffectSection) {
         withAnimation(.easeInOut(duration: 0.18)) {
-            expandedSectionID = expandedSectionID == section.id ? nil : section.id
+            selectionState.toggleSection(section.id)
         }
     }
 
     private var advancedControls: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Button { showsAdvancedControls = false } label: {
-                    Label(selectedPreset.name, systemImage: "chevron.left")
-                        .font(.system(size: 13, weight: .semibold))
-                }
-                .buttonStyle(.plain)
-                Spacer()
-                Button("Reset") { select(GalleryEffectPreset.all[0]) }
-                    .font(.system(size: 12, weight: .medium))
-                    .buttonStyle(.plain)
-                    .foregroundStyle(AppColours.appMutedForegroundColor)
-            }
-
-            EffectControlRow(
-                title: "Intensity",
-                value: amount,
-                range: 0...1,
-                onChange: updateAmount,
-                onEnd: onChangeEnded
-            )
+        GalleryEffectPresetEditorView(
+            title: selectedPreset.name,
+            onBack: { selectionState.returnToCollection() },
+            onReset: resetSelectedPreset
+        ) {
             if selectedPreset.kind != .tiltShift,
                selectedPreset.kind != .edgeBlur,
                selectedPreset.kind != .vignette,
@@ -151,7 +107,6 @@ struct GalleryEffectsControlsView: View {
             }
             secondaryControls
         }
-        .padding(.horizontal, 18)
     }
 
     @ViewBuilder
@@ -223,63 +178,27 @@ struct GalleryEffectsControlsView: View {
         }
     }
 
-    private var amount: Double {
-        switch selectedPreset.kind {
-        case .none: 0
-        case .filmGrain: draft.effects.filmGrain.amount
-        case .lightLeak: draft.effects.lightLeak.amount
-        case .chromaticAberration: draft.effects.chromaticAberration.amount
-        case .halation: draft.effects.halation.amount
-        case .dustAndScratches: draft.effects.dustAndScratches.amount
-        case .bloom: draft.effects.bloom.amount
-        case .vhs: draft.effects.vhs.amount
-        case .lensWarp: draft.effects.lensWarp.amount
-        case .motionBlur: draft.effects.motionBlur.amount
-        case .zoomBlur: draft.effects.zoomBlur.amount
-        case .kaleidoscope: draft.effects.kaleidoscope.amount
-        case .sparkle: draft.effects.sparkle.amount
-        case .pixelSort: draft.effects.pixelSort.amount
-        case .tiltShift: draft.effects.tiltShift.amount
-        case .edgeBlur: draft.effects.edgeBlur.amount
-        case .vignette: vignetteIntensityScale.sliderValue(for: draft.effects.vignette.amount)
-        case .lensDirt: draft.effects.lensDirt.amount
-        }
-    }
-
     private func select(_ preset: GalleryEffectPreset) {
-        selectionID = preset.id
-        showsAdvancedControls = false
+        if selectionState.selectionID == preset.id, !selectionState.isEditing {
+            let effects = preset.removing(from: draft.effects)
+            selectionState.disableSelection(
+                fallbackID: GalleryEffectPreset.initialSelectionID(for: effects)
+            )
+            onEffectsChange(effects)
+            onChangeEnded()
+            return
+        }
+        selectionState.beginEditing(
+            preset,
+            sectionID: Self.catalog.section(containing: preset.id)?.id
+        )
         onEffectsChange(preset.applying(to: draft.effects))
         onChangeEnded()
     }
 
-    private func updateAmount(_ value: Double) {
-        mutateEffects {
-            switch selectedPreset.kind {
-            case .none: break
-            case .filmGrain: $0.filmGrain.amount = value
-            case .lightLeak: $0.lightLeak.amount = value
-            case .chromaticAberration: $0.chromaticAberration.amount = value
-            case .halation: $0.halation.amount = value
-            case .dustAndScratches: $0.dustAndScratches.amount = value
-            case .bloom: $0.bloom.amount = value
-            case .vhs: $0.vhs.amount = value
-            case .lensWarp: $0.lensWarp.amount = value
-            case .motionBlur: $0.motionBlur.amount = value
-            case .zoomBlur: $0.zoomBlur.amount = value
-            case .kaleidoscope: $0.kaleidoscope.amount = value
-            case .sparkle: $0.sparkle.amount = value
-            case .pixelSort: $0.pixelSort.amount = value
-            case .tiltShift: $0.tiltShift.amount = value
-            case .edgeBlur: $0.edgeBlur.amount = value
-            case .vignette: $0.vignette.amount = vignetteIntensityScale.amount(for: value)
-            case .lensDirt: $0.lensDirt.amount = value
-            }
-        }
-    }
-
-    private var vignetteIntensityScale: VignetteIntensityScale {
-        VignetteIntensityScale(baseAmount: selectedPreset.previewEffects.vignette.amount)
+    private func resetSelectedPreset() {
+        onEffectsChange(selectedPreset.applying(to: draft.effects))
+        onChangeEnded()
     }
 
     private func updateGrainSize(_ value: Double) { mutateEffects { $0.filmGrain.size = value } }
@@ -328,12 +247,12 @@ struct GalleryEffectsControlsView: View {
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
         onSelectedKindChange(
-            showsAdvancedControls && mask.mode == .spot ? selectedPreset.kind : nil
+            selectionState.isEditing && mask.mode == .spot ? selectedPreset.kind : nil
         )
     }
 
     private func notifySelectedKind() {
-        guard showsAdvancedControls,
+        guard selectionState.isEditing,
               selectedPreset.kind.supportsSpatialMask,
               draft.effects.spatialMask(for: selectedPreset.kind)?.mode == .spot
         else {
