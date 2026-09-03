@@ -99,7 +99,7 @@ enum GallerySpatialEffectGeometry {
         effectRotation: Double,
         imageRotationDegrees: Int
     ) -> Double {
-        effectRotation * 180 + Double(ImageEditRotation.normalized(imageRotationDegrees))
+        Double(ImageEditRotation.normalized(imageRotationDegrees)) - effectRotation * 180
     }
 
     static func imagePoint(
