@@ -18,6 +18,7 @@ enum GalleryEffectKind: String, Sendable {
     case tiltShift
     case edgeBlur
     case vignette
+    case lensDirt
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -66,11 +67,14 @@ struct GalleryEffectPreset: Identifiable, Sendable {
             result.edgeBlur = previewEffects.edgeBlur
         case .vignette:
             result.vignette = previewEffects.vignette
+        case .lensDirt:
+            result.lensDirt = previewEffects.lensDirt
         }
         return result
     }
 
     static func initialSelectionID(for effects: ImageEffects) -> ID {
+        if effects.lensDirt.isEnabled { return "dirt-clean" }
         if effects.vignette.isEnabled { return "vignette-dark" }
         if effects.edgeBlur.isEnabled { return "edge-soft" }
         if effects.tiltShift.isEnabled { return "tilt-miniature" }
@@ -247,6 +251,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "vignette-dark", name: "Dark", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.58, size: 0.56, feather: 0.7, roundness: 0.55, spatialMask: ImageSpatialEffectMask(mode: .spot)))),
         GalleryEffectPreset(id: "vignette-bright", name: "Bright", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.34, size: 0.62, feather: 0.82, roundness: 0.48, color: .white, spatialMask: ImageSpatialEffectMask(mode: .spot)))),
         GalleryEffectPreset(id: "vignette-color", name: "Color", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.46, size: 0.52, feather: 0.68, roundness: 0.62, color: .init(red: 0.34, green: 0.08, blue: 0.42), spatialMask: ImageSpatialEffectMask(mode: .spot)))),
-        GalleryEffectPreset(id: "vignette-aged", name: "Aged", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.68, size: 0.48, feather: 0.56, roundness: 0.28, irregularity: 0.72, color: .init(red: 0.16, green: 0.08, blue: 0.03), spatialMask: ImageSpatialEffectMask(mode: .spot))))
+        GalleryEffectPreset(id: "vignette-aged", name: "Aged", kind: .vignette, previewEffects: ImageEffects(vignette: ImageVignette(amount: 0.68, size: 0.48, feather: 0.56, roundness: 0.28, irregularity: 0.72, color: .init(red: 0.16, green: 0.08, blue: 0.03), spatialMask: ImageSpatialEffectMask(mode: .spot)))),
+        GalleryEffectPreset(id: "dirt-clean", name: "Clean Glass", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.3, density: 0.2, smudge: 0.16, flare: 0.22, seed: 7, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.7, feather: 0.8)))),
+        GalleryEffectPreset(id: "dirt-smudged", name: "Smudged", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.58, density: 0.2, smudge: 0.8, flare: 0.36, seed: 19, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.62, feather: 0.72)))),
+        GalleryEffectPreset(id: "dirt-dusty", name: "Dusty Lens", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.64, density: 0.84, smudge: 0.28, flare: 0.2, seed: 43, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.78, feather: 0.62)))),
+        GalleryEffectPreset(id: "dirt-flare", name: "Flare Spots", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.72, density: 0.35, smudge: 0.58, flare: 0.9, seed: 71, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.56, feather: 0.84))))
     ]
 }

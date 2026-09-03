@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func lensDirtSettingsClampAndDecodeDefaults() throws {
+        let settings = ImageLensDirt(amount: 2, density: -1, smudge: 3, flare: -2)
+        #expect(settings == ImageLensDirt(amount: 1, density: 0, smudge: 1, flare: 0))
+        let decoded = try JSONDecoder().decode(ImageLensDirt.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageLensDirt(amount: 0.4))
+    }
+
     @Test func vignetteSettingsClampAndDecodeDefaults() throws {
         let settings = ImageVignette(amount: 2, size: -1, feather: 3, roundness: -2, irregularity: 4)
         #expect(settings == ImageVignette(amount: 1, size: 0, feather: 1, roundness: 0, irregularity: 1))

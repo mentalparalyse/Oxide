@@ -85,6 +85,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.tiltShift.isEnabled
                 && !draft.effects.edgeBlur.isEnabled
                 && !draft.effects.vignette.isEnabled
+                && !draft.effects.lensDirt.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -117,6 +118,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.edgeBlur.isEnabled else { return false }
         case .vignette:
             guard draft.effects.vignette.isEnabled else { return false }
+        case .lensDirt:
+            guard draft.effects.lensDirt.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -202,6 +205,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.vignette.feather - preset.previewEffects.vignette.feather)
                 + abs(draft.effects.vignette.roundness - preset.previewEffects.vignette.roundness)
                 + abs(draft.effects.vignette.irregularity - preset.previewEffects.vignette.irregularity)
+        case .lensDirt:
+            return abs(draft.effects.lensDirt.amount - preset.previewEffects.lensDirt.amount)
+                + abs(draft.effects.lensDirt.density - preset.previewEffects.lensDirt.density)
+                + abs(draft.effects.lensDirt.smudge - preset.previewEffects.lensDirt.smudge)
+                + abs(draft.effects.lensDirt.flare - preset.previewEffects.lensDirt.flare)
         }
     }
 }
