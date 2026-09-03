@@ -171,6 +171,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Softness", value: draft.effects.vignette.feather, range: 0...1, onChange: updateVignetteFeather, onEnd: onChangeEnded)
             EffectControlRow(title: "Shape", value: draft.effects.vignette.roundness, range: 0...1, onChange: updateVignetteRoundness, onEnd: onChangeEnded)
             EffectControlRow(title: "Texture", value: draft.effects.vignette.irregularity, range: 0...1, onChange: updateVignetteIrregularity, onEnd: onChangeEnded)
+        case .lensDirt:
+            EffectControlRow(title: "Density", value: draft.effects.lensDirt.density, range: 0...1, onChange: updateLensDirtDensity, onEnd: onChangeEnded)
+            EffectControlRow(title: "Smudge", value: draft.effects.lensDirt.smudge, range: 0...1, onChange: updateLensDirtSmudge, onEnd: onChangeEnded)
+            EffectControlRow(title: "Flare", value: draft.effects.lensDirt.flare, range: 0...1, onChange: updateLensDirtFlare, onEnd: onChangeEnded)
         }
     }
 
@@ -236,6 +240,9 @@ struct GalleryEffectsControlsView: View {
     private func updateVignetteFeather(_ value: Double) { mutateEffects { $0.vignette.feather = value } }
     private func updateVignetteRoundness(_ value: Double) { mutateEffects { $0.vignette.roundness = value } }
     private func updateVignetteIrregularity(_ value: Double) { mutateEffects { $0.vignette.irregularity = value } }
+    private func updateLensDirtDensity(_ value: Double) { mutateEffects { $0.lensDirt.density = value } }
+    private func updateLensDirtSmudge(_ value: Double) { mutateEffects { $0.lensDirt.smudge = value } }
+    private func updateLensDirtFlare(_ value: Double) { mutateEffects { $0.lensDirt.flare = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

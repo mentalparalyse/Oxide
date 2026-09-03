@@ -85,6 +85,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.tiltShift.isEnabled
                 && !draft.effects.edgeBlur.isEnabled
                 && !draft.effects.vignette.isEnabled
+                && !draft.effects.lensDirt.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -117,6 +118,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.edgeBlur.isEnabled else { return false }
         case .vignette:
             guard draft.effects.vignette.isEnabled else { return false }
+        case .lensDirt:
+            guard draft.effects.lensDirt.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -204,6 +207,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.vignette.feather - targetEffects.vignette.feather)
                 + abs(draft.effects.vignette.roundness - targetEffects.vignette.roundness)
                 + abs(draft.effects.vignette.irregularity - targetEffects.vignette.irregularity)
+        case .lensDirt:
+            return abs(draft.effects.lensDirt.amount - targetEffects.lensDirt.amount)
+                + abs(draft.effects.lensDirt.density - targetEffects.lensDirt.density)
+                + abs(draft.effects.lensDirt.smudge - targetEffects.lensDirt.smudge)
+                + abs(draft.effects.lensDirt.flare - targetEffects.lensDirt.flare)
         }
     }
 }

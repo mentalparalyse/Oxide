@@ -158,6 +158,26 @@ struct GalleryEffectPresetTests {
         #expect(result.edgeBlur == current.edgeBlur)
     }
 
+    @Test func applyingLensDirtPresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(vignette: ImageVignette(amount: 0.3))
+        let result = preset("dirt-smudged").applying(to: current)
+
+        #expect(result.lensDirt.amount == 1)
+        #expect(result.lensDirt.smudge == 0.8)
+        #expect(result.vignette == current.vignette)
+    }
+
+    @Test func removingLensDirtPreservesOtherEffectKinds() {
+        let current = ImageEffects(
+            vignette: ImageVignette(amount: 0.3),
+            lensDirt: ImageLensDirt(amount: 1, density: 0.5)
+        )
+        let result = preset("dirt-clean").removing(from: current)
+
+        #expect(result.lensDirt == .disabled)
+        #expect(result.vignette == current.vignette)
+    }
+
     @Test func initialSelectionPrioritizesVisibleTopLayer() {
         let effects = ImageEffects(
             filmGrain: ImageFilmGrain(amount: 0.2),
@@ -192,6 +212,7 @@ struct GalleryEffectPresetTests {
         case .tiltShift: effects.tiltShift.amount
         case .edgeBlur: effects.edgeBlur.amount
         case .vignette: effects.vignette.amount
+        case .lensDirt: effects.lensDirt.amount
         }
     }
 }

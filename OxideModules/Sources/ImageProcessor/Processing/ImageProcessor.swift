@@ -335,6 +335,14 @@ public final class ImageProcessor: @unchecked Sendable {
                         blue: effects.vignette.color.blue
                     ),
                     spatialMask: effects.vignette.spatialMask.effectMask
+                ),
+                lensDirt: LensDirtSettings(
+                    amount: effects.lensDirt.amount,
+                    density: effects.lensDirt.density,
+                    smudge: effects.lensDirt.smudge,
+                    flare: effects.lensDirt.flare,
+                    seed: effects.lensDirt.seed,
+                    spatialMask: effects.lensDirt.spatialMask.effectMask
                 )
             ),
             to: image
