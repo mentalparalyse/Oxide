@@ -179,6 +179,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Softness", value: draft.effects.softFocus.softness, range: 0.05...1, onChange: updateSoftFocusSoftness, onEnd: onChangeEnded)
             EffectControlRow(title: "Glow", value: draft.effects.softFocus.glow, range: 0...1, onChange: updateSoftFocusGlow, onEnd: onChangeEnded)
             EffectControlRow(title: "Detail", value: draft.effects.softFocus.detail, range: 0...1, onChange: updateSoftFocusDetail, onEnd: onChangeEnded)
+        case .dreamGlow:
+            EffectControlRow(title: "Glow", value: draft.effects.dreamGlow.glow, range: 0...1, onChange: updateDreamGlowAmount, onEnd: onChangeEnded)
+            EffectControlRow(title: "Spread", value: draft.effects.dreamGlow.spread, range: 0...1, onChange: updateDreamGlowSpread, onEnd: onChangeEnded)
+            EffectControlRow(title: "Threshold", value: draft.effects.dreamGlow.threshold, range: 0...1, onChange: updateDreamGlowThreshold, onEnd: onChangeEnded)
         }
     }
 
@@ -250,6 +254,9 @@ struct GalleryEffectsControlsView: View {
     private func updateSoftFocusSoftness(_ value: Double) { mutateEffects { $0.softFocus.softness = value } }
     private func updateSoftFocusGlow(_ value: Double) { mutateEffects { $0.softFocus.glow = value } }
     private func updateSoftFocusDetail(_ value: Double) { mutateEffects { $0.softFocus.detail = value } }
+    private func updateDreamGlowAmount(_ value: Double) { mutateEffects { $0.dreamGlow.glow = value } }
+    private func updateDreamGlowSpread(_ value: Double) { mutateEffects { $0.dreamGlow.spread = value } }
+    private func updateDreamGlowThreshold(_ value: Double) { mutateEffects { $0.dreamGlow.threshold = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

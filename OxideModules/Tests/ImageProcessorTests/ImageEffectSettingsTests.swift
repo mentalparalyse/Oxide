@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func dreamGlowSettingsClampAndDecodeDefaults() throws {
+        let settings = ImageDreamGlow(amount: 2, glow: -1, spread: 3, threshold: -2)
+        #expect(settings == ImageDreamGlow(amount: 1, glow: 0, spread: 1, threshold: 0))
+        let decoded = try JSONDecoder().decode(ImageDreamGlow.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageDreamGlow(amount: 0.4))
+    }
+
     @Test func softFocusSettingsClampAndDecodeDefaults() throws {
         let settings = ImageSoftFocus(amount: 2, softness: -1, glow: 3, detail: -2)
         #expect(settings == ImageSoftFocus(amount: 1, softness: 0, glow: 1, detail: 0))
