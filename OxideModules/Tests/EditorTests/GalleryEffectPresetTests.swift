@@ -207,6 +207,26 @@ struct GalleryEffectPresetTests {
         #expect(result.softFocus == current.softFocus)
     }
 
+    @Test func applyingLensFlarePresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(dreamGlow: ImageDreamGlow(amount: 1))
+        let result = preset("flare-anamorphic").applying(to: current)
+
+        #expect(result.lensFlare.amount == 1)
+        #expect(result.lensFlare.streak == 1)
+        #expect(result.dreamGlow == current.dreamGlow)
+    }
+
+    @Test func removingLensFlarePreservesOtherEffectKinds() {
+        let current = ImageEffects(
+            dreamGlow: ImageDreamGlow(amount: 1),
+            lensFlare: ImageLensFlare(amount: 1)
+        )
+        let result = preset("flare-cinematic").removing(from: current)
+
+        #expect(result.lensFlare == .disabled)
+        #expect(result.dreamGlow == current.dreamGlow)
+    }
+
     @Test func removingLensDirtPreservesOtherEffectKinds() {
         let current = ImageEffects(
             vignette: ImageVignette(amount: 0.3),
@@ -255,6 +275,7 @@ struct GalleryEffectPresetTests {
         case .lensDirt: effects.lensDirt.amount
         case .softFocus: effects.softFocus.amount
         case .dreamGlow: effects.dreamGlow.amount
+        case .lensFlare: effects.lensFlare.amount
         }
     }
 }

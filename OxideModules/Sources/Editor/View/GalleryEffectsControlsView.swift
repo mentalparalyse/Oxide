@@ -183,6 +183,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Glow", value: draft.effects.dreamGlow.glow, range: 0...1, onChange: updateDreamGlowAmount, onEnd: onChangeEnded)
             EffectControlRow(title: "Spread", value: draft.effects.dreamGlow.spread, range: 0...1, onChange: updateDreamGlowSpread, onEnd: onChangeEnded)
             EffectControlRow(title: "Threshold", value: draft.effects.dreamGlow.threshold, range: 0...1, onChange: updateDreamGlowThreshold, onEnd: onChangeEnded)
+        case .lensFlare:
+            EffectControlRow(title: "Size", value: draft.effects.lensFlare.size, range: 0.05...1, onChange: updateLensFlareSize, onEnd: onChangeEnded)
+            EffectControlRow(title: "Streak", value: draft.effects.lensFlare.streak, range: 0...1, onChange: updateLensFlareStreak, onEnd: onChangeEnded)
+            EffectControlRow(title: "Warmth", value: draft.effects.lensFlare.warmth, range: 0...1, onChange: updateLensFlareWarmth, onEnd: onChangeEnded)
         }
     }
 
@@ -257,6 +261,9 @@ struct GalleryEffectsControlsView: View {
     private func updateDreamGlowAmount(_ value: Double) { mutateEffects { $0.dreamGlow.glow = value } }
     private func updateDreamGlowSpread(_ value: Double) { mutateEffects { $0.dreamGlow.spread = value } }
     private func updateDreamGlowThreshold(_ value: Double) { mutateEffects { $0.dreamGlow.threshold = value } }
+    private func updateLensFlareSize(_ value: Double) { mutateEffects { $0.lensFlare.size = value } }
+    private func updateLensFlareStreak(_ value: Double) { mutateEffects { $0.lensFlare.streak = value } }
+    private func updateLensFlareWarmth(_ value: Double) { mutateEffects { $0.lensFlare.warmth = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

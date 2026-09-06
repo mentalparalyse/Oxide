@@ -5,6 +5,7 @@ extension GalleryEffectPreset {
         if effects.lensDirt.isEnabled { return "dirt-clean" }
         if effects.softFocus.isEnabled { return "focus-classic" }
         if effects.dreamGlow.isEnabled { return "glow-portrait" }
+        if effects.lensFlare.isEnabled { return "flare-cinematic" }
         if effects.vignette.isEnabled { return "vignette-dark" }
         if effects.edgeBlur.isEnabled { return "edge-soft" }
         if effects.tiltShift.isEnabled { return "tilt-miniature" }
