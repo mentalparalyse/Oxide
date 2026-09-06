@@ -88,6 +88,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.lensDirt.isEnabled
                 && !draft.effects.softFocus.isEnabled
                 && !draft.effects.dreamGlow.isEnabled
+                && !draft.effects.lensFlare.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -126,6 +127,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.softFocus.isEnabled else { return false }
         case .dreamGlow:
             guard draft.effects.dreamGlow.isEnabled else { return false }
+        case .lensFlare:
+            guard draft.effects.lensFlare.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -228,6 +231,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.dreamGlow.glow - targetEffects.dreamGlow.glow)
                 + abs(draft.effects.dreamGlow.spread - targetEffects.dreamGlow.spread)
                 + abs(draft.effects.dreamGlow.threshold - targetEffects.dreamGlow.threshold)
+        case .lensFlare:
+            return abs(draft.effects.lensFlare.amount - targetEffects.lensFlare.amount)
+                + abs(draft.effects.lensFlare.size - targetEffects.lensFlare.size)
+                + abs(draft.effects.lensFlare.streak - targetEffects.lensFlare.streak)
+                + abs(draft.effects.lensFlare.warmth - targetEffects.lensFlare.warmth)
         }
     }
 }
