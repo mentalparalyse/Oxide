@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func softFocusSettingsClampAndDecodeDefaults() throws {
+        let settings = ImageSoftFocus(amount: 2, softness: -1, glow: 3, detail: -2)
+        #expect(settings == ImageSoftFocus(amount: 1, softness: 0, glow: 1, detail: 0))
+        let decoded = try JSONDecoder().decode(ImageSoftFocus.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageSoftFocus(amount: 0.4))
+    }
+
     @Test func lensDirtSettingsClampAndDecodeDefaults() throws {
         let settings = ImageLensDirt(amount: 2, density: -1, smudge: 3, flare: -2)
         #expect(settings == ImageLensDirt(amount: 1, density: 0, smudge: 1, flare: 0))

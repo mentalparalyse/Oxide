@@ -19,6 +19,7 @@ enum GalleryEffectKind: String, Sendable {
     case edgeBlur
     case vignette
     case lensDirt
+    case softFocus
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -86,6 +87,9 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         case .lensDirt:
             result.lensDirt = previewEffects.lensDirt
             result.lensDirt.amount = 1
+        case .softFocus:
+            result.softFocus = previewEffects.softFocus
+            result.softFocus.amount = 1
         }
         return result
     }
@@ -111,29 +115,9 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         case .edgeBlur: result.edgeBlur = .disabled
         case .vignette: result.vignette = .disabled
         case .lensDirt: result.lensDirt = .disabled
+        case .softFocus: result.softFocus = .disabled
         }
         return result
-    }
-
-    static func initialSelectionID(for effects: ImageEffects) -> ID {
-        if effects.lensDirt.isEnabled { return "dirt-clean" }
-        if effects.vignette.isEnabled { return "vignette-dark" }
-        if effects.edgeBlur.isEnabled { return "edge-soft" }
-        if effects.tiltShift.isEnabled { return "tilt-miniature" }
-        if effects.pixelSort.isEnabled { return "sort-clean" }
-        if effects.sparkle.isEnabled { return "sparkle-soft" }
-        if effects.kaleidoscope.isEnabled { return "kaleido-mirror" }
-        if effects.zoomBlur.isEnabled { return "zoom-rush" }
-        if effects.motionBlur.isEnabled { return "motion-soft" }
-        if effects.lensWarp.isEnabled { return "lens-fisheye" }
-        if effects.vhs.isEnabled { return "vhs-clean" }
-        if effects.bloom.isEnabled { return "bloom-soft" }
-        if effects.dustAndScratches.isEnabled { return "dust-clean" }
-        if effects.halation.isEnabled { return "halation-soft" }
-        if effects.chromaticAberration.amount > 0 { return "chromatic-soft" }
-        if effects.lightLeak.amount > 0 { return "leak-left" }
-        if effects.filmGrain.isEnabled { return "grain-fine" }
-        return "none"
     }
 
     static let all: [GalleryEffectPreset] = [
@@ -297,6 +281,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "dirt-clean", name: "Clean Glass", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.3, density: 0.2, smudge: 0.16, flare: 0.22, seed: 7, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.7, feather: 0.8)))),
         GalleryEffectPreset(id: "dirt-smudged", name: "Smudged", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.58, density: 0.2, smudge: 0.8, flare: 0.36, seed: 19, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.62, feather: 0.72)))),
         GalleryEffectPreset(id: "dirt-dusty", name: "Dusty Lens", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.64, density: 0.84, smudge: 0.28, flare: 0.2, seed: 43, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.78, feather: 0.62)))),
-        GalleryEffectPreset(id: "dirt-flare", name: "Flare Spots", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.72, density: 0.35, smudge: 0.58, flare: 0.9, seed: 71, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.56, feather: 0.84))))
+        GalleryEffectPreset(id: "dirt-flare", name: "Flare Spots", kind: .lensDirt, previewEffects: ImageEffects(lensDirt: ImageLensDirt(amount: 0.72, density: 0.35, smudge: 0.58, flare: 0.9, seed: 71, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.56, feather: 0.84)))),
+        GalleryEffectPreset(id: "focus-classic", name: "Classic", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.45, glow: 0.28, detail: 0.72))),
+        GalleryEffectPreset(id: "focus-portrait", name: "Portrait", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.34, glow: 0.2, detail: 0.86, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.5, feather: 0.78)))),
+        GalleryEffectPreset(id: "focus-dream", name: "Dreamy", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.75, glow: 0.68, detail: 0.42))),
+        GalleryEffectPreset(id: "focus-silk", name: "Silk", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.58, glow: 0.4, detail: 0.58)))
     ]
 }
