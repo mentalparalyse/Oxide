@@ -187,6 +187,26 @@ struct GalleryEffectPresetTests {
         #expect(result.lensDirt == current.lensDirt)
     }
 
+    @Test func applyingDreamGlowPresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(softFocus: ImageSoftFocus(amount: 1))
+        let result = preset("glow-ethereal").applying(to: current)
+
+        #expect(result.dreamGlow.amount == 1)
+        #expect(result.dreamGlow.spread == 0.8)
+        #expect(result.softFocus == current.softFocus)
+    }
+
+    @Test func removingDreamGlowPreservesOtherEffectKinds() {
+        let current = ImageEffects(
+            softFocus: ImageSoftFocus(amount: 1),
+            dreamGlow: ImageDreamGlow(amount: 1, glow: 0.7)
+        )
+        let result = preset("glow-portrait").removing(from: current)
+
+        #expect(result.dreamGlow == .disabled)
+        #expect(result.softFocus == current.softFocus)
+    }
+
     @Test func removingLensDirtPreservesOtherEffectKinds() {
         let current = ImageEffects(
             vignette: ImageVignette(amount: 0.3),
@@ -234,6 +254,7 @@ struct GalleryEffectPresetTests {
         case .vignette: effects.vignette.amount
         case .lensDirt: effects.lensDirt.amount
         case .softFocus: effects.softFocus.amount
+        case .dreamGlow: effects.dreamGlow.amount
         }
     }
 }

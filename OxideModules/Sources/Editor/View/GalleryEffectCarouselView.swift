@@ -87,6 +87,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.vignette.isEnabled
                 && !draft.effects.lensDirt.isEnabled
                 && !draft.effects.softFocus.isEnabled
+                && !draft.effects.dreamGlow.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -123,6 +124,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.lensDirt.isEnabled else { return false }
         case .softFocus:
             guard draft.effects.softFocus.isEnabled else { return false }
+        case .dreamGlow:
+            guard draft.effects.dreamGlow.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -220,6 +223,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.softFocus.softness - targetEffects.softFocus.softness)
                 + abs(draft.effects.softFocus.glow - targetEffects.softFocus.glow)
                 + abs(draft.effects.softFocus.detail - targetEffects.softFocus.detail)
+        case .dreamGlow:
+            return abs(draft.effects.dreamGlow.amount - targetEffects.dreamGlow.amount)
+                + abs(draft.effects.dreamGlow.glow - targetEffects.dreamGlow.glow)
+                + abs(draft.effects.dreamGlow.spread - targetEffects.dreamGlow.spread)
+                + abs(draft.effects.dreamGlow.threshold - targetEffects.dreamGlow.threshold)
         }
     }
 }

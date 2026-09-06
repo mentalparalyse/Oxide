@@ -20,6 +20,7 @@ enum GalleryEffectKind: String, Sendable {
     case vignette
     case lensDirt
     case softFocus
+    case dreamGlow
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -90,6 +91,9 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         case .softFocus:
             result.softFocus = previewEffects.softFocus
             result.softFocus.amount = 1
+        case .dreamGlow:
+            result.dreamGlow = previewEffects.dreamGlow
+            result.dreamGlow.amount = 1
         }
         return result
     }
@@ -116,6 +120,7 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         case .vignette: result.vignette = .disabled
         case .lensDirt: result.lensDirt = .disabled
         case .softFocus: result.softFocus = .disabled
+        case .dreamGlow: result.dreamGlow = .disabled
         }
         return result
     }
@@ -285,6 +290,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "focus-classic", name: "Classic", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.45, glow: 0.28, detail: 0.72))),
         GalleryEffectPreset(id: "focus-portrait", name: "Portrait", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.34, glow: 0.2, detail: 0.86, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.5, feather: 0.78)))),
         GalleryEffectPreset(id: "focus-dream", name: "Dreamy", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.75, glow: 0.68, detail: 0.42))),
-        GalleryEffectPreset(id: "focus-silk", name: "Silk", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.58, glow: 0.4, detail: 0.58)))
+        GalleryEffectPreset(id: "focus-silk", name: "Silk", kind: .softFocus, previewEffects: ImageEffects(softFocus: ImageSoftFocus(amount: 1, softness: 0.58, glow: 0.4, detail: 0.58))),
+        GalleryEffectPreset(id: "glow-portrait", name: "Portrait", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.38, spread: 0.52, threshold: 0.48))),
+        GalleryEffectPreset(id: "glow-ethereal", name: "Ethereal", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.64, spread: 0.8, threshold: 0.32))),
+        GalleryEffectPreset(id: "glow-pastel", name: "Pastel", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.5, spread: 0.68, threshold: 0.24))),
+        GalleryEffectPreset(id: "glow-halo", name: "Halo", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.78, spread: 0.42, threshold: 0.62, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.48, feather: 0.82))))
     ]
 }

@@ -350,6 +350,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     glow: effects.softFocus.glow,
                     detail: effects.softFocus.detail,
                     spatialMask: effects.softFocus.spatialMask.effectMask
+                ),
+                dreamGlow: DreamGlowSettings(
+                    amount: effects.dreamGlow.amount,
+                    glow: effects.dreamGlow.glow,
+                    spread: effects.dreamGlow.spread,
+                    threshold: effects.dreamGlow.threshold,
+                    spatialMask: effects.dreamGlow.spatialMask.effectMask
                 )
             ),
             to: image
