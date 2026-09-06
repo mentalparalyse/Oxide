@@ -175,6 +175,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Density", value: draft.effects.lensDirt.density, range: 0...1, onChange: updateLensDirtDensity, onEnd: onChangeEnded)
             EffectControlRow(title: "Smudge", value: draft.effects.lensDirt.smudge, range: 0...1, onChange: updateLensDirtSmudge, onEnd: onChangeEnded)
             EffectControlRow(title: "Flare", value: draft.effects.lensDirt.flare, range: 0...1, onChange: updateLensDirtFlare, onEnd: onChangeEnded)
+        case .softFocus:
+            EffectControlRow(title: "Softness", value: draft.effects.softFocus.softness, range: 0.05...1, onChange: updateSoftFocusSoftness, onEnd: onChangeEnded)
+            EffectControlRow(title: "Glow", value: draft.effects.softFocus.glow, range: 0...1, onChange: updateSoftFocusGlow, onEnd: onChangeEnded)
+            EffectControlRow(title: "Detail", value: draft.effects.softFocus.detail, range: 0...1, onChange: updateSoftFocusDetail, onEnd: onChangeEnded)
         }
     }
 
@@ -243,6 +247,9 @@ struct GalleryEffectsControlsView: View {
     private func updateLensDirtDensity(_ value: Double) { mutateEffects { $0.lensDirt.density = value } }
     private func updateLensDirtSmudge(_ value: Double) { mutateEffects { $0.lensDirt.smudge = value } }
     private func updateLensDirtFlare(_ value: Double) { mutateEffects { $0.lensDirt.flare = value } }
+    private func updateSoftFocusSoftness(_ value: Double) { mutateEffects { $0.softFocus.softness = value } }
+    private func updateSoftFocusGlow(_ value: Double) { mutateEffects { $0.softFocus.glow = value } }
+    private func updateSoftFocusDetail(_ value: Double) { mutateEffects { $0.softFocus.detail = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

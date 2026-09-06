@@ -343,6 +343,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     flare: effects.lensDirt.flare,
                     seed: effects.lensDirt.seed,
                     spatialMask: effects.lensDirt.spatialMask.effectMask
+                ),
+                softFocus: SoftFocusSettings(
+                    amount: effects.softFocus.amount,
+                    softness: effects.softFocus.softness,
+                    glow: effects.softFocus.glow,
+                    detail: effects.softFocus.detail,
+                    spatialMask: effects.softFocus.spatialMask.effectMask
                 )
             ),
             to: image

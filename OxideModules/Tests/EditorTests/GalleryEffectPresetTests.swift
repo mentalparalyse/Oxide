@@ -167,6 +167,26 @@ struct GalleryEffectPresetTests {
         #expect(result.vignette == current.vignette)
     }
 
+    @Test func applyingSoftFocusPresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(lensDirt: ImageLensDirt(amount: 0.3))
+        let result = preset("focus-portrait").applying(to: current)
+
+        #expect(result.softFocus.amount == 1)
+        #expect(result.softFocus.detail == 0.86)
+        #expect(result.lensDirt == current.lensDirt)
+    }
+
+    @Test func removingSoftFocusPreservesOtherEffectKinds() {
+        let current = ImageEffects(
+            lensDirt: ImageLensDirt(amount: 0.3),
+            softFocus: ImageSoftFocus(amount: 1, softness: 0.7)
+        )
+        let result = preset("focus-classic").removing(from: current)
+
+        #expect(result.softFocus == .disabled)
+        #expect(result.lensDirt == current.lensDirt)
+    }
+
     @Test func removingLensDirtPreservesOtherEffectKinds() {
         let current = ImageEffects(
             vignette: ImageVignette(amount: 0.3),
@@ -213,6 +233,7 @@ struct GalleryEffectPresetTests {
         case .edgeBlur: effects.edgeBlur.amount
         case .vignette: effects.vignette.amount
         case .lensDirt: effects.lensDirt.amount
+        case .softFocus: effects.softFocus.amount
         }
     }
 }
