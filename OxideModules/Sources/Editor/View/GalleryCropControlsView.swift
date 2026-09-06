@@ -6,6 +6,7 @@ import UIComponents
 struct GalleryCropControlsView: View {
     let selectedAspectRatio: Double?
     let onSelect: (Double?) -> Void
+    let onDone: () -> Void
     
     private let options: [CropOption] = [
         CropOption(title: "Free", aspectRatio: nil),
@@ -15,20 +16,30 @@ struct GalleryCropControlsView: View {
     ]
     
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(options) { option in
-                Button {
-                    onSelect(option.aspectRatio)
-                } label: {
-                    Text(option.title)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(isSelected(option) ? AppColours.appForegroundColor : AppColours.appMutedForegroundColor)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(background(for: option), in: RoundedRectangle(cornerRadius: 8))
+        VStack(spacing: 10) {
+            HStack(spacing: 8) {
+                ForEach(options) { option in
+                    Button {
+                        onSelect(option.aspectRatio)
+                    } label: {
+                        Text(option.title)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(isSelected(option) ? AppColours.appForegroundColor : AppColours.appMutedForegroundColor)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(background(for: option), in: RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
+            Button("Done", action: onDone)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AppColours.appForegroundColor)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(AppColours.accent, in: RoundedRectangle(cornerRadius: 8))
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("crop.done")
         }
     }
     

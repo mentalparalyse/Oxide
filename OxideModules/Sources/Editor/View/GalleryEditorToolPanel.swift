@@ -6,6 +6,7 @@ import UIComponents
 struct GalleryEditorToolPanel: View {
     @ObservedObject var presenter: EditorPresenter
     let activeTool: GalleryEditingTool
+    let onCropDone: () -> Void
     @Binding var selectedSpatialEffectKind: GalleryEffectKind?
 
     @ViewBuilder
@@ -30,8 +31,9 @@ struct GalleryEditorToolPanel: View {
                 )
         case .crop:
             GalleryCropControlsView(
-                selectedAspectRatio: presenter.draft.cropAspectRatio,
-                onSelect: { ratio in Task { await presenter.setCropAspectRatio(ratio) } }
+                selectedAspectRatio: presenter.cropDraft?.cropAspectRatio,
+                onSelect: presenter.setCropAspectRatio,
+                onDone: onCropDone
             )
             .padding(.horizontal, 8)
             .padding(.vertical, 14)

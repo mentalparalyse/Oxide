@@ -5,7 +5,6 @@ import SwiftUI
 
 struct CropOverlayView: View {
     let crop: ImageEditCrop?
-    let zoomScale: CGFloat
     let onResize: (ImageEditCropEdge, ImageEditCrop?, Double, Double) -> Void
     let onResizeEnded: () -> Void
     
@@ -18,9 +17,11 @@ struct CropOverlayView: View {
             let rect = cropRect(in: proxy.size)
             
             ZStack(alignment: .topLeading) {
-                dimmedOutsideCrop(rect: rect)
+                blurredOutsideCrop(rect: rect, size: proxy.size)
+                    .allowsHitTesting(false)
                 
                 cropGrid
+                    .allowsHitTesting(false)
                     .frame(width: rect.width, height: rect.height)
                     .offset(x: rect.minX, y: rect.minY)
                 
@@ -33,6 +34,7 @@ struct CropOverlayView: View {
                 handle(edge: .bottom, in: rect, size: proxy.size)
                     .offset(x: rect.minX, y: rect.maxY - handleThickness / 2)
             }
+            .coordinateSpace(name: "cropOverlay")
         }
     }
     
@@ -53,20 +55,17 @@ struct CropOverlayView: View {
             }
     }
     
-    private func dimmedOutsideCrop(rect: CGRect) -> some View {
-        Color.black.opacity(0.28)
-            .mask {
-                Rectangle()
-                    .overlay(alignment: .topLeading) {
-                        Rectangle()
-                            .frame(width: rect.width, height: rect.height)
-                            .offset(x: rect.minX, y: rect.minY)
-                            .blendMode(.destinationOut)
-                    }
-            }
-            .compositingGroup()
+    private func blurredOutsideCrop(rect: CGRect, size: CGSize) -> some View {
+        Path { path in
+            path.addRect(CGRect(origin: .zero, size: size))
+            path.addRect(rect)
+        }
+        // A backdrop material reuses the displayed image. The even-odd cutout
+        // keeps the selection sharp without rendering a second LUT preview.
+        .fill(.ultraThinMaterial, style: FillStyle(eoFill: true))
+        .environment(\.colorScheme, .dark)
     }
-    
+
     private func handle(edge: ImageEditCropEdge, in rect: CGRect, size: CGSize) -> some View {
         Color.clear
             .frame(width: hitAreaSize(edge: edge, cropRect: rect).width, height: hitAreaSize(edge: edge, cropRect: rect).height)
@@ -77,13 +76,13 @@ struct CropOverlayView: View {
             }
             .contentShape(Rectangle())
             .gesture(
-                DragGesture(minimumDistance: 0)
+                DragGesture(minimumDistance: 0, coordinateSpace: .named("cropOverlay"))
                     .onChanged { value in
                         if dragStartCrop == nil {
-                            dragStartCrop = crop
+                            dragStartCrop = crop ?? GalleryCropGeometry.fullImage
                         }
-                        let scaledWidth = size.width * zoomScale
-                        let scaledHeight = size.height * zoomScale
+                        let scaledWidth = size.width
+                        let scaledHeight = size.height
                         let horizontalDelta = scaledWidth > 0 ? Double(value.translation.width / scaledWidth) : 0
                         let verticalDelta = scaledHeight > 0 ? Double(value.translation.height / scaledHeight) : 0
                         onResize(edge, dragStartCrop, horizontalDelta, verticalDelta)

@@ -6,6 +6,8 @@ import ImageProcessor
 @MainActor
 public final class EditorPresenter: ObservableObject {
     @Published public private(set) var draft: EditorDraft
+    @Published public private(set) var cropDraft: EditorDraft?
+    @Published public private(set) var isApplyingCrop = false
     @Published public private(set) var canUndo = false
     @Published public private(set) var sourceSize: CGSize?
 
@@ -73,37 +75,58 @@ public final class EditorPresenter: ObservableObject {
         await recordCurrentStep()
     }
 
-    public func setCropAspectRatio(_ aspectRatio: Double?) async {
+    public func beginCropping() {
+        guard cropDraft == nil, !isApplyingCrop else { return }
+        cropDraft = draft
+    }
+
+    public func cancelCropping() { cropDraft = nil }
+
+    public func finishCropping() async {
+        guard let pending = cropDraft, !isApplyingCrop else { return }
+        cropDraft = nil
+        guard (pending.crop ?? GalleryCropGeometry.fullImage) != (draft.crop ?? GalleryCropGeometry.fullImage) else { return }
+        isApplyingCrop = true
+        defer { isApplyingCrop = false }
+        draft.crop = pending.crop
+        draft.cropAspectRatio = pending.cropAspectRatio
+        await recordCurrentStep()
+    }
+
+    public func setCropAspectRatio(_ aspectRatio: Double?) {
+        beginCropping()
+        guard var pending = cropDraft else { return }
         if let aspectRatio {
             guard let sourceSize else {
                 onError("Crop unavailable")
                 return
             }
-            draft.crop = ImageEditCropper.centeredCrop(sourceSize: sourceSize, aspectRatio: aspectRatio)
-            draft.cropAspectRatio = aspectRatio
+            guard aspectRatio.isFinite, aspectRatio > 0 else {
+                onError("Crop unavailable")
+                return
+            }
+            let rotation = ImageEditRotation.normalized(pending.rotationDegrees)
+            let sourceRatio = rotation == 90 || rotation == 270 ? 1 / aspectRatio : aspectRatio
+            pending.crop = ImageEditCropper.centeredCrop(sourceSize: sourceSize, aspectRatio: sourceRatio)
+            pending.cropAspectRatio = aspectRatio
         } else {
-            draft.crop = nil
-            draft.cropAspectRatio = nil
+            pending.crop = nil
+            pending.cropAspectRatio = nil
         }
-        await recordCurrentStep()
+        cropDraft = pending
     }
 
-    public func resizeCrop(
-        edge: ImageEditCropEdge,
-        baseCrop: ImageEditCrop?,
-        horizontalDelta: Double,
-        verticalDelta: Double
-    ) {
-        draft.crop = ImageEditCropper.resized(
-            baseCrop,
-            edge: edge,
-            horizontalDelta: horizontalDelta,
-            verticalDelta: verticalDelta
-        )
-        draft.cropAspectRatio = nil
+    public func setCrop(_ crop: ImageEditCrop) {
+        guard crop.x.isFinite, crop.y.isFinite, crop.width.isFinite, crop.height.isFinite,
+              crop.width > 0, crop.height > 0,
+              crop.x >= -1e-9, crop.y >= -1e-9,
+              crop.x + crop.width <= 1 + 1e-9, crop.y + crop.height <= 1 + 1e-9 else {
+            onError("Crop unavailable")
+            return
+        }
+        beginCropping()
+        cropDraft?.crop = crop
     }
-
-    public func commitCropResize() async { await recordCurrentStep() }
 
     public func setAdjustment(_ kind: ImageAdjustmentKind, value: Double) {
         var adjustments = draft.adjustments
@@ -127,6 +150,7 @@ public final class EditorPresenter: ObservableObject {
     public func commitEffects() async { await recordCurrentStep() }
 
     public func undo() async {
+        cancelCropping()
         await historySetupTask.value
         let state = await interactor.undo()
         if let currentDraft = state.currentDraft {
