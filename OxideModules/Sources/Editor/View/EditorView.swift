@@ -28,7 +28,10 @@ public struct EditorView: View {
                 GalleryEditorNavigationBar(
                     canUndo: presenter.canUndo,
                     onCancel: presenter.cancel,
-                    onUndo: { Task { await presenter.undo() } },
+                    onUndo: {
+                        selectTool(.filters)
+                        Task { await presenter.undo() }
+                    },
                     onSave: presenter.save
                 )
 
@@ -45,13 +48,19 @@ public struct EditorView: View {
                             GalleryEditorToolPanel(
                                 presenter: presenter,
                                 activeTool: activeTool,
+                                onCropDone: {
+                                    Task {
+                                        await presenter.finishCropping()
+                                        selectTool(.filters)
+                                    }
+                                },
                                 selectedSpatialEffectKind: $selectedSpatialEffectKind
                             )
                         }
                     }
 
                     FloatingControlPanel {
-                        GalleryEditingToolTabBar(selection: $activeTool)
+                        GalleryEditingToolTabBar(selection: Binding(get: { activeTool }, set: { selectTool($0) }))
                     }
                 }
                 .padding(.horizontal, 12)
@@ -61,6 +70,7 @@ public struct EditorView: View {
             .allowsHitTesting(!comparisonVisibility.areControlsHidden)
             .accessibilityHidden(comparisonVisibility.areControlsHidden)
         }
+        .disabled(presenter.isApplyingCrop)
         .background(AppColours.appColor)
         .animation(.easeOut(duration: 0.16), value: comparisonVisibility.areControlsHidden)
         .accessibilityAction(
@@ -72,17 +82,29 @@ public struct EditorView: View {
 
     private var editorPreview: some View {
         Group {
-            GalleryEditorPreviewSurface(
+            if activeTool == .crop {
+                GalleryCropPreviewSurface(draft: presenter.cropDraft ?? presenter.draft, sourceSize: presenter.sourceSize) { crop in
+                    presenter.setCrop(crop)
+                }
+                .padding(.top, 64)
+                .padding(.bottom, 220)
+            } else {
+                GalleryEditorPreviewSurface(
                     draft: presenter.draft,
                     sourceSize: presenter.sourceSize,
-                    isCropping: activeTool == .crop,
-                    onResize: presenter.resizeCrop,
-                    onResizeEnded: { Task { await presenter.commitCropResize() } },
                     spatialEffectKind: activeTool == .effects ? selectedSpatialEffectKind : nil,
                     onSpatialCenterChange: updateSpatialCenter,
                     onSpatialCenterChangeEnded: { Task { await presenter.commitEffects() } }
                 )
+            }
         }
+    }
+
+    private func selectTool(_ tool: GalleryEditingTool) {
+        guard tool != activeTool else { return }
+        if activeTool == .crop { presenter.cancelCropping() }
+        if tool == .crop { presenter.beginCropping() }
+        activeTool = tool
     }
 
     private var isComparisonEligible: Bool {

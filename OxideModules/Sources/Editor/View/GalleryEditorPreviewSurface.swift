@@ -7,9 +7,6 @@ import UIComponents
 struct GalleryEditorPreviewSurface: View {
     let draft: EditorDraft
     let sourceSize: CGSize?
-    let isCropping: Bool
-    let onResize: (ImageEditCropEdge, ImageEditCrop?, Double, Double) -> Void
-    let onResizeEnded: () -> Void
     let spatialEffectKind: GalleryEffectKind?
     let onSpatialCenterChange: (Double, Double) -> Void
     let onSpatialCenterChangeEnded: () -> Void
@@ -42,23 +39,13 @@ struct GalleryEditorPreviewSurface: View {
                         presetID: draft.selectedFilterID,
                         intensity: draft.filterIntensity,
                         rotationDegrees: draft.rotationDegrees,
-                        crop: isCropping ? nil : draft.crop,
+                        crop: draft.crop,
                         adjustments: draft.adjustments,
                         effects: draft.effects,
                         contentMode: .fit,
                         maxPixelSize: 1_600
                     )
                     .frame(width: imageSize.width, height: imageSize.height)
-
-                    if isCropping {
-                        CropOverlayView(
-                            crop: draft.crop,
-                            zoomScale: effectiveScale,
-                            onResize: onResize,
-                            onResizeEnded: onResizeEnded
-                        )
-                        .frame(width: imageSize.width, height: imageSize.height)
-                    }
 
                     if let mask = activeSpatialMask {
                         GallerySpatialEffectOverlay(
@@ -112,11 +99,11 @@ struct GalleryEditorPreviewSurface: View {
     private func panGesture(imageSize: CGSize, containerSize: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 8)
             .updating($gestureOffset) { value, state, _ in
-                guard !isCropping, activeSpatialMask == nil, viewport.scale > 1 else { return }
+                guard activeSpatialMask == nil, viewport.scale > 1 else { return }
                 state = value.translation
             }
             .onEnded { value in
-                guard !isCropping, activeSpatialMask == nil, viewport.scale > 1 else { return }
+                guard activeSpatialMask == nil, viewport.scale > 1 else { return }
                 viewport.applyOffset(
                     CGSize(
                         width: viewport.offset.width + value.translation.width,
@@ -133,7 +120,7 @@ struct GalleryEditorPreviewSurface: View {
             sourceSize: sourceSize,
             crop: draft.crop,
             rotationDegrees: draft.rotationDegrees,
-            appliesCrop: !isCropping
+            appliesCrop: true
         )
         guard size.width > 0, size.height > 0 else {
             return container
