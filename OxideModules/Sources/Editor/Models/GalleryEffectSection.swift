@@ -54,7 +54,7 @@ private enum GalleryEffectSectionDefinition: String, CaseIterable {
         case .film:
             [.filmGrain, .halation, .dustAndScratches, .vhs]
         case .light:
-            [.lightLeak, .bloom, .dreamGlow, .lensFlare, .sparkle]
+            [.lightLeak, .bloom, .dreamGlow, .lensFlare, .haze, .sparkle]
         case .lens:
             [.chromaticAberration, .lensWarp, .motionBlur, .zoomBlur, .tiltShift, .edgeBlur, .vignette, .lensDirt, .softFocus]
         case .creative:

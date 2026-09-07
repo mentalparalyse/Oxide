@@ -227,6 +227,23 @@ struct GalleryEffectPresetTests {
         #expect(result.dreamGlow == current.dreamGlow)
     }
 
+    @Test func applyingHazePresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1))
+        let result = preset("haze-golden").applying(to: current)
+
+        #expect(result.haze.amount == 1)
+        #expect(result.haze.warmth == 0.9)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
+    @Test func removingHazePreservesOtherEffectKinds() {
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1), haze: ImageHaze(amount: 1))
+        let result = preset("haze-mist").removing(from: current)
+
+        #expect(result.haze == .disabled)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
     @Test func removingLensDirtPreservesOtherEffectKinds() {
         let current = ImageEffects(
             vignette: ImageVignette(amount: 0.3),
@@ -276,6 +293,7 @@ struct GalleryEffectPresetTests {
         case .softFocus: effects.softFocus.amount
         case .dreamGlow: effects.dreamGlow.amount
         case .lensFlare: effects.lensFlare.amount
+        case .haze: effects.haze.amount
         }
     }
 }

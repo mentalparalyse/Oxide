@@ -6,6 +6,7 @@ extension GalleryEffectPreset {
         if effects.softFocus.isEnabled { return "focus-classic" }
         if effects.dreamGlow.isEnabled { return "glow-portrait" }
         if effects.lensFlare.isEnabled { return "flare-cinematic" }
+        if effects.haze.isEnabled { return "haze-mist" }
         if effects.vignette.isEnabled { return "vignette-dark" }
         if effects.edgeBlur.isEnabled { return "edge-soft" }
         if effects.tiltShift.isEnabled { return "tilt-miniature" }

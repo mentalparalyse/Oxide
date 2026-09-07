@@ -364,6 +364,12 @@ public final class ImageProcessor: @unchecked Sendable {
                     streak: effects.lensFlare.streak,
                     warmth: effects.lensFlare.warmth,
                     spatialMask: effects.lensFlare.spatialMask.effectMask
+                ),
+                haze: HazeSettings(
+                    amount: effects.haze.amount,
+                    density: effects.haze.density,
+                    depth: effects.haze.depth,
+                    warmth: effects.haze.warmth
                 )
             ),
             to: image

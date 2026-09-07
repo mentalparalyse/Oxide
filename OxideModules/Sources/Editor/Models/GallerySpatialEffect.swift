@@ -5,7 +5,7 @@ extension GalleryEffectKind {
         switch self {
         case .lightLeak, .chromaticAberration, .halation, .bloom, .lensWarp, .zoomBlur, .kaleidoscope, .sparkle, .pixelSort, .tiltShift, .edgeBlur, .vignette, .lensDirt, .softFocus, .dreamGlow, .lensFlare:
             true
-        case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur:
+        case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur, .haze:
             false
         }
     }
@@ -30,7 +30,7 @@ extension ImageEffects {
         case .softFocus: softFocus.spatialMask
         case .dreamGlow: dreamGlow.spatialMask
         case .lensFlare: lensFlare.spatialMask
-        case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur: nil
+        case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur, .haze: nil
         }
     }
 
@@ -55,7 +55,7 @@ extension ImageEffects {
         case .softFocus: softFocus.spatialMask = mask
         case .dreamGlow: dreamGlow.spatialMask = mask
         case .lensFlare: lensFlare.spatialMask = mask
-        case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur: break
+        case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur, .haze: break
         }
     }
 }

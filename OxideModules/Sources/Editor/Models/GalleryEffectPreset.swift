@@ -22,6 +22,7 @@ enum GalleryEffectKind: String, Sendable {
     case softFocus
     case dreamGlow
     case lensFlare
+    case haze
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -205,6 +206,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "flare-cinematic", name: "Cinematic", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.58, streak: 0.72, warmth: 0.48, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.2, centerY: 0.24)))),
         GalleryEffectPreset(id: "flare-vintage", name: "Vintage", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.72, streak: 0.2, warmth: 0.9, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.22, centerY: 0.3)))),
         GalleryEffectPreset(id: "flare-anamorphic", name: "Anamorphic", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.42, streak: 1, warmth: 0.12, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.5, centerY: 0.38)))),
-        GalleryEffectPreset(id: "flare-soft", name: "Soft Flare", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.82, streak: 0.08, warmth: 0.66, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.76, centerY: 0.22))))
+        GalleryEffectPreset(id: "flare-soft", name: "Soft Flare", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.82, streak: 0.08, warmth: 0.66, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.76, centerY: 0.22)))),
+        GalleryEffectPreset(id: "haze-mist", name: "Morning Mist", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.34, depth: 0.75, warmth: 0.45))),
+        GalleryEffectPreset(id: "haze-golden", name: "Golden Haze", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.55, depth: 0.7, warmth: 0.9))),
+        GalleryEffectPreset(id: "haze-blue", name: "Blue Hour", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.45, depth: 0.82, warmth: 0.12))),
+        GalleryEffectPreset(id: "haze-flat", name: "Flat Air", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.68, depth: 0.2, warmth: 0.5)))
     ]
 }
