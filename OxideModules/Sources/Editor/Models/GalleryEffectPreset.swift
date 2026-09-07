@@ -21,6 +21,7 @@ enum GalleryEffectKind: String, Sendable {
     case lensDirt
     case softFocus
     case dreamGlow
+    case lensFlare
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -30,100 +31,6 @@ struct GalleryEffectPreset: Identifiable, Sendable {
     let previewEffects: ImageEffects
 
     var isNone: Bool { kind == .none }
-
-    func applying(to current: ImageEffects) -> ImageEffects {
-        guard !isNone else { return .neutral }
-        var result = current
-        switch kind {
-        case .none:
-            return .neutral
-        case .filmGrain:
-            result.filmGrain = previewEffects.filmGrain
-            result.filmGrain.amount = 1
-        case .lightLeak:
-            result.lightLeak = previewEffects.lightLeak
-            result.lightLeak.amount = 1
-        case .chromaticAberration:
-            result.chromaticAberration = previewEffects.chromaticAberration
-            result.chromaticAberration.amount = 1
-        case .halation:
-            result.halation = previewEffects.halation
-            result.halation.amount = 1
-        case .dustAndScratches:
-            result.dustAndScratches = previewEffects.dustAndScratches
-            result.dustAndScratches.amount = 1
-        case .bloom:
-            result.bloom = previewEffects.bloom
-            result.bloom.amount = 1
-        case .vhs:
-            result.vhs = previewEffects.vhs
-            result.vhs.amount = 1
-        case .lensWarp:
-            result.lensWarp = previewEffects.lensWarp
-            result.lensWarp.amount = 1
-        case .motionBlur:
-            result.motionBlur = previewEffects.motionBlur
-            result.motionBlur.amount = 1
-        case .zoomBlur:
-            result.zoomBlur = previewEffects.zoomBlur
-            result.zoomBlur.amount = 1
-        case .kaleidoscope:
-            result.kaleidoscope = previewEffects.kaleidoscope
-            result.kaleidoscope.amount = 1
-        case .sparkle:
-            result.sparkle = previewEffects.sparkle
-            result.sparkle.amount = 1
-        case .pixelSort:
-            result.pixelSort = previewEffects.pixelSort
-            result.pixelSort.amount = 1
-        case .tiltShift:
-            result.tiltShift = previewEffects.tiltShift
-            result.tiltShift.amount = 1
-        case .edgeBlur:
-            result.edgeBlur = previewEffects.edgeBlur
-            result.edgeBlur.amount = 1
-        case .vignette:
-            result.vignette = previewEffects.vignette
-            result.vignette.amount = 1
-        case .lensDirt:
-            result.lensDirt = previewEffects.lensDirt
-            result.lensDirt.amount = 1
-        case .softFocus:
-            result.softFocus = previewEffects.softFocus
-            result.softFocus.amount = 1
-        case .dreamGlow:
-            result.dreamGlow = previewEffects.dreamGlow
-            result.dreamGlow.amount = 1
-        }
-        return result
-    }
-
-    func removing(from current: ImageEffects) -> ImageEffects {
-        var result = current
-        switch kind {
-        case .none: return .neutral
-        case .filmGrain: result.filmGrain = .disabled
-        case .lightLeak: result.lightLeak = .disabled
-        case .chromaticAberration: result.chromaticAberration = .disabled
-        case .halation: result.halation = .disabled
-        case .dustAndScratches: result.dustAndScratches = .disabled
-        case .bloom: result.bloom = .disabled
-        case .vhs: result.vhs = .disabled
-        case .lensWarp: result.lensWarp = .disabled
-        case .motionBlur: result.motionBlur = .disabled
-        case .zoomBlur: result.zoomBlur = .disabled
-        case .kaleidoscope: result.kaleidoscope = .disabled
-        case .sparkle: result.sparkle = .disabled
-        case .pixelSort: result.pixelSort = .disabled
-        case .tiltShift: result.tiltShift = .disabled
-        case .edgeBlur: result.edgeBlur = .disabled
-        case .vignette: result.vignette = .disabled
-        case .lensDirt: result.lensDirt = .disabled
-        case .softFocus: result.softFocus = .disabled
-        case .dreamGlow: result.dreamGlow = .disabled
-        }
-        return result
-    }
 
     static let all: [GalleryEffectPreset] = [
         GalleryEffectPreset(id: "none", name: "None", kind: .none, previewEffects: .neutral),
@@ -294,6 +201,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "glow-portrait", name: "Portrait", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.38, spread: 0.52, threshold: 0.48))),
         GalleryEffectPreset(id: "glow-ethereal", name: "Ethereal", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.64, spread: 0.8, threshold: 0.32))),
         GalleryEffectPreset(id: "glow-pastel", name: "Pastel", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.5, spread: 0.68, threshold: 0.24))),
-        GalleryEffectPreset(id: "glow-halo", name: "Halo", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.78, spread: 0.42, threshold: 0.62, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.48, feather: 0.82))))
+        GalleryEffectPreset(id: "glow-halo", name: "Halo", kind: .dreamGlow, previewEffects: ImageEffects(dreamGlow: ImageDreamGlow(amount: 1, glow: 0.78, spread: 0.42, threshold: 0.62, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.48, feather: 0.82)))),
+        GalleryEffectPreset(id: "flare-cinematic", name: "Cinematic", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.58, streak: 0.72, warmth: 0.48, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.2, centerY: 0.24)))),
+        GalleryEffectPreset(id: "flare-vintage", name: "Vintage", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.72, streak: 0.2, warmth: 0.9, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.22, centerY: 0.3)))),
+        GalleryEffectPreset(id: "flare-anamorphic", name: "Anamorphic", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.42, streak: 1, warmth: 0.12, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.5, centerY: 0.38)))),
+        GalleryEffectPreset(id: "flare-soft", name: "Soft Flare", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.82, streak: 0.08, warmth: 0.66, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.76, centerY: 0.22))))
     ]
 }

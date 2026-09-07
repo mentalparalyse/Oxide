@@ -357,6 +357,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     spread: effects.dreamGlow.spread,
                     threshold: effects.dreamGlow.threshold,
                     spatialMask: effects.dreamGlow.spatialMask.effectMask
+                ),
+                lensFlare: LensFlareSettings(
+                    amount: effects.lensFlare.amount,
+                    size: effects.lensFlare.size,
+                    streak: effects.lensFlare.streak,
+                    warmth: effects.lensFlare.warmth,
+                    spatialMask: effects.lensFlare.spatialMask.effectMask
                 )
             ),
             to: image
