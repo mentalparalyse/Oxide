@@ -22,6 +22,7 @@ enum GalleryEffectKind: String, Sendable {
     case softFocus
     case dreamGlow
     case lensFlare
+    case sunFlare
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -205,6 +206,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "flare-cinematic", name: "Cinematic", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.58, streak: 0.72, warmth: 0.48, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.2, centerY: 0.24)))),
         GalleryEffectPreset(id: "flare-vintage", name: "Vintage", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.72, streak: 0.2, warmth: 0.9, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.22, centerY: 0.3)))),
         GalleryEffectPreset(id: "flare-anamorphic", name: "Anamorphic", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.42, streak: 1, warmth: 0.12, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.5, centerY: 0.38)))),
-        GalleryEffectPreset(id: "flare-soft", name: "Soft Flare", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.82, streak: 0.08, warmth: 0.66, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.76, centerY: 0.22))))
+        GalleryEffectPreset(id: "flare-soft", name: "Soft Flare", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.82, streak: 0.08, warmth: 0.66, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.76, centerY: 0.22)))),
+        GalleryEffectPreset(id: "sun-golden", name: "Golden Hour", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.62, rays: 0.55, warmth: 0.92, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.18, centerY: 0.18)))),
+        GalleryEffectPreset(id: "sun-dawn", name: "Cool Dawn", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.48, rays: 0.38, warmth: 0.28, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.78, centerY: 0.2)))),
+        GalleryEffectPreset(id: "sun-burst", name: "Sunburst", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.38, rays: 0.9, warmth: 0.68, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.5, centerY: 0.25)))),
+        GalleryEffectPreset(id: "sun-wash", name: "Warm Wash", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.86, rays: 0.18, warmth: 1, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.22, centerY: 0.28))))
     ]
 }

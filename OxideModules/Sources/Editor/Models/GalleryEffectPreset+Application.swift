@@ -66,6 +66,9 @@ extension GalleryEffectPreset {
         case .lensFlare:
             result.lensFlare = previewEffects.lensFlare
             result.lensFlare.amount = 1
+        case .sunFlare:
+            result.sunFlare = previewEffects.sunFlare
+            result.sunFlare.amount = 1
         }
         return result
     }
@@ -94,6 +97,7 @@ extension GalleryEffectPreset {
         case .softFocus: result.softFocus = .disabled
         case .dreamGlow: result.dreamGlow = .disabled
         case .lensFlare: result.lensFlare = .disabled
+        case .sunFlare: result.sunFlare = .disabled
         }
         return result
     }
