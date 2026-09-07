@@ -312,6 +312,7 @@ struct GalleryEffectPresetTests {
         case .lensFlare: effects.lensFlare.amount
         case .sunFlare: effects.sunFlare.amount
         case .haze: effects.haze.amount
+        case .bokeh: effects.bokeh.amount
         }
     }
 }

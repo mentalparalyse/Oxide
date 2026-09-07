@@ -24,6 +24,7 @@ enum GalleryEffectKind: String, Sendable {
     case lensFlare
     case sunFlare
     case haze
+    case bokeh
 }
 
 struct GalleryEffectPreset: Identifiable, Sendable {
@@ -215,6 +216,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "haze-mist", name: "Morning Mist", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.34, depth: 0.75, warmth: 0.45))),
         GalleryEffectPreset(id: "haze-golden", name: "Golden Haze", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.55, depth: 0.7, warmth: 0.9))),
         GalleryEffectPreset(id: "haze-blue", name: "Blue Hour", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.45, depth: 0.82, warmth: 0.12))),
-        GalleryEffectPreset(id: "haze-flat", name: "Flat Air", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.68, depth: 0.2, warmth: 0.5)))
+        GalleryEffectPreset(id: "haze-flat", name: "Flat Air", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.68, depth: 0.2, warmth: 0.5))),
+        GalleryEffectPreset(id: "bokeh-soft", name: "Soft Lights", kind: .bokeh, previewEffects: ImageEffects(bokeh: ImageBokeh(amount: 1, density: 0.38, size: 0.55, softness: 0.82, warmth: 0.58, seed: 7, spatialMask: ImageSpatialEffectMask(mode: .spot, radius: 0.7, feather: 0.75)))),
+        GalleryEffectPreset(id: "bokeh-golden", name: "Golden", kind: .bokeh, previewEffects: ImageEffects(bokeh: ImageBokeh(amount: 1, density: 0.55, size: 0.68, softness: 0.65, warmth: 0.95, seed: 19, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.28, centerY: 0.3, radius: 0.62, feather: 0.7)))),
+        GalleryEffectPreset(id: "bokeh-dream", name: "Dream", kind: .bokeh, previewEffects: ImageEffects(bokeh: ImageBokeh(amount: 1, density: 0.75, size: 0.42, softness: 0.9, warmth: 0.38, seed: 37, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.7, centerY: 0.32, radius: 0.72, feather: 0.86)))),
+        GalleryEffectPreset(id: "bokeh-bold", name: "Big Lights", kind: .bokeh, previewEffects: ImageEffects(bokeh: ImageBokeh(amount: 1, density: 0.32, size: 0.9, softness: 0.48, warmth: 0.72, seed: 53, spatialMask: ImageSpatialEffectMask(mode: .spot, centerY: 0.35, radius: 0.78, feather: 0.62))))
     ]
 }

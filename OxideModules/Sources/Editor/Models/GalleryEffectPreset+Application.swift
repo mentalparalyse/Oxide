@@ -72,6 +72,9 @@ extension GalleryEffectPreset {
         case .haze:
             result.haze = previewEffects.haze
             result.haze.amount = 1
+        case .bokeh:
+            result.bokeh = previewEffects.bokeh
+            result.bokeh.amount = 1
         }
         return result
     }
@@ -102,6 +105,7 @@ extension GalleryEffectPreset {
         case .lensFlare: result.lensFlare = .disabled
         case .sunFlare: result.sunFlare = .disabled
         case .haze: result.haze = .disabled
+        case .bokeh: result.bokeh = .disabled
         }
         return result
     }

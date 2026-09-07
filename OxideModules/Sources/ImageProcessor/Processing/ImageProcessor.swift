@@ -377,6 +377,12 @@ public final class ImageProcessor: @unchecked Sendable {
                     density: effects.haze.density,
                     depth: effects.haze.depth,
                     warmth: effects.haze.warmth
+                ),
+                bokeh: BokehSettings(
+                    amount: effects.bokeh.amount, density: effects.bokeh.density,
+                    size: effects.bokeh.size, softness: effects.bokeh.softness,
+                    warmth: effects.bokeh.warmth, seed: effects.bokeh.seed,
+                    spatialMask: effects.bokeh.spatialMask.effectMask
                 )
             ),
             to: image

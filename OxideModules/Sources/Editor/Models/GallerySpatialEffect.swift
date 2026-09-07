@@ -3,7 +3,7 @@ import ImageProcessor
 extension GalleryEffectKind {
     var supportsSpatialMask: Bool {
         switch self {
-        case .lightLeak, .chromaticAberration, .halation, .bloom, .lensWarp, .zoomBlur, .kaleidoscope, .sparkle, .pixelSort, .tiltShift, .edgeBlur, .vignette, .lensDirt, .softFocus, .dreamGlow, .lensFlare, .sunFlare:
+        case .lightLeak, .chromaticAberration, .halation, .bloom, .lensWarp, .zoomBlur, .kaleidoscope, .sparkle, .pixelSort, .tiltShift, .edgeBlur, .vignette, .lensDirt, .softFocus, .dreamGlow, .lensFlare, .sunFlare, .bokeh:
             true
         case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur, .haze:
             false
@@ -31,6 +31,7 @@ extension ImageEffects {
         case .dreamGlow: dreamGlow.spatialMask
         case .lensFlare: lensFlare.spatialMask
         case .sunFlare: sunFlare.spatialMask
+        case .bokeh: bokeh.spatialMask
         case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur, .haze: nil
         }
     }
@@ -57,6 +58,7 @@ extension ImageEffects {
         case .dreamGlow: dreamGlow.spatialMask = mask
         case .lensFlare: lensFlare.spatialMask = mask
         case .sunFlare: sunFlare.spatialMask = mask
+        case .bokeh: bokeh.spatialMask = mask
         case .none, .filmGrain, .dustAndScratches, .vhs, .motionBlur, .haze: break
         }
     }

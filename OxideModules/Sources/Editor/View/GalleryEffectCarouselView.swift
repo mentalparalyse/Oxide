@@ -91,6 +91,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.lensFlare.isEnabled
                 && !draft.effects.sunFlare.isEnabled
                 && !draft.effects.haze.isEnabled
+                && !draft.effects.bokeh.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -135,6 +136,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.sunFlare.isEnabled else { return false }
         case .haze:
             guard draft.effects.haze.isEnabled else { return false }
+        case .bokeh:
+            guard draft.effects.bokeh.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -252,6 +255,12 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.haze.density - targetEffects.haze.density)
                 + abs(draft.effects.haze.depth - targetEffects.haze.depth)
                 + abs(draft.effects.haze.warmth - targetEffects.haze.warmth)
+        case .bokeh:
+            return abs(draft.effects.bokeh.amount - targetEffects.bokeh.amount)
+                + abs(draft.effects.bokeh.density - targetEffects.bokeh.density)
+                + abs(draft.effects.bokeh.size - targetEffects.bokeh.size)
+                + abs(draft.effects.bokeh.softness - targetEffects.bokeh.softness)
+                + abs(draft.effects.bokeh.warmth - targetEffects.bokeh.warmth)
         }
     }
 }

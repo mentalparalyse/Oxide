@@ -62,6 +62,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     public var lensFlare: ImageLensFlare
     public var sunFlare: ImageSunFlare
     public var haze: ImageHaze
+    public var bokeh: ImageBokeh
 
     public init(
         filmGrain: ImageFilmGrain = .disabled,
@@ -85,7 +86,8 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         dreamGlow: ImageDreamGlow = .disabled,
         lensFlare: ImageLensFlare = .disabled,
         sunFlare: ImageSunFlare = .disabled,
-        haze: ImageHaze = .disabled
+        haze: ImageHaze = .disabled,
+        bokeh: ImageBokeh = .disabled
     ) {
         self.filmGrain = filmGrain
         self.lightLeak = lightLeak
@@ -109,6 +111,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         self.lensFlare = lensFlare
         self.sunFlare = sunFlare
         self.haze = haze
+        self.bokeh = bokeh
     }
 
     public static let neutral = ImageEffects()
@@ -136,6 +139,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         case lensFlare
         case sunFlare
         case haze
+        case bokeh
     }
 
     public init(from decoder: Decoder) throws {
@@ -186,6 +190,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         lensFlare = try container.decodeIfPresent(ImageLensFlare.self, forKey: .lensFlare) ?? .disabled
         sunFlare = try container.decodeIfPresent(ImageSunFlare.self, forKey: .sunFlare) ?? .disabled
         haze = try container.decodeIfPresent(ImageHaze.self, forKey: .haze) ?? .disabled
+        bokeh = try container.decodeIfPresent(ImageBokeh.self, forKey: .bokeh) ?? .disabled
     }
 }
 

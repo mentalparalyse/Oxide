@@ -195,6 +195,11 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Density", value: draft.effects.haze.density, range: 0...1, onChange: updateHazeDensity, onEnd: onChangeEnded)
             EffectControlRow(title: "Depth", value: draft.effects.haze.depth, range: 0...1, onChange: updateHazeDepth, onEnd: onChangeEnded)
             EffectControlRow(title: "Warmth", value: draft.effects.haze.warmth, range: 0...1, onChange: updateHazeWarmth, onEnd: onChangeEnded)
+        case .bokeh:
+            EffectControlRow(title: "Density", value: draft.effects.bokeh.density, range: 0...1, onChange: updateBokehDensity, onEnd: onChangeEnded)
+            EffectControlRow(title: "Size", value: draft.effects.bokeh.size, range: 0.05...1, onChange: updateBokehSize, onEnd: onChangeEnded)
+            EffectControlRow(title: "Softness", value: draft.effects.bokeh.softness, range: 0...1, onChange: updateBokehSoftness, onEnd: onChangeEnded)
+            EffectControlRow(title: "Warmth", value: draft.effects.bokeh.warmth, range: 0...1, onChange: updateBokehWarmth, onEnd: onChangeEnded)
         }
     }
 
@@ -278,6 +283,10 @@ struct GalleryEffectsControlsView: View {
     private func updateHazeDensity(_ value: Double) { mutateEffects { $0.haze.density = value } }
     private func updateHazeDepth(_ value: Double) { mutateEffects { $0.haze.depth = value } }
     private func updateHazeWarmth(_ value: Double) { mutateEffects { $0.haze.warmth = value } }
+    private func updateBokehDensity(_ value: Double) { mutateEffects { $0.bokeh.density = value } }
+    private func updateBokehSize(_ value: Double) { mutateEffects { $0.bokeh.size = value } }
+    private func updateBokehSoftness(_ value: Double) { mutateEffects { $0.bokeh.softness = value } }
+    private func updateBokehWarmth(_ value: Double) { mutateEffects { $0.bokeh.warmth = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
