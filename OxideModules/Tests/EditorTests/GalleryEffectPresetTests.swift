@@ -227,6 +227,26 @@ struct GalleryEffectPresetTests {
         #expect(result.dreamGlow == current.dreamGlow)
     }
 
+    @Test func applyingSunFlarePresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1))
+        let result = preset("sun-burst").applying(to: current)
+
+        #expect(result.sunFlare.amount == 1)
+        #expect(result.sunFlare.rays == 0.9)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
+    @Test func removingSunFlarePreservesOtherEffectKinds() {
+        let current = ImageEffects(
+            lensFlare: ImageLensFlare(amount: 1),
+            sunFlare: ImageSunFlare(amount: 1)
+        )
+        let result = preset("sun-golden").removing(from: current)
+
+        #expect(result.sunFlare == .disabled)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
     @Test func removingLensDirtPreservesOtherEffectKinds() {
         let current = ImageEffects(
             vignette: ImageVignette(amount: 0.3),
@@ -276,6 +296,7 @@ struct GalleryEffectPresetTests {
         case .softFocus: effects.softFocus.amount
         case .dreamGlow: effects.dreamGlow.amount
         case .lensFlare: effects.lensFlare.amount
+        case .sunFlare: effects.sunFlare.amount
         }
     }
 }

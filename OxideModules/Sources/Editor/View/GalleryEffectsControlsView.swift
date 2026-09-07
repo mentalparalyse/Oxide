@@ -187,6 +187,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Size", value: draft.effects.lensFlare.size, range: 0.05...1, onChange: updateLensFlareSize, onEnd: onChangeEnded)
             EffectControlRow(title: "Streak", value: draft.effects.lensFlare.streak, range: 0...1, onChange: updateLensFlareStreak, onEnd: onChangeEnded)
             EffectControlRow(title: "Warmth", value: draft.effects.lensFlare.warmth, range: 0...1, onChange: updateLensFlareWarmth, onEnd: onChangeEnded)
+        case .sunFlare:
+            EffectControlRow(title: "Size", value: draft.effects.sunFlare.size, range: 0.05...1, onChange: updateSunFlareSize, onEnd: onChangeEnded)
+            EffectControlRow(title: "Rays", value: draft.effects.sunFlare.rays, range: 0...1, onChange: updateSunFlareRays, onEnd: onChangeEnded)
+            EffectControlRow(title: "Warmth", value: draft.effects.sunFlare.warmth, range: 0...1, onChange: updateSunFlareWarmth, onEnd: onChangeEnded)
         }
     }
 
@@ -264,6 +268,9 @@ struct GalleryEffectsControlsView: View {
     private func updateLensFlareSize(_ value: Double) { mutateEffects { $0.lensFlare.size = value } }
     private func updateLensFlareStreak(_ value: Double) { mutateEffects { $0.lensFlare.streak = value } }
     private func updateLensFlareWarmth(_ value: Double) { mutateEffects { $0.lensFlare.warmth = value } }
+    private func updateSunFlareSize(_ value: Double) { mutateEffects { $0.sunFlare.size = value } }
+    private func updateSunFlareRays(_ value: Double) { mutateEffects { $0.sunFlare.rays = value } }
+    private func updateSunFlareWarmth(_ value: Double) { mutateEffects { $0.sunFlare.warmth = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }
