@@ -227,6 +227,15 @@ struct GalleryEffectPresetTests {
         #expect(result.dreamGlow == current.dreamGlow)
     }
 
+    @Test func applyingHazePresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1))
+        let result = preset("haze-golden").applying(to: current)
+
+        #expect(result.haze.amount == 1)
+        #expect(result.haze.warmth == 0.9)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
     @Test func applyingSunFlarePresetUsesFullStrengthAndPreservesOtherEffectKinds() {
         let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1))
         let result = preset("sun-burst").applying(to: current)
@@ -237,13 +246,18 @@ struct GalleryEffectPresetTests {
     }
 
     @Test func removingSunFlarePreservesOtherEffectKinds() {
-        let current = ImageEffects(
-            lensFlare: ImageLensFlare(amount: 1),
-            sunFlare: ImageSunFlare(amount: 1)
-        )
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1), sunFlare: ImageSunFlare(amount: 1))
         let result = preset("sun-golden").removing(from: current)
 
         #expect(result.sunFlare == .disabled)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
+    @Test func removingHazePreservesOtherEffectKinds() {
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1), haze: ImageHaze(amount: 1))
+        let result = preset("haze-mist").removing(from: current)
+
+        #expect(result.haze == .disabled)
         #expect(result.lensFlare == current.lensFlare)
     }
 
@@ -297,6 +311,7 @@ struct GalleryEffectPresetTests {
         case .dreamGlow: effects.dreamGlow.amount
         case .lensFlare: effects.lensFlare.amount
         case .sunFlare: effects.sunFlare.amount
+        case .haze: effects.haze.amount
         }
     }
 }

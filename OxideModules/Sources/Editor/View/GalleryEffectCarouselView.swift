@@ -90,6 +90,7 @@ struct GalleryEffectCarouselView: View {
                 && !draft.effects.dreamGlow.isEnabled
                 && !draft.effects.lensFlare.isEnabled
                 && !draft.effects.sunFlare.isEnabled
+                && !draft.effects.haze.isEnabled
         case .filmGrain:
             guard draft.effects.filmGrain.isEnabled else { return false }
         case .lightLeak:
@@ -132,6 +133,8 @@ struct GalleryEffectCarouselView: View {
             guard draft.effects.lensFlare.isEnabled else { return false }
         case .sunFlare:
             guard draft.effects.sunFlare.isEnabled else { return false }
+        case .haze:
+            guard draft.effects.haze.isEnabled else { return false }
         }
 
         return closestEnabledPreset(for: preset.kind)?.id == preset.id
@@ -244,6 +247,11 @@ struct GalleryEffectCarouselView: View {
                 + abs(draft.effects.sunFlare.size - targetEffects.sunFlare.size)
                 + abs(draft.effects.sunFlare.rays - targetEffects.sunFlare.rays)
                 + abs(draft.effects.sunFlare.warmth - targetEffects.sunFlare.warmth)
+        case .haze:
+            return abs(draft.effects.haze.amount - targetEffects.haze.amount)
+                + abs(draft.effects.haze.density - targetEffects.haze.density)
+                + abs(draft.effects.haze.depth - targetEffects.haze.depth)
+                + abs(draft.effects.haze.warmth - targetEffects.haze.warmth)
         }
     }
 }

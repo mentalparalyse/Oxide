@@ -191,6 +191,10 @@ struct GalleryEffectsControlsView: View {
             EffectControlRow(title: "Size", value: draft.effects.sunFlare.size, range: 0.05...1, onChange: updateSunFlareSize, onEnd: onChangeEnded)
             EffectControlRow(title: "Rays", value: draft.effects.sunFlare.rays, range: 0...1, onChange: updateSunFlareRays, onEnd: onChangeEnded)
             EffectControlRow(title: "Warmth", value: draft.effects.sunFlare.warmth, range: 0...1, onChange: updateSunFlareWarmth, onEnd: onChangeEnded)
+        case .haze:
+            EffectControlRow(title: "Density", value: draft.effects.haze.density, range: 0...1, onChange: updateHazeDensity, onEnd: onChangeEnded)
+            EffectControlRow(title: "Depth", value: draft.effects.haze.depth, range: 0...1, onChange: updateHazeDepth, onEnd: onChangeEnded)
+            EffectControlRow(title: "Warmth", value: draft.effects.haze.warmth, range: 0...1, onChange: updateHazeWarmth, onEnd: onChangeEnded)
         }
     }
 
@@ -271,6 +275,9 @@ struct GalleryEffectsControlsView: View {
     private func updateSunFlareSize(_ value: Double) { mutateEffects { $0.sunFlare.size = value } }
     private func updateSunFlareRays(_ value: Double) { mutateEffects { $0.sunFlare.rays = value } }
     private func updateSunFlareWarmth(_ value: Double) { mutateEffects { $0.sunFlare.warmth = value } }
+    private func updateHazeDensity(_ value: Double) { mutateEffects { $0.haze.density = value } }
+    private func updateHazeDepth(_ value: Double) { mutateEffects { $0.haze.depth = value } }
+    private func updateHazeWarmth(_ value: Double) { mutateEffects { $0.haze.warmth = value } }
 
     private func updateSpatialMask(_ mask: ImageSpatialEffectMask) {
         mutateEffects { $0.setSpatialMask(mask, for: selectedPreset.kind) }

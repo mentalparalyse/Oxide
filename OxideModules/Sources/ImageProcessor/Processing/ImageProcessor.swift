@@ -371,6 +371,12 @@ public final class ImageProcessor: @unchecked Sendable {
                     rays: effects.sunFlare.rays,
                     warmth: effects.sunFlare.warmth,
                     spatialMask: effects.sunFlare.spatialMask.effectMask
+                ),
+                haze: HazeSettings(
+                    amount: effects.haze.amount,
+                    density: effects.haze.density,
+                    depth: effects.haze.depth,
+                    warmth: effects.haze.warmth
                 )
             ),
             to: image

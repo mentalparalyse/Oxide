@@ -11,6 +11,13 @@ struct ImageEffectSettingsTests {
         #expect(decoded == ImageSunFlare(amount: 0.4))
     }
 
+    @Test func hazeSettingsClampAndDecodeDefaults() throws {
+        let settings = ImageHaze(amount: 2, density: -1, depth: 3, warmth: -2)
+        #expect(settings == ImageHaze(amount: 1, density: 0, depth: 1, warmth: 0))
+        let decoded = try JSONDecoder().decode(ImageHaze.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageHaze(amount: 0.4))
+    }
+
     @Test func lensFlareSettingsClampAndDecodeDefaults() throws {
         let settings = ImageLensFlare(amount: 2, size: -1, streak: 3, warmth: -2)
         #expect(settings == ImageLensFlare(amount: 1, size: 0, streak: 1, warmth: 0))
