@@ -22,6 +22,7 @@ enum GalleryEffectKind: String, Sendable {
     case softFocus
     case dreamGlow
     case lensFlare
+    case sunFlare
     case haze
 }
 
@@ -207,6 +208,10 @@ struct GalleryEffectPreset: Identifiable, Sendable {
         GalleryEffectPreset(id: "flare-vintage", name: "Vintage", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.72, streak: 0.2, warmth: 0.9, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.22, centerY: 0.3)))),
         GalleryEffectPreset(id: "flare-anamorphic", name: "Anamorphic", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.42, streak: 1, warmth: 0.12, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.5, centerY: 0.38)))),
         GalleryEffectPreset(id: "flare-soft", name: "Soft Flare", kind: .lensFlare, previewEffects: ImageEffects(lensFlare: ImageLensFlare(amount: 1, size: 0.82, streak: 0.08, warmth: 0.66, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.76, centerY: 0.22)))),
+        GalleryEffectPreset(id: "sun-golden", name: "Golden Hour", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.62, rays: 0.55, warmth: 0.92, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.18, centerY: 0.18)))),
+        GalleryEffectPreset(id: "sun-dawn", name: "Cool Dawn", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.48, rays: 0.38, warmth: 0.28, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.78, centerY: 0.2)))),
+        GalleryEffectPreset(id: "sun-burst", name: "Sunburst", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.38, rays: 0.9, warmth: 0.68, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.5, centerY: 0.25)))),
+        GalleryEffectPreset(id: "sun-wash", name: "Warm Wash", kind: .sunFlare, previewEffects: ImageEffects(sunFlare: ImageSunFlare(amount: 1, size: 0.86, rays: 0.18, warmth: 1, spatialMask: ImageSpatialEffectMask(mode: .spot, centerX: 0.22, centerY: 0.28)))),
         GalleryEffectPreset(id: "haze-mist", name: "Morning Mist", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.34, depth: 0.75, warmth: 0.45))),
         GalleryEffectPreset(id: "haze-golden", name: "Golden Haze", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.55, depth: 0.7, warmth: 0.9))),
         GalleryEffectPreset(id: "haze-blue", name: "Blue Hour", kind: .haze, previewEffects: ImageEffects(haze: ImageHaze(amount: 1, density: 0.45, depth: 0.82, warmth: 0.12))),

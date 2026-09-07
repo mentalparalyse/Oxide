@@ -236,6 +236,23 @@ struct GalleryEffectPresetTests {
         #expect(result.lensFlare == current.lensFlare)
     }
 
+    @Test func applyingSunFlarePresetUsesFullStrengthAndPreservesOtherEffectKinds() {
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1))
+        let result = preset("sun-burst").applying(to: current)
+
+        #expect(result.sunFlare.amount == 1)
+        #expect(result.sunFlare.rays == 0.9)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
+    @Test func removingSunFlarePreservesOtherEffectKinds() {
+        let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1), sunFlare: ImageSunFlare(amount: 1))
+        let result = preset("sun-golden").removing(from: current)
+
+        #expect(result.sunFlare == .disabled)
+        #expect(result.lensFlare == current.lensFlare)
+    }
+
     @Test func removingHazePreservesOtherEffectKinds() {
         let current = ImageEffects(lensFlare: ImageLensFlare(amount: 1), haze: ImageHaze(amount: 1))
         let result = preset("haze-mist").removing(from: current)
@@ -293,6 +310,7 @@ struct GalleryEffectPresetTests {
         case .softFocus: effects.softFocus.amount
         case .dreamGlow: effects.dreamGlow.amount
         case .lensFlare: effects.lensFlare.amount
+        case .sunFlare: effects.sunFlare.amount
         case .haze: effects.haze.amount
         }
     }

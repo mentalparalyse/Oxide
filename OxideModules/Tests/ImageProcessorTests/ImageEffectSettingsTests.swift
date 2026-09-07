@@ -4,6 +4,13 @@ import Testing
 @testable import ImageProcessor
 
 struct ImageEffectSettingsTests {
+    @Test func sunFlareSettingsClampAndDecodeDefaults() throws {
+        let settings = ImageSunFlare(amount: 2, size: -1, rays: 3, warmth: -2)
+        #expect(settings == ImageSunFlare(amount: 1, size: 0, rays: 1, warmth: 0))
+        let decoded = try JSONDecoder().decode(ImageSunFlare.self, from: Data(#"{"amount":0.4}"#.utf8))
+        #expect(decoded == ImageSunFlare(amount: 0.4))
+    }
+
     @Test func hazeSettingsClampAndDecodeDefaults() throws {
         let settings = ImageHaze(amount: 2, density: -1, depth: 3, warmth: -2)
         #expect(settings == ImageHaze(amount: 1, density: 0, depth: 1, warmth: 0))

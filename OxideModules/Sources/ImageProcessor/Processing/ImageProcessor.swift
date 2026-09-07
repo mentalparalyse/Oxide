@@ -365,6 +365,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     warmth: effects.lensFlare.warmth,
                     spatialMask: effects.lensFlare.spatialMask.effectMask
                 ),
+                sunFlare: SunFlareSettings(
+                    amount: effects.sunFlare.amount,
+                    size: effects.sunFlare.size,
+                    rays: effects.sunFlare.rays,
+                    warmth: effects.sunFlare.warmth,
+                    spatialMask: effects.sunFlare.spatialMask.effectMask
+                ),
                 haze: HazeSettings(
                     amount: effects.haze.amount,
                     density: effects.haze.density,

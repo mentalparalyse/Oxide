@@ -60,6 +60,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
     public var softFocus: ImageSoftFocus
     public var dreamGlow: ImageDreamGlow
     public var lensFlare: ImageLensFlare
+    public var sunFlare: ImageSunFlare
     public var haze: ImageHaze
 
     public init(
@@ -83,6 +84,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         softFocus: ImageSoftFocus = .disabled,
         dreamGlow: ImageDreamGlow = .disabled,
         lensFlare: ImageLensFlare = .disabled,
+        sunFlare: ImageSunFlare = .disabled,
         haze: ImageHaze = .disabled
     ) {
         self.filmGrain = filmGrain
@@ -105,6 +107,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         self.softFocus = softFocus
         self.dreamGlow = dreamGlow
         self.lensFlare = lensFlare
+        self.sunFlare = sunFlare
         self.haze = haze
     }
 
@@ -131,6 +134,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         case softFocus
         case dreamGlow
         case lensFlare
+        case sunFlare
         case haze
     }
 
@@ -180,6 +184,7 @@ public struct ImageEffects: Equatable, Codable, Sendable {
         softFocus = try container.decodeIfPresent(ImageSoftFocus.self, forKey: .softFocus) ?? .disabled
         dreamGlow = try container.decodeIfPresent(ImageDreamGlow.self, forKey: .dreamGlow) ?? .disabled
         lensFlare = try container.decodeIfPresent(ImageLensFlare.self, forKey: .lensFlare) ?? .disabled
+        sunFlare = try container.decodeIfPresent(ImageSunFlare.self, forKey: .sunFlare) ?? .disabled
         haze = try container.decodeIfPresent(ImageHaze.self, forKey: .haze) ?? .disabled
     }
 }
