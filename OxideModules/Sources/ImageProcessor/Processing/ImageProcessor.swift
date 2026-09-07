@@ -364,6 +364,13 @@ public final class ImageProcessor: @unchecked Sendable {
                     streak: effects.lensFlare.streak,
                     warmth: effects.lensFlare.warmth,
                     spatialMask: effects.lensFlare.spatialMask.effectMask
+                ),
+                sunFlare: SunFlareSettings(
+                    amount: effects.sunFlare.amount,
+                    size: effects.sunFlare.size,
+                    rays: effects.sunFlare.rays,
+                    warmth: effects.sunFlare.warmth,
+                    spatialMask: effects.sunFlare.spatialMask.effectMask
                 )
             ),
             to: image
