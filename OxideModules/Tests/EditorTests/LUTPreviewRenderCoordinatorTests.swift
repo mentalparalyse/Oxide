@@ -45,9 +45,20 @@ struct LUTPreviewRenderCoordinatorTests {
         #expect(coordinator.image == nil)
 
         await renderer.completeNext()
-        await Task.yield()
-        #expect(coordinator.image != nil)
+        await waitForRenderedImage(on: coordinator)
         #expect(await renderer.requests() == [stale, current])
+    }
+
+    private func waitForRenderedImage(
+        on coordinator: LUTPreviewRenderCoordinator,
+        timeout: Duration = .seconds(1)
+    ) async {
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: timeout)
+        while coordinator.image == nil, clock.now < deadline {
+            await Task.yield()
+        }
+        #expect(coordinator.image != nil)
     }
 
     private func request(intensity: Double) -> LUTPreviewRenderRequest {
