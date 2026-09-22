@@ -38,8 +38,16 @@ final class LUTPreviewRenderCoordinator: ObservableObject {
         pendingRequest = request
         guard renderTask == nil else { return }
         let generation = generation
-        renderTask = Task { [weak self] in
-            await self?.renderPendingRequests(generation: generation)
+        let renderer = renderer
+        renderTask = Task { [weak self, renderer] in
+            while !Task.isCancelled {
+                guard let request = self?.takePendingRequest(generation: generation) else { return }
+                let renderedImage = await renderer(request)
+                guard self?.finishRendering(
+                    renderedImage,
+                    generation: generation
+                ) == true else { return }
+            }
         }
     }
 
@@ -49,28 +57,34 @@ final class LUTPreviewRenderCoordinator: ObservableObject {
         activeRequest = nil
         renderTask?.cancel()
         renderTask = nil
+        image = nil
     }
 
-    private func renderPendingRequests(generation: Int) async {
-        while !Task.isCancelled, generation == self.generation, let request = pendingRequest {
-            pendingRequest = nil
-            activeRequest = request
-
-            guard request.imageURL != nil else {
-                image = nil
-                continue
-            }
-
-            let renderedImage = await renderer(request)
-
-            if generation == self.generation, let renderedImage {
-                image = renderedImage
-            }
+    private func takePendingRequest(generation: Int) -> LUTPreviewRenderRequest? {
+        guard generation == self.generation, let request = pendingRequest else {
+            activeRequest = nil
+            renderTask = nil
+            return nil
         }
+        pendingRequest = nil
+        activeRequest = request
 
-        guard generation == self.generation else { return }
-        activeRequest = nil
-        renderTask = nil
+        guard request.imageURL != nil else {
+            image = nil
+            return takePendingRequest(generation: generation)
+        }
+        return request
+    }
+
+    private func finishRendering(_ renderedImage: UIImage?, generation: Int) -> Bool {
+        guard generation == self.generation, !Task.isCancelled else { return false }
+        if let renderedImage { image = renderedImage }
+        if pendingRequest == nil {
+            activeRequest = nil
+            renderTask = nil
+            return false
+        }
+        return true
     }
 
     private static func render(_ request: LUTPreviewRenderRequest) async -> UIImage? {

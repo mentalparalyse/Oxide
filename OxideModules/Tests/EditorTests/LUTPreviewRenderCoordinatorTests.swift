@@ -49,6 +49,33 @@ struct LUTPreviewRenderCoordinatorTests {
         #expect(await renderer.requests() == [stale, current])
     }
 
+    @Test func cancellationReleasesRenderedImageImmediately() async {
+        let coordinator = LUTPreviewRenderCoordinator { _ in UIImage() }
+        coordinator.submit(request(intensity: 0.4))
+        await waitForRenderedImage(on: coordinator)
+
+        coordinator.cancel()
+
+        #expect(coordinator.image == nil)
+    }
+
+    @Test func suspendedRenderDoesNotRetainCoordinatorAfterCancellation() async {
+        let renderer = PreviewRendererSpy()
+        var coordinator: LUTPreviewRenderCoordinator? = LUTPreviewRenderCoordinator { request in
+            await renderer.render(request)
+        }
+        weak var weakCoordinator = coordinator
+        coordinator?.submit(request(intensity: 0.6))
+        await renderer.waitForRequestCount(1)
+
+        coordinator?.cancel()
+        coordinator = nil
+        await Task.yield()
+
+        #expect(weakCoordinator == nil)
+        await renderer.completeNext()
+    }
+
     private func waitForRenderedImage(
         on coordinator: LUTPreviewRenderCoordinator,
         timeout: Duration = .seconds(1)
