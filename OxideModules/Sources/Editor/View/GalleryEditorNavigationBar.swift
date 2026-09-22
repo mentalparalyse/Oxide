@@ -7,6 +7,7 @@ struct GalleryEditorNavigationBar: View {
     let canUndo: Bool
     let onCancel: () -> Void
     let onUndo: () -> Void
+    let onLooks: () -> Void
     let onSave: () -> Void
 
     var body: some View {
@@ -17,6 +18,14 @@ struct GalleryEditorNavigationBar: View {
                 .disabled(!canUndo)
 
             Spacer()
+
+            Button("Looks", action: onLooks)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppColours.appForegroundColor)
+                .padding(.horizontal, 16)
+                .frame(minHeight: 44)
+                .background(AppColours.appSurfaceColor, in: Capsule())
+                .accessibilityLabel("My Looks")
 
             Button("Save", action: onSave)
                 .font(.system(size: 16, weight: .semibold))

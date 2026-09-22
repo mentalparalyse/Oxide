@@ -165,6 +165,36 @@ struct EditorPresenterTests {
         #expect(presenter.draft.crop == nil)
     }
 
+    @Test func applyingLookPreservesPendingCropAndUndoRestoresLiveAdjustments() async throws {
+        let presenter = makePresenter(interactor: EditorInteractor())
+        let look = SavedLook(name: "Neutral", draft: presenter.draft)
+        presenter.setAdjustment(.exposure, value: 0.8)
+        presenter.setCrop(ImageEditCrop(x: 0.1, y: 0.1, width: 0.8, height: 0.8))
+        let pendingCrop = presenter.cropDraft?.crop
+        try await presenter.applyLook(look)
+        #expect(presenter.cropDraft?.crop == pendingCrop)
+        #expect(presenter.cropDraft?.adjustments == look.adjustments)
+        await presenter.undo()
+        #expect(presenter.draft.adjustments.exposure == 0.8)
+    }
+
+    @Test func lookApplicationFailureLeavesEditorAndPendingCropUnchanged() async {
+        let interactor = EditorInteractorSpy()
+        interactor.applyError = EditorHistoryStore.HistoryError.recordingFailed
+        let presenter = makePresenter(interactor: interactor)
+        let before = presenter.draft
+        presenter.setCrop(ImageEditCrop(x: 0.1, y: 0.1, width: 0.8, height: 0.8))
+        let pending = presenter.cropDraft
+        var source = before
+        source.selectedFilterID = "cinematic"
+        await #expect(throws: EditorHistoryStore.HistoryError.self) {
+            try await presenter.applyLook(SavedLook(name: "Film", draft: source))
+        }
+        #expect(presenter.draft == before)
+        #expect(presenter.cropDraft == pending)
+        #expect(!presenter.isApplyingLook)
+    }
+
     private func makePresenter(
         interactor: EditorInteractorProtocol? = nil,
         onSave: @escaping @MainActor (EditorAsset) -> Void = { _ in },
@@ -188,6 +218,12 @@ struct EditorPresenterTests {
 private final class EditorInteractorSpy: EditorInteractorProtocol {
     var recordedDrafts: [EditorDraft] = []
     var imageSize: CGSize?
+    var applyError: (any Error)?
+
+    func applyLook(_ look: SavedLook, to draft: EditorDraft) async throws -> EditorHistoryState {
+        if let applyError { throw applyError }
+        return EditorHistoryState(currentDraft: look.applying(to: draft), canUndo: true)
+    }
 
     private var history: [EditorDraft] = []
 

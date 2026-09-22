@@ -9,12 +9,24 @@ protocol EditorInteractorProtocol {
     func undo() async -> EditorHistoryState
     func sourceImageSize(for imageURL: URL) -> CGSize?
     func preloadFilterPreviews(filters: [GalleryFilter])
+    func applyLook(_ look: SavedLook, to draft: EditorDraft) async throws -> EditorHistoryState
 }
 
 @MainActor
 final class EditorInteractor: EditorInteractorProtocol {
-    private let history = EditorHistoryStore()
+    private let history: EditorHistoryStore
     private let imageProcessor = ImageProcessor()
+
+    init(history: EditorHistoryStore = EditorHistoryStore()) {
+        self.history = history
+    }
+
+    func applyLook(_ look: SavedLook, to draft: EditorDraft) async throws -> EditorHistoryState {
+        guard GalleryFilter.all.contains(where: { $0.id == look.filterID }) else {
+            throw SavedLookApplicationError.unavailableFilter
+        }
+        return try await history.recordReplacement(look.applying(to: draft), replacing: draft)
+    }
 
     func beginHistory(for asset: EditorAsset) async {
         await history.reset(for: asset.id)
@@ -50,4 +62,9 @@ final class EditorInteractor: EditorInteractorProtocol {
             }
         }
     }
+}
+
+enum SavedLookApplicationError: Error {
+    case unavailableFilter
+    case editorBusy
 }

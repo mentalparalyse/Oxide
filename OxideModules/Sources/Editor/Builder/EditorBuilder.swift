@@ -2,6 +2,19 @@ import AppCore
 
 @MainActor
 public enum EditorBuilder {
+    static func makeLooksPresenter(
+        draft: EditorDraft,
+        onApply: @escaping @MainActor (SavedLook) async throws -> Void,
+        onClose: @escaping @MainActor () -> Void
+    ) -> SavedLooksPresenter {
+        SavedLooksPresenter(
+            draft: draft,
+            interactor: SavedLooksInteractor(store: .shared),
+            onApply: onApply,
+            onClose: onClose
+        )
+    }
+
     public static func makePresenter(
         asset: EditorAsset,
         analytics: any AppAnalyticsTracking,

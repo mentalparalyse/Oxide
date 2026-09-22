@@ -10,6 +10,8 @@ public final class EditorPresenter: ObservableObject {
     @Published public private(set) var isApplyingCrop = false
     @Published public private(set) var canUndo = false
     @Published public private(set) var sourceSize: CGSize?
+    @Published var looksPresenter: SavedLooksPresenter?
+    @Published private(set) var isApplyingLook = false
 
     public let filters: [GalleryFilter]
     public let filterCatalog: GalleryFilterCatalog
@@ -149,6 +151,31 @@ public final class EditorPresenter: ObservableObject {
     public func setEffects(_ effects: ImageEffects) { draft.effects = effects }
     public func commitEffects() async { await recordCurrentStep() }
 
+    func showLooks() {
+        guard looksPresenter == nil, !isApplyingCrop else { return }
+        looksPresenter = EditorBuilder.makeLooksPresenter(
+            draft: draft,
+            onApply: { [weak self] look in
+                guard let self else { throw CancellationError() }
+                try await self.applyLook(look)
+            },
+            onClose: { [weak self] in self?.looksPresenter = nil }
+        )
+    }
+
+    func applyLook(_ look: SavedLook) async throws {
+        guard !isApplyingLook, !isApplyingCrop else { throw SavedLookApplicationError.editorBusy }
+        isApplyingLook = true
+        defer { isApplyingLook = false }
+        await historySetupTask.value
+        let state = try await interactor.applyLook(look, to: draft)
+        if let updated = state.currentDraft {
+            draft = updated
+            if let pending = cropDraft { cropDraft = look.applying(to: pending) }
+        }
+        canUndo = state.canUndo
+    }
+
     public func undo() async {
         cancelCropping()
         await historySetupTask.value
@@ -160,8 +187,9 @@ public final class EditorPresenter: ObservableObject {
     }
 
     private func recordCurrentStep() async {
+        let snapshot = draft
         await historySetupTask.value
-        let state = await interactor.record(draft)
+        let state = await interactor.record(snapshot)
         canUndo = state.canUndo
     }
 }

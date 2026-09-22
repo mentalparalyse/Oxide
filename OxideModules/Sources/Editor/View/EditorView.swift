@@ -32,6 +32,7 @@ public struct EditorView: View {
                         selectTool(.filters)
                         Task { await presenter.undo() }
                     },
+                    onLooks: presenter.showLooks,
                     onSave: presenter.save
                 )
 
@@ -70,7 +71,16 @@ public struct EditorView: View {
             .allowsHitTesting(!comparisonVisibility.areControlsHidden)
             .accessibilityHidden(comparisonVisibility.areControlsHidden)
         }
-        .disabled(presenter.isApplyingCrop)
+        .disabled(presenter.isApplyingCrop || presenter.isApplyingLook)
+        .sheet(item: $presenter.looksPresenter) { looksPresenter in
+            SavedLooksView(presenter: looksPresenter)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
+        .onChange(of: presenter.draft.selectedFilterID) { filterID in
+            // Keep the filter pack in sync even when a look is applied from another tool.
+            expandedFilterSectionID = presenter.filterCatalog.section(containing: filterID)?.id
+        }
         .background(AppColours.appColor)
         .animation(.easeOut(duration: 0.16), value: comparisonVisibility.areControlsHidden)
         .accessibilityAction(
