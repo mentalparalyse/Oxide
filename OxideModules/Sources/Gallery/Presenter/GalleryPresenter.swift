@@ -21,6 +21,7 @@ public final class GalleryPresenter: ObservableObject {
     private let router: GalleryRouterProtocol
     private let imageExporter: GalleryImageExporting
     private let analytics: any AppAnalyticsTracking
+    private var editorReturnScreen: GalleryScreen = .gallery
 
     init(
         interactor: GalleryInteractorProtocol,
@@ -144,10 +145,11 @@ public final class GalleryPresenter: ObservableObject {
 
     private func beginEditing(photo: GalleryPhoto) {
         let photoID = photo.id
+        editorReturnScreen = screen
         editorPresenter = EditorBuilder.makePresenter(
             asset: EditorAsset(photo),
             analytics: analytics,
-            onCancel: { [weak self] in self?.finishEditingWithoutSaving(photoID: photoID) },
+            onCancel: { [weak self] in self?.finishEditingWithoutSaving() },
             onSave: { [weak self] asset in self?.finishEditing(with: asset) },
             onError: { [weak self] message in self?.toast = .error(message) }
         )
@@ -155,14 +157,16 @@ public final class GalleryPresenter: ObservableObject {
         analytics.track(.editorStarted(source: photos.contains { $0.id == photoID } ? "gallery" : "capture_or_import"))
     }
 
-    private func finishEditingWithoutSaving(photoID: GalleryPhoto.ID) {
+    private func finishEditingWithoutSaving() {
         editorPresenter = nil
-        screen = photos.contains { $0.id == photoID } ? .preview(photoID) : .gallery
+        screen = editorReturnScreen
+        editorReturnScreen = .gallery
     }
 
     private func finishEditing(with asset: EditorAsset) {
         photos = interactor.save(GalleryPhoto(asset))
         editorPresenter = nil
+        editorReturnScreen = .gallery
         screen = .gallery
         toast = .success("Photo saved")
     }

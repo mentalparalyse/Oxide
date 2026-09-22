@@ -2,6 +2,8 @@
 
 @preconcurrency import AVFoundation
 import Foundation
+import CoreImage
+import ImageIO
 import UIKit
 
 @MainActor
@@ -13,6 +15,8 @@ public final class CameraSessionController: NSObject, ObservableObject, @uncheck
     @Published public private(set) var isSwitchingCamera = false
     @Published public private(set) var currentPosition: AVCaptureDevice.Position
     @Published public private(set) var errorMessage: String?
+    @Published public private(set) var isLowLightBoostAvailable = false
+    @Published public private(set) var isLowLightBoostEnabled = false
 
     public let session = AVCaptureSession()
 
@@ -26,6 +30,7 @@ public final class CameraSessionController: NSObject, ObservableObject, @uncheck
     private var videoDevice: AVCaptureDevice?
     private var isConfigurationRequested = false
     private var captureCompletion: (@MainActor (URL) -> Void)?
+    private var captureAspectRatio: CameraAspectRatio = .full
 
     public init(
         configuration: CameraCaptureConfiguration = CameraCaptureConfiguration(),
@@ -97,6 +102,57 @@ public final class CameraSessionController: NSObject, ObservableObject, @uncheck
         }
     }
 
+    public func focus(at devicePoint: CGPoint) {
+        let device = videoDevice
+        sessionQueue.async { [weak self] in
+            guard let device else { return }
+            do {
+                try device.lockForConfiguration()
+                defer { device.unlockForConfiguration() }
+                if device.isFocusPointOfInterestSupported {
+                    device.focusPointOfInterest = devicePoint
+                    device.focusMode = device.isFocusModeSupported(.autoFocus) ? .autoFocus : .continuousAutoFocus
+                }
+                if device.isExposurePointOfInterestSupported {
+                    device.exposurePointOfInterest = devicePoint
+                    device.exposureMode = device.isExposureModeSupported(.autoExpose) ? .autoExpose : .continuousAutoExposure
+                }
+            } catch {
+                Task { @MainActor in self?.errorMessage = "Focus unavailable" }
+            }
+        }
+    }
+
+    public func setExposureBias(_ bias: Float) {
+        let device = videoDevice
+        sessionQueue.async { [weak self] in
+            guard let device else { return }
+            do {
+                try device.lockForConfiguration()
+                defer { device.unlockForConfiguration() }
+                let value = min(max(bias, device.minExposureTargetBias), device.maxExposureTargetBias)
+                device.setExposureTargetBias(value)
+            } catch {
+                Task { @MainActor in self?.errorMessage = "Brightness unavailable" }
+            }
+        }
+    }
+
+    public func setLowLightBoostEnabled(_ isEnabled: Bool) {
+        let device = videoDevice
+        sessionQueue.async { [weak self] in
+            guard let device, device.isLowLightBoostSupported else { return }
+            do {
+                try device.lockForConfiguration()
+                device.automaticallyEnablesLowLightBoostWhenAvailable = isEnabled
+                device.unlockForConfiguration()
+                Task { @MainActor in self?.isLowLightBoostEnabled = isEnabled }
+            } catch {
+                Task { @MainActor in self?.errorMessage = "Night mode unavailable" }
+            }
+        }
+    }
+
     public func switchCamera() {
         guard isConfigured, !isSwitchingCamera else { return }
         let targetPosition = CameraPositionToggle.opposite(of: currentPosition)
@@ -154,6 +210,7 @@ public final class CameraSessionController: NSObject, ObservableObject, @uncheck
                     self.videoDevice = targetDevice
                     self.currentPosition = targetPosition
                     self.isTorchAvailable = targetDevice.hasTorch
+                    self.updateLowLightState(for: targetDevice)
                     self.isCameraSwitchAvailable = self.hasCamera(
                         at: CameraPositionToggle.opposite(of: targetPosition)
                     )
@@ -166,9 +223,11 @@ public final class CameraSessionController: NSObject, ObservableObject, @uncheck
 
     public func capturePhoto(
         flashMode: AVCaptureDevice.FlashMode,
+        aspectRatio: CameraAspectRatio = .full,
         completion: @escaping @MainActor (URL) -> Void
     ) {
         captureCompletion = completion
+        captureAspectRatio = aspectRatio
         let isConfigured = isConfigured
         let photoOutput = photoOutput
         let delegate = self
@@ -226,11 +285,50 @@ public final class CameraSessionController: NSObject, ObservableObject, @uncheck
                 self.currentPosition = device.position
                 self.isConfigured = true
                 self.isTorchAvailable = device.hasTorch
+                self.updateLowLightState(for: device)
                 self.isCameraSwitchAvailable = self.hasCamera(
                     at: CameraPositionToggle.opposite(of: device.position)
                 )
             }
         }
+    }
+
+
+    private func updateLowLightState(for device: AVCaptureDevice) {
+        isLowLightBoostAvailable = device.isLowLightBoostSupported
+        isLowLightBoostEnabled = device.isLowLightBoostSupported && device.automaticallyEnablesLowLightBoostWhenAvailable
+    }
+
+    nonisolated private static func processedCaptureData(
+        _ data: Data,
+        aspectRatio: CameraAspectRatio
+    ) -> Data? {
+        guard var image = CIImage(data: data, options: [.applyOrientationProperty: true]) else { return nil }
+
+        if let ratio = aspectRatio.ratio {
+            let extent = image.extent
+            let desiredRatio = extent.width < extent.height ? 1 / ratio : ratio
+            let currentRatio = extent.width / extent.height
+            let size: CGSize
+            if currentRatio > desiredRatio {
+                size = CGSize(width: extent.height * desiredRatio, height: extent.height)
+            } else {
+                size = CGSize(width: extent.width, height: extent.width / desiredRatio)
+            }
+            image = image.cropped(to: CGRect(
+                x: extent.midX - size.width / 2,
+                y: extent.midY - size.height / 2,
+                width: size.width,
+                height: size.height
+            ))
+        }
+
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) else { return nil }
+        return CIContext(options: [.cacheIntermediates: false]).jpegRepresentation(
+            of: image,
+            colorSpace: colorSpace,
+            options: [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.95]
+        )
     }
 
     private func hasCamera(at position: AVCaptureDevice.Position) -> Bool {
@@ -258,7 +356,7 @@ extension CameraSessionController: AVCapturePhotoCaptureDelegate {
         didFinishProcessingPhoto photo: AVCapturePhoto,
         error: Error?
     ) {
-        guard error == nil, let data = photo.fileDataRepresentation() else {
+        guard error == nil, let sourceData = photo.fileDataRepresentation() else {
             Task { @MainActor in
                 self.errorMessage = "Capture failed"
             }
@@ -267,6 +365,11 @@ extension CameraSessionController: AVCapturePhotoCaptureDelegate {
 
         Task {
             do {
+                let aspectRatio = await MainActor.run { self.captureAspectRatio }
+                let data = Self.processedCaptureData(
+                    sourceData,
+                    aspectRatio: aspectRatio
+                ) ?? sourceData
                 let url = try await imageFileStore.writeImageData(data, id: UUID().uuidString)
                 await MainActor.run {
                     self.captureCompletion?(url)

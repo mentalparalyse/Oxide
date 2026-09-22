@@ -73,6 +73,21 @@ struct GalleryTests {
         #expect(presenter.photos.isEmpty)
     }
 
+    @Test func editorCancelReturnsImportedPhotoToCapture() async {
+        let presenter = GalleryPresenter(
+            interactor: SuccessfulImportInteractor(),
+            router: GalleryRouter()
+        )
+        presenter.openCapture()
+        await presenter.startEditingImportedPhoto(data: Data(), id: "import")
+
+        presenter.editorPresenter?.cancel()
+
+        #expect(presenter.screen == .capture)
+        #expect(presenter.editorPresenter == nil)
+        #expect(presenter.photos.isEmpty)
+    }
+
     @Test func presenterShowsImportFailureToast() async {
         let presenter = GalleryPresenter(interactor: FailingImportInteractor(), router: GalleryRouter())
 
@@ -133,5 +148,16 @@ private struct FailingImportInteractor: GalleryInteractorProtocol {
     func sourceImageSize(for imageURL: URL) -> CGSize? { nil }
     func storeImportedImage(data: Data, id: String) async throws -> URL {
         throw CocoaError(.fileWriteUnknown)
+    }
+}
+
+@MainActor
+private struct SuccessfulImportInteractor: GalleryInteractorProtocol {
+    func loadPhotos() -> [GalleryPhoto] { [] }
+    func save(_ photo: GalleryPhoto) -> [GalleryPhoto] { [photo] }
+    func delete(photoID: GalleryPhoto.ID) -> [GalleryPhoto] { [] }
+    func sourceImageSize(for imageURL: URL) -> CGSize? { nil }
+    func storeImportedImage(data: Data, id: String) async throws -> URL {
+        URL(fileURLWithPath: "/tmp/\(id).jpg")
     }
 }
