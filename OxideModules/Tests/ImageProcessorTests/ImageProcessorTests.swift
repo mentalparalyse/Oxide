@@ -301,12 +301,15 @@ struct ImageProcessorTests {
 
         let firstURL = try await store.proxyURL(for: sourceURL, id: "photo")
         let secondURL = try await store.proxyURL(for: sourceURL, id: "photo")
-        let proxy = try #require(UIImage(data: Data(contentsOf: firstURL)))
+        let proxyData = try Data(contentsOf: firstURL)
+        let originalData = try Data(contentsOf: sourceURL)
+        let proxy = try #require(UIImage(data: proxyData))
+        let storedOriginal = try #require(UIImage(data: originalData))
 
         #expect(firstURL == secondURL)
         #expect(firstURL != sourceURL)
         #expect(proxy.size == CGSize(width: 150, height: 200))
-        #expect(UIImage(data: Data(contentsOf: sourceURL))?.size == CGSize(width: 300, height: 400))
+        #expect(storedOriginal.size == CGSize(width: 300, height: 400))
     }
 
     @Test func centeredCropReducesWiderSourceWidth() async throws {
