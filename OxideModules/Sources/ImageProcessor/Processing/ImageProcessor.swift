@@ -15,13 +15,21 @@ public final class ImageProcessor: @unchecked Sendable {
     )
     private let context: CIContext
     private let lutPreparationService: LUTPreparationService
+    private let previewSourceCache: ImagePreviewSourceCache
 
     public convenience init() {
-        self.init(lutPreparationService: .shared)
+        self.init(
+            lutPreparationService: .shared,
+            previewSourceCache: .shared
+        )
     }
 
-    init(lutPreparationService: LUTPreparationService) {
+    init(
+        lutPreparationService: LUTPreparationService,
+        previewSourceCache: ImagePreviewSourceCache = .shared
+    ) {
         self.lutPreparationService = lutPreparationService
+        self.previewSourceCache = previewSourceCache
         if let device = MTLCreateSystemDefaultDevice() {
             self.context = CIContext(
                 mtlDevice: device,
@@ -101,7 +109,13 @@ public final class ImageProcessor: @unchecked Sendable {
             guard !Task.isCancelled else { return nil }
             let cropRect = crop?.coreImageNormalizedRect ?? cropRect
             guard
-                let sourceImage = CIImage(contentsOf: imageURL),
+                let sourceImage = sourceImage(
+                    at: imageURL,
+                    previewMaxPixelSize: previewSourcePixelSize(
+                        outputMaxPixelSize: maxPixelSize,
+                        cropRect: cropRect
+                    )
+                ),
                 let croppedImage = croppedImage(sourceImage, cropRect: cropRect),
                 let inputImage = scaledImage(croppedImage, maxPixelSize: maxPixelSize)
             else {
@@ -171,6 +185,43 @@ public final class ImageProcessor: @unchecked Sendable {
 
     public func sourceSize(for imageURL: URL) -> CGSize? {
         CIImage(contentsOf: imageURL)?.extent.size
+    }
+
+    private func sourceImage(
+        at imageURL: URL,
+        previewMaxPixelSize: CGFloat?
+    ) -> CIImage? {
+        guard let previewMaxPixelSize else {
+            return CIImage(contentsOf: imageURL)
+        }
+        guard let image = previewSourceCache.image(
+            at: imageURL,
+            maxPixelSize: previewMaxPixelSize
+        ) else {
+            return nil
+        }
+        return CIImage(cgImage: image)
+    }
+
+    private func previewSourcePixelSize(
+        outputMaxPixelSize: CGFloat?,
+        cropRect: CGRect?
+    ) -> CGFloat? {
+        guard let outputMaxPixelSize, outputMaxPixelSize > 0 else {
+            return nil
+        }
+        guard let cropRect else {
+            return outputMaxPixelSize
+        }
+
+        let clampedCrop = cropRect.intersection(
+            CGRect(x: 0, y: 0, width: 1, height: 1)
+        )
+        let retainedLongestSide = max(clampedCrop.width, clampedCrop.height)
+        guard retainedLongestSide > 0 else {
+            return outputMaxPixelSize
+        }
+        return outputMaxPixelSize / retainedLongestSide
     }
 
     private func croppedImage(_ image: CIImage, cropRect: CGRect?) -> CIImage? {

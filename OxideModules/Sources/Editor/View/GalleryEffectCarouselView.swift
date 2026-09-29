@@ -34,7 +34,7 @@ struct GalleryEffectCarouselView: View {
 
     private func preview(for preset: GalleryEffectPreset) -> some View {
         LUTPreviewImage(
-            imageURL: draft.asset.imageURI,
+            imageURL: draft.asset.editorSourceURI,
             presetID: draft.selectedFilterID,
             intensity: draft.filterIntensity,
             rotationDegrees: draft.rotationDegrees,

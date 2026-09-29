@@ -146,6 +146,7 @@ private struct FailingImportInteractor: GalleryInteractorProtocol {
     func save(_ photo: GalleryPhoto) -> [GalleryPhoto] { [photo] }
     func delete(photoID: GalleryPhoto.ID) -> [GalleryPhoto] { [] }
     func sourceImageSize(for imageURL: URL) -> CGSize? { nil }
+    func prepareEditingProxy(for imageURL: URL, id: String) async -> URL? { imageURL }
     func storeImportedImage(data: Data, id: String) async throws -> URL {
         throw CocoaError(.fileWriteUnknown)
     }
@@ -157,6 +158,7 @@ private struct SuccessfulImportInteractor: GalleryInteractorProtocol {
     func save(_ photo: GalleryPhoto) -> [GalleryPhoto] { [photo] }
     func delete(photoID: GalleryPhoto.ID) -> [GalleryPhoto] { [] }
     func sourceImageSize(for imageURL: URL) -> CGSize? { nil }
+    func prepareEditingProxy(for imageURL: URL, id: String) async -> URL? { imageURL }
     func storeImportedImage(data: Data, id: String) async throws -> URL {
         URL(fileURLWithPath: "/tmp/\(id).jpg")
     }

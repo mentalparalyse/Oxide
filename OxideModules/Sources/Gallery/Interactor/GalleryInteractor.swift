@@ -9,6 +9,7 @@ protocol GalleryInteractorProtocol {
     func save(_ photo: GalleryPhoto) -> [GalleryPhoto]
     func delete(photoID: GalleryPhoto.ID) -> [GalleryPhoto]
     func storeImportedImage(data: Data, id: String) async throws -> URL
+    func prepareEditingProxy(for imageURL: URL, id: String) async -> URL?
     func sourceImageSize(for imageURL: URL) -> CGSize?
 }
 
@@ -16,6 +17,7 @@ protocol GalleryInteractorProtocol {
 final class GalleryInteractor: GalleryInteractorProtocol {
     private var photos: [GalleryPhoto]
     private let imageFileStore = ImageFileStore()
+    private let editingProxyStore = ImageEditingProxyStore()
     private let imageProcessor = ImageProcessor()
     private let persistsChanges: Bool
 
@@ -55,6 +57,10 @@ final class GalleryInteractor: GalleryInteractorProtocol {
 
     func storeImportedImage(data: Data, id: String) async throws -> URL {
         try await imageFileStore.writeImageData(data, id: id)
+    }
+
+    func prepareEditingProxy(for imageURL: URL, id: String) async -> URL? {
+        try? await editingProxyStore.proxyURL(for: imageURL, id: id)
     }
 
     func sourceImageSize(for imageURL: URL) -> CGSize? {
