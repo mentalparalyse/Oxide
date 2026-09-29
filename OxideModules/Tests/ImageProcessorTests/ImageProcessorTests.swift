@@ -249,6 +249,66 @@ struct ImageProcessorTests {
         #expect(preview == nil)
     }
 
+    @Test func previewRenderDownsamplesLargeSourceBeforeProcessing() async throws {
+        let rootDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let sourceURL = rootDirectory.appendingPathComponent("large-source.jpg")
+        try FileManager.default.createDirectory(at: rootDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+        let image = makeSolidImage(size: CGSize(width: 2_400, height: 3_200), color: .cyan)
+        try #require(image.jpegData(compressionQuality: 0.9)).write(to: sourceURL, options: .atomic)
+
+        let preview = await ImageProcessor().renderUIImage(
+            from: sourceURL,
+            presetID: nil,
+            maxPixelSize: 800
+        )
+
+        #expect(preview?.size == CGSize(width: 600, height: 800))
+    }
+
+    @Test func croppedPreviewRetainsRequestedOutputResolution() async throws {
+        let rootDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let sourceURL = rootDirectory.appendingPathComponent("crop-source.jpg")
+        try FileManager.default.createDirectory(at: rootDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+        let image = makeSolidImage(size: CGSize(width: 2_000, height: 2_000), color: .magenta)
+        try #require(image.jpegData(compressionQuality: 0.9)).write(to: sourceURL, options: .atomic)
+
+        let preview = await ImageProcessor().renderUIImage(
+            from: sourceURL,
+            presetID: nil,
+            crop: ImageEditCrop(x: 0.25, y: 0.25, width: 0.5, height: 0.5),
+            maxPixelSize: 800
+        )
+
+        #expect(preview?.size == CGSize(width: 800, height: 800))
+    }
+
+    @Test func editingProxyStoreCreatesReusableDownsampledClone() async throws {
+        let rootDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let sourceURL = rootDirectory.appendingPathComponent("original.jpg")
+        try FileManager.default.createDirectory(at: rootDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: rootDirectory) }
+        let original = makeSolidImage(size: CGSize(width: 300, height: 400), color: .green)
+        try #require(original.jpegData(compressionQuality: 0.9)).write(to: sourceURL, options: .atomic)
+        let store = ImageEditingProxyStore(
+            rootDirectory: rootDirectory.appendingPathComponent("proxies"),
+            maxPixelSize: 200
+        )
+
+        let firstURL = try await store.proxyURL(for: sourceURL, id: "photo")
+        let secondURL = try await store.proxyURL(for: sourceURL, id: "photo")
+        let proxy = try #require(UIImage(data: Data(contentsOf: firstURL)))
+
+        #expect(firstURL == secondURL)
+        #expect(firstURL != sourceURL)
+        #expect(proxy.size == CGSize(width: 150, height: 200))
+        #expect(UIImage(data: Data(contentsOf: sourceURL))?.size == CGSize(width: 300, height: 400))
+    }
+
     @Test func centeredCropReducesWiderSourceWidth() async throws {
         let crop = try #require(ImageEditCropper.centeredCrop(
             sourceSize: CGSize(width: 4000, height: 3000),

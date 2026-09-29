@@ -114,7 +114,7 @@ struct SavedLooksView: View {
             GeometryReader { geometry in
                 ZStack(alignment: .bottomLeading) {
                     LUTPreviewImage(
-                        imageURL: presenter.previewDraft.asset.imageURI,
+                        imageURL: presenter.previewDraft.asset.editorSourceURI,
                         presetID: look.filterID,
                         intensity: look.filterIntensity,
                         rotationDegrees: presenter.previewDraft.rotationDegrees,

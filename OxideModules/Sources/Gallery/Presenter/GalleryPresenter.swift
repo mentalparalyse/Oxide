@@ -103,17 +103,17 @@ public final class GalleryPresenter: ObservableObject {
 
     public func startEditingSelectedPhoto() async {
         guard let selectedPhoto else { return }
-        beginEditing(photo: selectedPhoto)
+        await beginEditing(photo: selectedPhoto)
     }
 
     public func startEditingCapturedPhoto(uri: URL, now: Date = Date(), id: String = UUID().uuidString) async {
-        beginEditing(photo: GalleryPhoto(id: id, imageURI: uri, createdAt: now))
+        await beginEditing(photo: GalleryPhoto(id: id, imageURI: uri, createdAt: now))
     }
 
     public func startEditingImportedPhoto(data: Data, now: Date = Date(), id: String = UUID().uuidString) async {
         do {
             let url = try await interactor.storeImportedImage(data: data, id: id)
-            beginEditing(photo: GalleryPhoto(id: id, imageURI: url, createdAt: now))
+            await beginEditing(photo: GalleryPhoto(id: id, imageURI: url, createdAt: now))
         } catch {
             toast = .error("Import failed")
             analytics.track(.operationFailed(operation: "photo_import", reason: "storage_failed"))
@@ -143,11 +143,15 @@ public final class GalleryPresenter: ObservableObject {
 
     public func clearToast() { toast = nil }
 
-    private func beginEditing(photo: GalleryPhoto) {
+    private func beginEditing(photo: GalleryPhoto) async {
         let photoID = photo.id
+        let editingImageURI = await interactor.prepareEditingProxy(
+            for: photo.imageURI,
+            id: photo.id
+        )
         editorReturnScreen = screen
         editorPresenter = EditorBuilder.makePresenter(
-            asset: EditorAsset(photo),
+            asset: EditorAsset(photo, editingImageURI: editingImageURI),
             analytics: analytics,
             onCancel: { [weak self] in self?.finishEditingWithoutSaving() },
             onSave: { [weak self] asset in self?.finishEditing(with: asset) },
@@ -173,8 +177,8 @@ public final class GalleryPresenter: ObservableObject {
 }
 
 private extension EditorAsset {
-    init(_ photo: GalleryPhoto) {
-        self.init(id: photo.id, imageURI: photo.imageURI, createdAt: photo.createdAt, filterID: photo.filterID, filterIntensity: photo.filterIntensity, rotationDegrees: photo.rotationDegrees, crop: photo.crop, adjustments: photo.adjustments, effects: photo.effects)
+    init(_ photo: GalleryPhoto, editingImageURI: URL?) {
+        self.init(id: photo.id, imageURI: photo.imageURI, editingImageURI: editingImageURI, createdAt: photo.createdAt, filterID: photo.filterID, filterIntensity: photo.filterIntensity, rotationDegrees: photo.rotationDegrees, crop: photo.crop, adjustments: photo.adjustments, effects: photo.effects)
     }
 }
 

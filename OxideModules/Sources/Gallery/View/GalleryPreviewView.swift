@@ -21,7 +21,8 @@ struct GalleryPreviewView: View {
                     crop: photo.crop,
                     adjustments: photo.adjustments,
                     effects: photo.effects,
-                    contentMode: .fit
+                    contentMode: .fit,
+                    maxPixelSize: 1_600
                 )
                 .padding(.horizontal, 4)
             }

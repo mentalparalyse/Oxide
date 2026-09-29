@@ -41,12 +41,14 @@ final class LUTPreviewRenderCoordinator: ObservableObject {
         let renderer = renderer
         renderTask = Task { [weak self, renderer] in
             while !Task.isCancelled {
+                do {
+                    try await Task.sleep(for: .milliseconds(16))
+                } catch {
+                    return
+                }
                 guard let request = self?.takePendingRequest(generation: generation) else { return }
                 let renderedImage = await renderer(request)
-                guard self?.finishRendering(
-                    renderedImage,
-                    generation: generation
-                ) == true else { return }
+                guard self?.finishRendering(renderedImage, generation: generation) == true else { return }
             }
         }
     }

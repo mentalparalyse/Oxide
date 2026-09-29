@@ -27,7 +27,7 @@ struct GalleryEditorFilterPanels: View {
                         GalleryExpandedFilterRail(
                             section: expandedSection,
                             selectedFilterID: presenter.draft.selectedFilterID,
-                            imageURL: presenter.draft.asset.imageURI,
+                            imageURL: presenter.draft.asset.editorSourceURI,
                             onSelectFilter: { filter in Task { await presenter.selectFilter(filter.id) } }
                         )
                     }

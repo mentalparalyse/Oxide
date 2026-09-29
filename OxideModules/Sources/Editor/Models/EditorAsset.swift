@@ -4,6 +4,7 @@ import ImageProcessor
 public struct EditorAsset: Identifiable, Equatable, Codable, Sendable {
     public let id: String
     public let imageURI: URL
+    public let editingImageURI: URL?
     public let createdAt: Date
     public var filterID: String?
     public var filterIntensity: Double
@@ -15,6 +16,7 @@ public struct EditorAsset: Identifiable, Equatable, Codable, Sendable {
     public init(
         id: String,
         imageURI: URL,
+        editingImageURI: URL? = nil,
         createdAt: Date,
         filterID: String? = nil,
         filterIntensity: Double = 1,
@@ -25,6 +27,7 @@ public struct EditorAsset: Identifiable, Equatable, Codable, Sendable {
     ) {
         self.id = id
         self.imageURI = imageURI
+        self.editingImageURI = editingImageURI
         self.createdAt = createdAt
         self.filterID = filterID
         self.filterIntensity = filterIntensity
@@ -32,6 +35,14 @@ public struct EditorAsset: Identifiable, Equatable, Codable, Sendable {
         self.crop = crop
         self.adjustments = adjustments
         self.effects = effects
+    }
+
+    public var editorSourceURI: URL {
+        guard let editingImageURI else { return imageURI }
+        guard editingImageURI.isFileURL else { return editingImageURI }
+        return FileManager.default.fileExists(atPath: editingImageURI.path)
+            ? editingImageURI
+            : imageURI
     }
 }
 

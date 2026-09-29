@@ -27,7 +27,7 @@ struct GalleryCropPreviewSurface: View {
             ZStack {
                 AppColours.appColor
                 LUTPreviewImage(
-                    imageURL: draft.asset.imageURI,
+                    imageURL: draft.asset.editorSourceURI,
                     presetID: draft.selectedFilterID,
                     intensity: draft.filterIntensity,
                     rotationDegrees: draft.rotationDegrees,

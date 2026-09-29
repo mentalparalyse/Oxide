@@ -35,7 +35,7 @@ struct GalleryEditorPreviewSurface: View {
 
                 ZStack {
                     LUTPreviewImage(
-                        imageURL: draft.asset.imageURI,
+                        imageURL: draft.asset.editorSourceURI,
                         presetID: draft.selectedFilterID,
                         intensity: draft.filterIntensity,
                         rotationDegrees: draft.rotationDegrees,
