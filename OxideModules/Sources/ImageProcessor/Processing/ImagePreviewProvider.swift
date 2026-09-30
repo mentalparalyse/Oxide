@@ -61,7 +61,7 @@ public final class ImagePreviewProvider {
             String(recipe.filterIntensity),
             String(ImageEditRotation.normalized(recipe.rotationDegrees)),
             crop.map { "\($0.x),\($0.y),\($0.width),\($0.height)" } ?? "no-crop",
-            "\(adjustments.exposure),\(adjustments.contrast),\(adjustments.saturation)",
+            "\(adjustments.isAutoEnhanced),\(adjustments.exposure),\(adjustments.contrast),\(adjustments.saturation)",
             "\(adjustments.brightness),\(adjustments.isMonochrome)",
             "effects:\(String(describing: recipe.effects))"
         ].joined(separator: "|")

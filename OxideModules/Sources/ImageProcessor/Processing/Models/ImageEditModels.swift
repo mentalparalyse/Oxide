@@ -28,6 +28,7 @@ public struct ImageEditCrop: Equatable, Codable, Sendable {
 }
 
 public struct ImageAdjustments: Equatable, Codable, Sendable {
+    public var isAutoEnhanced: Bool
     public var exposure: Double
     public var contrast: Double
     public var saturation: Double
@@ -35,12 +36,14 @@ public struct ImageAdjustments: Equatable, Codable, Sendable {
     public var isMonochrome: Bool
 
     public init(
+        isAutoEnhanced: Bool = false,
         exposure: Double = 0,
         contrast: Double = 1,
         saturation: Double = 1,
         brightness: Double = 0,
         isMonochrome: Bool = false
     ) {
+        self.isAutoEnhanced = isAutoEnhanced
         self.exposure = exposure
         self.contrast = contrast
         self.saturation = saturation
@@ -49,6 +52,25 @@ public struct ImageAdjustments: Equatable, Codable, Sendable {
     }
 
     public static let neutral = ImageAdjustments()
+
+    private enum CodingKeys: String, CodingKey {
+        case isAutoEnhanced
+        case exposure
+        case contrast
+        case saturation
+        case brightness
+        case isMonochrome
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        isAutoEnhanced = try container.decodeIfPresent(Bool.self, forKey: .isAutoEnhanced) ?? false
+        exposure = try container.decodeIfPresent(Double.self, forKey: .exposure) ?? 0
+        contrast = try container.decodeIfPresent(Double.self, forKey: .contrast) ?? 1
+        saturation = try container.decodeIfPresent(Double.self, forKey: .saturation) ?? 1
+        brightness = try container.decodeIfPresent(Double.self, forKey: .brightness) ?? 0
+        isMonochrome = try container.decodeIfPresent(Bool.self, forKey: .isMonochrome) ?? false
+    }
 }
 
 public enum ImageAdjustmentKind: String, CaseIterable, Identifiable, Sendable {

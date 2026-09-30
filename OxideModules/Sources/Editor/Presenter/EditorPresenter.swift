@@ -61,7 +61,7 @@ public final class EditorPresenter: ObservableObject {
         }
         guard draft.selectedFilterID != filterID else { return }
         draft.selectedFilterID = filterID
-        draft.filterIntensity = 0.5
+        draft.filterIntensity = 0.2
         analytics.track(.filterApplied(filterID: filterID))
         await recordCurrentStep()
     }
@@ -144,6 +144,12 @@ public final class EditorPresenter: ObservableObject {
 
     public func toggleMonochrome() async {
         draft.adjustments.isMonochrome.toggle()
+        await recordCurrentStep()
+    }
+
+    public func toggleAutoAdjust() async {
+        guard !isApplyingCrop, !isApplyingLook else { return }
+        draft.adjustments.isAutoEnhanced.toggle()
         await recordCurrentStep()
     }
 

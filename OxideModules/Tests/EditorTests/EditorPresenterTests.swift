@@ -5,6 +5,14 @@ import Testing
 
 @MainActor
 struct EditorPresenterTests {
+    @Test func newlySelectedFilterStartsAtTwentyPercentIntensity() async {
+        let presenter = makePresenter()
+
+        await presenter.selectFilter("cinematic")
+
+        #expect(presenter.draft.filterIntensity == 0.2)
+    }
+
     @Test func filterDragUpdatesLiveAndRecordsOnlyOnCommit() async throws {
         let interactor = EditorInteractorSpy()
         let presenter = makePresenter(interactor: interactor)
@@ -31,6 +39,20 @@ struct EditorPresenterTests {
         #expect(presenter.draft.adjustments.exposure == 2)
         #expect(presenter.draft.adjustments.contrast == 0.5)
         #expect(interactor.recordedDrafts.count == 1)
+    }
+
+    @Test func autoAdjustIsUndoableAndRecordsOneHistoryStep() async {
+        let interactor = EditorInteractorSpy()
+        let presenter = makePresenter(interactor: interactor)
+
+        await presenter.toggleAutoAdjust()
+
+        #expect(presenter.draft.adjustments.isAutoEnhanced)
+        #expect(interactor.recordedDrafts.count == 1)
+
+        await presenter.undo()
+
+        #expect(!presenter.draft.adjustments.isAutoEnhanced)
     }
 
     @Test func unknownFilterReportsFailureWithoutChangingDraft() async {
