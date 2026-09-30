@@ -19,7 +19,8 @@ struct GalleryEditorToolPanel: View {
                     adjustments: presenter.draft.adjustments,
                     onChange: presenter.setAdjustment,
                     onChangeEnded: { Task { await presenter.commitAdjustment() } },
-                    onToggleMonochrome: { Task { await presenter.toggleMonochrome() } }
+                    onToggleMonochrome: { Task { await presenter.toggleMonochrome() } },
+                    onToggleAutoAdjust: { Task { await presenter.toggleAutoAdjust() } }
                 )
                 .padding(.vertical, 14)
         case .effects:

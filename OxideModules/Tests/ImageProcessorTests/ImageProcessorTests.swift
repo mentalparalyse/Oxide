@@ -84,6 +84,29 @@ struct ImageProcessorTests {
         #expect(output.extent == input.extent)
     }
 
+    @Test func autoEnhancementPreservesImageExtent() {
+        let input = CIImage(
+            color: CIColor(red: 0.18, green: 0.28, blue: 0.38)
+        ).cropped(to: CGRect(x: 0, y: 0, width: 64, height: 48))
+
+        let output = ImageAdjustmentFilter.apply(
+            to: input,
+            adjustments: ImageAdjustments(isAutoEnhanced: true)
+        )
+
+        #expect(output.extent == input.extent)
+    }
+
+    @Test func legacyAdjustmentsDecodeWithAutoEnhancementDisabled() throws {
+        let json = Data(#"{"exposure":0.5,"contrast":1.2,"saturation":0.8,"brightness":0.1,"isMonochrome":false}"#.utf8)
+
+        let adjustments = try JSONDecoder().decode(ImageAdjustments.self, from: json)
+
+        #expect(!adjustments.isAutoEnhanced)
+        #expect(adjustments.exposure == 0.5)
+        #expect(adjustments.contrast == 1.2)
+    }
+
     @Test func adjustmentFilterSupportsCombinedControls() {
         let input = CIImage(
             color: CIColor(red: 0.2, green: 0.4, blue: 0.6)

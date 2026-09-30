@@ -9,6 +9,21 @@ enum ImageAdjustmentFilter {
     ) -> CIImage {
         var output = image
 
+        if adjustments.isAutoEnhanced {
+            let filters = output.autoAdjustmentFilters(options: [
+                .enhance: true,
+                .redEye: false,
+                .crop: false,
+                .level: false
+            ])
+            for filter in filters {
+                filter.setValue(output, forKey: kCIInputImageKey)
+                if let filteredImage = filter.outputImage {
+                    output = filteredImage
+                }
+            }
+        }
+
         if adjustments.exposure != 0 {
             output = output.applyingFilter(
                 "CIExposureAdjust",

@@ -9,6 +9,7 @@ struct GalleryAdjustmentControlsView: View {
     let onChange: (ImageAdjustmentKind, Double) -> Void
     let onChangeEnded: () -> Void
     let onToggleMonochrome: () -> Void
+    let onToggleAutoAdjust: () -> Void
 
     @State private var selectedKind: ImageAdjustmentKind = .exposure
 
@@ -16,6 +17,26 @@ struct GalleryAdjustmentControlsView: View {
         VStack(spacing: 16) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
+                    Button(action: onToggleAutoAdjust) {
+                        Label("Auto", systemImage: "wand.and.stars")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(
+                                adjustments.isAutoEnhanced
+                                    ? AppColours.appForegroundColor
+                                    : AppColours.appMutedForegroundColor
+                            )
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 9)
+                            .background(
+                                adjustments.isAutoEnhanced
+                                    ? AppColours.buttonBacground
+                                    : AppColours.appSurfaceColor,
+                                in: Capsule()
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(adjustments.isAutoEnhanced ? "Disable Auto Adjust" : "Apply Auto Adjust")
+
                     ForEach(ImageAdjustmentKind.allCases) { kind in
                         adjustmentButton(kind)
                     }
