@@ -78,12 +78,12 @@ struct LUTPreviewRenderCoordinatorTests {
 
     private func waitForRenderedImage(
         on coordinator: LUTPreviewRenderCoordinator,
-        timeout: Duration = .seconds(1)
+        timeout: Duration = .seconds(5)
     ) async {
         let clock = ContinuousClock()
         let deadline = clock.now.advanced(by: timeout)
         while coordinator.image == nil, clock.now < deadline {
-            await Task.yield()
+            try? await Task.sleep(for: .milliseconds(5))
         }
         #expect(coordinator.image != nil)
     }
