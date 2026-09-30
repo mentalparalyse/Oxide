@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import ImageProcessor
 import Testing
@@ -77,15 +78,12 @@ struct LUTPreviewRenderCoordinatorTests {
     }
 
     private func waitForRenderedImage(
-        on coordinator: LUTPreviewRenderCoordinator,
-        timeout: Duration = .seconds(5)
+        on coordinator: LUTPreviewRenderCoordinator
     ) async {
-        let clock = ContinuousClock()
-        let deadline = clock.now.advanced(by: timeout)
-        while coordinator.image == nil, clock.now < deadline {
-            try? await Task.sleep(for: .milliseconds(5))
+        for await image in coordinator.$image.values {
+            if image != nil { return }
         }
-        #expect(coordinator.image != nil)
+        Issue.record("Image publisher completed before rendering an image")
     }
 
     private func request(intensity: Double) -> LUTPreviewRenderRequest {
