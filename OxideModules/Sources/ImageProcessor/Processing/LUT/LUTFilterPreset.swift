@@ -51,7 +51,9 @@ public struct LUTFilterPreset: Identifiable, Equatable, Sendable {
         "05_her_strong", "06_drive", "07_no_country", "08_casino_royal", "10_loot", "11_loot",
     ]
 
-    static let presetResources: [String] = (12...182).map { "\($0)_loot" }
+    static let presetResources: [String] = (12...182)
+        .filter { $0 != 148 }
+        .map { "\($0)_loot" }
 
     static func bundledResourceURL(for resourceName: String) -> URL? {
         Bundle.module.url(

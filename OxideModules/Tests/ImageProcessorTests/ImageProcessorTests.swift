@@ -40,6 +40,7 @@ struct ImageProcessorTests {
         #expect(names.contains("Vintage 01"))
         #expect(names.contains("Dream 03"))
         #expect(names.contains("Dream 65"))
+        #expect(!LUTFilterPreset.bundledResourceNames.contains("148_loot"))
         #expect(Set(names).count == names.count)
         #expect(names.allSatisfy { !$0.localizedCaseInsensitiveContains("loot") })
     }
