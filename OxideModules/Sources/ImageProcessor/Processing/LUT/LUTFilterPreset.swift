@@ -51,7 +51,9 @@ public struct LUTFilterPreset: Identifiable, Equatable, Sendable {
         "05_her_strong", "06_drive", "07_no_country", "08_casino_royal", "10_loot", "11_loot",
     ]
 
-    static let presetResources: [String] = (12...120).map { "\($0)_loot" }
+    static let presetResources: [String] = (12...182)
+        .filter { $0 != 148 }
+        .map { "\($0)_loot" }
 
     static func bundledResourceURL(for resourceName: String) -> URL? {
         Bundle.module.url(
@@ -97,7 +99,7 @@ public struct LUTFilterPreset: Identifiable, Equatable, Sendable {
         ]
         let index = max(number - 10, 0)
         let theme = themes[min(index / 12, themes.count - 1)]
-        let sequence = (index % 12) + 1
+        let sequence = index - min(index / 12, themes.count - 1) * 12 + 1
         return "\(theme) \(String(format: "%02d", sequence))"
     }
 }
