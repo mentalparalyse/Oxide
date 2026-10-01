@@ -183,6 +183,13 @@ public final class ImageProcessor: @unchecked Sendable {
         _ = await lutPreparationService.cubeData(for: preset)
     }
 
+    /// Releases transient resources retained while producing editor previews.
+    /// Persisted LUT cube data remains cached because it is small and reusable.
+    public func releasePreviewResources() {
+        previewSourceCache.removeAllImages()
+        context.clearCaches()
+    }
+
     public func sourceSize(for imageURL: URL) -> CGSize? {
         CIImage(contentsOf: imageURL)?.extent.size
     }

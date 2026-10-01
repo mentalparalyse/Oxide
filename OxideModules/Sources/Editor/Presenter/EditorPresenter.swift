@@ -137,6 +137,14 @@ public final class EditorPresenter: ObservableObject {
         case .contrast: adjustments.contrast = min(max(value, 0.5), 1.5)
         case .saturation: adjustments.saturation = min(max(value, 0), 2)
         case .brightness: adjustments.brightness = min(max(value, -0.5), 0.5)
+        case .highlights: adjustments.highlights = min(max(value, -1), 1)
+        case .shadows: adjustments.shadows = min(max(value, -1), 1)
+        case .whites: adjustments.whites = min(max(value, -1), 1)
+        case .blacks: adjustments.blacks = min(max(value, -1), 1)
+        case .temperature: adjustments.temperature = min(max(value, -1), 1)
+        case .tint: adjustments.tint = min(max(value, -1), 1)
+        case .vibrance: adjustments.vibrance = min(max(value, -1), 1)
+        case .sharpness: adjustments.sharpness = min(max(value, 0), 1)
         case .monochrome: return
         }
         draft.adjustments = adjustments

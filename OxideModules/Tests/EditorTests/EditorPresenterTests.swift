@@ -34,10 +34,18 @@ struct EditorPresenterTests {
 
         presenter.setAdjustment(.exposure, value: 4)
         presenter.setAdjustment(.contrast, value: 0)
+        presenter.setAdjustment(.highlights, value: 2)
+        presenter.setAdjustment(.shadows, value: -2)
+        presenter.setAdjustment(.temperature, value: 2)
+        presenter.setAdjustment(.sharpness, value: -1)
         await presenter.commitAdjustment()
 
         #expect(presenter.draft.adjustments.exposure == 2)
         #expect(presenter.draft.adjustments.contrast == 0.5)
+        #expect(presenter.draft.adjustments.highlights == 1)
+        #expect(presenter.draft.adjustments.shadows == -1)
+        #expect(presenter.draft.adjustments.temperature == 1)
+        #expect(presenter.draft.adjustments.sharpness == 0)
         #expect(interactor.recordedDrafts.count == 1)
     }
 

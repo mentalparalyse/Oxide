@@ -105,6 +105,14 @@ struct GalleryAdjustmentControlsView: View {
         case .contrast: adjustments.contrast
         case .saturation: adjustments.saturation
         case .brightness: adjustments.brightness
+        case .highlights: adjustments.highlights
+        case .shadows: adjustments.shadows
+        case .whites: adjustments.whites
+        case .blacks: adjustments.blacks
+        case .temperature: adjustments.temperature
+        case .tint: adjustments.tint
+        case .vibrance: adjustments.vibrance
+        case .sharpness: adjustments.sharpness
         case .monochrome: adjustments.isMonochrome ? 1 : 0
         }
     }
@@ -115,6 +123,8 @@ struct GalleryAdjustmentControlsView: View {
         case .contrast: 0.5...1.5
         case .saturation: 0...2
         case .brightness: -0.5...0.5
+        case .highlights, .shadows, .whites, .blacks, .temperature, .tint, .vibrance: -1...1
+        case .sharpness: 0...1
         case .monochrome: 0...1
         }
     }
@@ -125,6 +135,14 @@ struct GalleryAdjustmentControlsView: View {
         case .contrast: "Contrast"
         case .saturation: "Saturation"
         case .brightness: "Brightness"
+        case .highlights: "Highlights"
+        case .shadows: "Shadows"
+        case .whites: "Whites"
+        case .blacks: "Blacks"
+        case .temperature: "Warmth"
+        case .tint: "Tint"
+        case .vibrance: "Vibrance"
+        case .sharpness: "Sharpness"
         case .monochrome: "B&W"
         }
     }
@@ -134,6 +152,10 @@ struct GalleryAdjustmentControlsView: View {
         switch kind {
         case .contrast, .saturation:
             return "\(Int((value - 1) * 100))"
+        case .highlights, .shadows, .whites, .blacks, .temperature, .tint, .vibrance:
+            return String(format: "%+d", Int((value * 100).rounded()))
+        case .sharpness:
+            return "\(Int((value * 100).rounded()))"
         default:
             return String(format: "%+.2f", value)
         }

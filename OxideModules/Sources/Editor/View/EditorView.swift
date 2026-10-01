@@ -81,6 +81,9 @@ public struct EditorView: View {
             // Keep the filter pack in sync even when a look is applied from another tool.
             expandedFilterSectionID = presenter.filterCatalog.section(containing: filterID)?.id
         }
+        .onDisappear {
+            LUTPreviewRenderCoordinator.releasePreviewResources()
+        }
         .background(AppColours.appColor)
         .animation(.easeOut(duration: 0.16), value: comparisonVisibility.areControlsHidden)
         .accessibilityAction(
