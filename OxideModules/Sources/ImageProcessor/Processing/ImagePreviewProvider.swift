@@ -63,6 +63,8 @@ public final class ImagePreviewProvider {
             crop.map { "\($0.x),\($0.y),\($0.width),\($0.height)" } ?? "no-crop",
             "\(adjustments.isAutoEnhanced),\(adjustments.exposure),\(adjustments.contrast),\(adjustments.saturation)",
             "\(adjustments.brightness),\(adjustments.isMonochrome)",
+            "\(adjustments.highlights),\(adjustments.shadows),\(adjustments.whites),\(adjustments.blacks)",
+            "\(adjustments.temperature),\(adjustments.tint),\(adjustments.vibrance),\(adjustments.sharpness)",
             "effects:\(String(describing: recipe.effects))"
         ].joined(separator: "|")
     }

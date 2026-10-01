@@ -33,6 +33,14 @@ public struct ImageAdjustments: Equatable, Codable, Sendable {
     public var contrast: Double
     public var saturation: Double
     public var brightness: Double
+    public var highlights: Double
+    public var shadows: Double
+    public var whites: Double
+    public var blacks: Double
+    public var temperature: Double
+    public var tint: Double
+    public var vibrance: Double
+    public var sharpness: Double
     public var isMonochrome: Bool
 
     public init(
@@ -41,6 +49,14 @@ public struct ImageAdjustments: Equatable, Codable, Sendable {
         contrast: Double = 1,
         saturation: Double = 1,
         brightness: Double = 0,
+        highlights: Double = 0,
+        shadows: Double = 0,
+        whites: Double = 0,
+        blacks: Double = 0,
+        temperature: Double = 0,
+        tint: Double = 0,
+        vibrance: Double = 0,
+        sharpness: Double = 0,
         isMonochrome: Bool = false
     ) {
         self.isAutoEnhanced = isAutoEnhanced
@@ -48,6 +64,14 @@ public struct ImageAdjustments: Equatable, Codable, Sendable {
         self.contrast = contrast
         self.saturation = saturation
         self.brightness = brightness
+        self.highlights = highlights
+        self.shadows = shadows
+        self.whites = whites
+        self.blacks = blacks
+        self.temperature = temperature
+        self.tint = tint
+        self.vibrance = vibrance
+        self.sharpness = sharpness
         self.isMonochrome = isMonochrome
     }
 
@@ -59,6 +83,14 @@ public struct ImageAdjustments: Equatable, Codable, Sendable {
         case contrast
         case saturation
         case brightness
+        case highlights
+        case shadows
+        case whites
+        case blacks
+        case temperature
+        case tint
+        case vibrance
+        case sharpness
         case isMonochrome
     }
 
@@ -69,6 +101,14 @@ public struct ImageAdjustments: Equatable, Codable, Sendable {
         contrast = try container.decodeIfPresent(Double.self, forKey: .contrast) ?? 1
         saturation = try container.decodeIfPresent(Double.self, forKey: .saturation) ?? 1
         brightness = try container.decodeIfPresent(Double.self, forKey: .brightness) ?? 0
+        highlights = try container.decodeIfPresent(Double.self, forKey: .highlights) ?? 0
+        shadows = try container.decodeIfPresent(Double.self, forKey: .shadows) ?? 0
+        whites = try container.decodeIfPresent(Double.self, forKey: .whites) ?? 0
+        blacks = try container.decodeIfPresent(Double.self, forKey: .blacks) ?? 0
+        temperature = try container.decodeIfPresent(Double.self, forKey: .temperature) ?? 0
+        tint = try container.decodeIfPresent(Double.self, forKey: .tint) ?? 0
+        vibrance = try container.decodeIfPresent(Double.self, forKey: .vibrance) ?? 0
+        sharpness = try container.decodeIfPresent(Double.self, forKey: .sharpness) ?? 0
         isMonochrome = try container.decodeIfPresent(Bool.self, forKey: .isMonochrome) ?? false
     }
 }
@@ -78,6 +118,14 @@ public enum ImageAdjustmentKind: String, CaseIterable, Identifiable, Sendable {
     case contrast
     case saturation
     case brightness
+    case highlights
+    case shadows
+    case whites
+    case blacks
+    case temperature
+    case tint
+    case vibrance
+    case sharpness
     case monochrome
 
     public var id: String { rawValue }

@@ -33,6 +33,21 @@ enum ImageAdjustmentFilter {
             )
         }
 
+        output = applyTonalAdjustments(to: output, adjustments: adjustments)
+
+        if adjustments.temperature != 0 || adjustments.tint != 0 {
+            output = output.applyingFilter(
+                "CITemperatureAndTint",
+                parameters: [
+                    "inputNeutral": CIVector(x: 6_500, y: 0),
+                    "inputTargetNeutral": CIVector(
+                        x: 6_500 - adjustments.temperature * 2_000,
+                        y: adjustments.tint * 100
+                    )
+                ]
+            )
+        }
+
         if
             adjustments.contrast != 1 ||
             adjustments.saturation != 1 ||
@@ -48,10 +63,59 @@ enum ImageAdjustmentFilter {
             )
         }
 
+        if adjustments.vibrance != 0 {
+            output = output.applyingFilter(
+                "CIVibrance",
+                parameters: ["inputAmount": adjustments.vibrance]
+            )
+        }
+
+        if adjustments.sharpness > 0 {
+            output = output.applyingFilter(
+                "CISharpenLuminance",
+                parameters: [kCIInputSharpnessKey: adjustments.sharpness * 2]
+            )
+        }
+
         if adjustments.isMonochrome {
             output = output.applyingFilter("CIPhotoEffectMono")
         }
 
         return output
+    }
+
+    private static func applyTonalAdjustments(
+        to image: CIImage,
+        adjustments: ImageAdjustments
+    ) -> CIImage {
+        guard adjustments.highlights != 0 ||
+                adjustments.shadows != 0 ||
+                adjustments.whites != 0 ||
+                adjustments.blacks != 0 else {
+            return image
+        }
+
+        // Build one smooth cubic tone curve. Each control is weighted toward
+        // its named tonal region while remaining zero at unrelated endpoints.
+        let black = adjustments.blacks * 0.12
+        let white = adjustments.whites * 0.12
+        let shadow = adjustments.shadows * 0.35
+        let highlight = adjustments.highlights * 0.35
+        let coefficients = CIVector(
+            x: black,
+            y: 1 - 3 * black + shadow,
+            z: 3 * black - 2 * shadow + highlight,
+            w: -black + white + shadow - highlight
+        )
+
+        return image.applyingFilter(
+            "CIColorPolynomial",
+            parameters: [
+                "inputRedCoefficients": coefficients,
+                "inputGreenCoefficients": coefficients,
+                "inputBlueCoefficients": coefficients,
+                "inputAlphaCoefficients": CIVector(x: 0, y: 1, z: 0, w: 0)
+            ]
+        )
     }
 }

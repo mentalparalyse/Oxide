@@ -62,6 +62,10 @@ final class LUTPreviewRenderCoordinator: ObservableObject {
         image = nil
     }
 
+    static func releasePreviewResources() {
+        imageProcessor.releasePreviewResources()
+    }
+
     private func takePendingRequest(generation: Int) -> LUTPreviewRenderRequest? {
         guard generation == self.generation, let request = pendingRequest else {
             activeRequest = nil

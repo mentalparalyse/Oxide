@@ -105,6 +105,14 @@ struct ImageProcessorTests {
         #expect(!adjustments.isAutoEnhanced)
         #expect(adjustments.exposure == 0.5)
         #expect(adjustments.contrast == 1.2)
+        #expect(adjustments.highlights == 0)
+        #expect(adjustments.shadows == 0)
+        #expect(adjustments.whites == 0)
+        #expect(adjustments.blacks == 0)
+        #expect(adjustments.temperature == 0)
+        #expect(adjustments.tint == 0)
+        #expect(adjustments.vibrance == 0)
+        #expect(adjustments.sharpness == 0)
     }
 
     @Test func adjustmentFilterSupportsCombinedControls() {
@@ -117,6 +125,14 @@ struct ImageProcessorTests {
             contrast: 1.2,
             saturation: 0.8,
             brightness: 0.1,
+            highlights: -0.4,
+            shadows: 0.5,
+            whites: 0.2,
+            blacks: -0.2,
+            temperature: 0.3,
+            tint: -0.2,
+            vibrance: 0.4,
+            sharpness: 0.5,
             isMonochrome: true
         )
 
