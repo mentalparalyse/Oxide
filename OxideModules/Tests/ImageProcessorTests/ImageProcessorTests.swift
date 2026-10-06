@@ -31,15 +31,17 @@ struct ImageProcessorTests {
         })
     }
 
-    @Test func numberedLUTPresetsUseThemedDisplayNames() async throws {
+    @Test func curatedLUTPresetsUseDescriptiveDisplayNames() async throws {
         let names = LUTFilterPreset.bundledResourceNames.map {
             LUTFilterPreset.displayName(for: $0)
         }
 
-        #expect(names.contains("Cinematic 01"))
-        #expect(names.contains("Vintage 01"))
-        #expect(names.contains("Dream 03"))
-        #expect(names.contains("Dream 65"))
+        #expect(LUTFilterPreset.bundledResourceNames.count == 120)
+        #expect(names.contains("Pure"))
+        #expect(names.contains("Aqua"))
+        #expect(names.contains("Soft Fade"))
+        #expect(names.contains("Poster Red"))
+        #expect(!LUTFilterPreset.bundledResourceNames.contains("22_loot"))
         #expect(!LUTFilterPreset.bundledResourceNames.contains("148_loot"))
         #expect(Set(names).count == names.count)
         #expect(names.allSatisfy { !$0.localizedCaseInsensitiveContains("loot") })
