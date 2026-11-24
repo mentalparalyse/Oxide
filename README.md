@@ -1,20 +1,23 @@
 # Oxide
 
-Oxide is a LUT-based photo editor for iOS, built as a production-minded showcase of modern Swift engineering. It combines camera capture, photo-library import, nondestructive editing, GPU-accelerated rendering, and a modular VIPER architecture in a compact open-source project.
+Oxide is a nondestructive photo editor for iPhone built with SwiftUI, Core Image, and Metal. It combines an in-app camera and photo library with LUT-based color grading, detailed tonal controls, reusable looks, precision cropping, and a growing collection of creative effects. The project is also a production-minded reference for modular VIPER architecture, Swift 6 concurrency, and responsive high-resolution image processing.
 
 > The project is under active development. APIs and persisted edit metadata may evolve.
 
 ## Highlights
 
-- Front and rear camera capture with live torch control
-- Photo-library import and export
-- A reusable LUT engine with adjustable filter intensity
-- Nondestructive crop, rotation, exposure, contrast, saturation, brightness, and monochrome edits
-- Pinch, pan, double-tap, and button-based editor zoom
+- Front and rear camera capture with flash, torch, focus, exposure, and zoom controls
+- Photo-library import, an on-device gallery, full-resolution export, and the native iOS share sheet
+- LUT-based color grading with filter packs and adjustable intensity
+- Nondestructive crop and rotation with edge handles and common aspect ratios
+- Automatic enhancement plus exposure, contrast, highlights, shadows, whites, blacks, temperature, tint, vibrance, saturation, brightness, sharpness, and monochrome controls
+- Creative effects spanning film texture, light and glow, lens treatments, focus and blur, distortion, and stylized transformations
+- Positionable effect masks for localized effects
+- Reusable looks that preserve a complete editing recipe
+- Pinch, pan, double-tap, press-to-compare, and button-based editor preview controls
 - Undo history for editing operations
-- Full-resolution export and the native iOS share sheet
-- Metal-backed Core Image rendering with cached LUT cube data
-- Swift 6 concurrency and Swift Package Manager modularization
+- Proxy-based previews and Metal-backed Core Image rendering for responsive high-resolution editing
+- Swift 6 concurrency, actor-isolated persistence, and Swift Package Manager modularization
 
 ## Screenshots
 
@@ -32,6 +35,7 @@ Oxide (app target)
     ├── Root
     ├── Home
     ├── Gallery
+    ├── Editor
     ├── ImageProcessor
     ├── Onboarding
     ├── Settings
@@ -40,7 +44,7 @@ Oxide (app target)
     └── UIComponents
 ```
 
-Within `Gallery`, SwiftUI Views render presenter state, the Presenter coordinates user intent, Interactors adapt reusable services to the feature, and the Router owns system presentation. `ImageProcessor` owns camera capture, edit recipes, storage primitives, LUT preparation, and rendering through a shared Metal-backed `CIContext`.
+At the feature level, SwiftUI Views render presenter state, Presenters coordinate user intent, Interactors own application logic and adapt reusable services, and Routers own navigation and system presentation. `Gallery` manages capture, import, browsing, export, and sharing, while the dedicated `Editor` module owns editing state, history, reusable looks, and tool presentation. `ImageProcessor` provides the independent capture and rendering infrastructure through a shared Metal-backed `CIContext`.
 
 ### Reusing ImageProcessor
 
@@ -49,7 +53,7 @@ Within `Gallery`, SwiftUI Views render presenter state, the Presenter coordinate
 ```text
 ImageProcessor/
 ├── Capture/       Camera session, authorization, preview, and configuration
-├── Processing/    Edit recipes, crop/adjustment models, LUTs, rendering, export
+├── Processing/    Edit recipes, adjustments, effects, LUTs, rendering, export
 └── Store/         Image files, Photos export, and actor-isolated edit history
 ```
 
@@ -176,13 +180,6 @@ Camera and Photos authorization flows still require device-level verification be
 - Full-resolution rendering and image encoding run away from the main actor.
 - Camera configuration and session operations are serialized on a dedicated queue.
 - Thumbnail rendering is pixel-bounded to reduce decode cost and memory pressure.
-
-## Roadmap
-
-- Add UI and snapshot test coverage
-- Add filter-pack discovery and StoreKit 2 purchases
-- Improve crop gestures with corner handles and locked aspect ratios
-- Add export format and quality controls
 
 ## Contributing
 
